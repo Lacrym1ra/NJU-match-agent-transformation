@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline": "#82737e",
+              "on-surface": "#1e1b1a",
+              "inverse-primary": "#ffa9fb",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#ffd9e2",
+              "primary": "#420047",
+              "surface-tint": "#8f3e91",
+              "surface-bright": "#fff8f7",
+              "on-secondary-container": "#781941",
+              "tertiary-fixed-dim": "#c8c6c6",
+              "primary-container": "#611066",
+              "on-tertiary-container": "#a1a0a0",
+              "on-surface-variant": "#50434e",
+              "on-secondary": "#ffffff",
+              "outline-variant": "#d4c1cf",
+              "on-secondary-fixed-variant": "#812148",
+              "on-background": "#1e1b1a",
+              "surface-container-high": "#efe6e5",
+              "background": "#fff8f7",
+              "on-tertiary-fixed-variant": "#474747",
+              "on-tertiary-fixed": "#1b1c1c",
+              "on-primary-container": "#da80d8",
+              "surface-container-highest": "#e9e1e0",
+              "on-error": "#ffffff",
+              "tertiary-fixed": "#e4e2e1",
+              "on-tertiary": "#ffffff",
+              "primary-fixed-dim": "#ffa9fb",
+              "secondary-container": "#fe84ad",
+              "surface-variant": "#e9e1e0",
+              "surface": "#fff8f7",
+              "secondary-fixed-dim": "#ffb1c7",
+              "tertiary-container": "#373737",
+              "surface-dim": "#e1d8d7",
+              "on-primary-fixed-variant": "#732477",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed": "#ffd6f9",
+              "inverse-surface": "#342f2f",
+              "on-secondary-fixed": "#3f001c",
+              "on-primary-fixed": "#37003b",
+              "on-error-container": "#93000a",
+              "error": "#ba1a1a",
+              "tertiary": "#222222",
+              "surface-container": "#f5eceb",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#fbf2f1",
+              "secondary": "#a03960",
+              "inverse-on-surface": "#f8efee"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(255, 248, 247, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #611066 0%, #420047 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 w-full z-50 bg-white/80 dark:bg-stone-950/80 backdrop-blur-2xl shadow-[0_12px_32px_rgba(66,0,71,0.06)]">
+<nav class="flex justify-between items-center w-full px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-black text-purple-900 dark:text-purple-50 tracking-tighter italic font-headline">NJU Date</div>
+<div class="hidden md:flex items-center gap-10">
+<a class="text-purple-900/40 dark:text-purple-100/40 hover:text-purple-900 dark:hover:text-purple-50 transition-colors font-manrope tracking-tight font-medium uppercase text-xs" href="#">Home</a>
+<a class="text-purple-900 dark:text-purple-50 font-bold border-b-2 border-purple-900 dark:border-purple-50 pb-1 font-manrope tracking-tight uppercase text-xs" href="#">Profile</a>
+<a class="text-purple-900/40 dark:text-purple-100/40 hover:text-purple-900 dark:hover:text-purple-50 transition-colors font-manrope tracking-tight font-medium uppercase text-xs" href="#">About</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-purple-50/50 rounded-full transition-all active:scale-95">notifications</button>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-purple-50/50 rounded-full transition-all active:scale-95">settings</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="portrait of a professional young man with a friendly smile, studio setting with soft warm key light and clean background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL_S3UmfHlumWhebeB7WM5Hv3HBYY_dzUmQjCsfiLnO9g68cGspIxSbMlIiY_V5K5_fRFtESQSUxWZBnzouVWdmfMUudLuCHY9U6XPBpMkWThq1WOisHkvqQzg8a6uCuqO-m7dPa2gcG2wCgbEBU_FQo3ZFZNISKL7_AS7G8aH1GVnwN8XExEVGNmnAfjqmPfIg--F8NR2FW8fphH3djfyjd1y_eEwJmujIjtxdn4HoZOLMykWq5aLqtrohkYrCQdHSJ94JxsxH4g"/>
+</div>
+</div>
+</nav>
+</header>
+<main class="max-w-screen-2xl mx-auto px-12 py-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Column: Identity Card -->
+<div class="lg:col-span-4 sticky top-32">
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_12px_32px_rgba(66,0,71,0.06)]">
+<div class="relative group">
+<img class="w-full aspect-[4/5] object-cover" data-alt="cinematic portrait of a handsome young academic man looking thoughtful, natural daylight in a library setting, high quality fashion photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu1NtvJ-g_aZ1gIhjxCJeb4DKfN1NyjEIbQr88Rl4cLK9xksQIybPtodocTetahB4cA_cv3SBalOQaEPqqxvCOMM0zV145zQdhVe609k8FF9012oxEmlzwx_5a1qAeIy1pZeNZcfkpOKAk9_TKmVOJcWPv5Q1shxtXVEEj8pBnsgE9_S4F-15BtmWRZlPUcxacUzusI_dm8Z0I9-l9zjos9MZeLbbLkttVah-W_UXzVm30mnZHu24CQdRe1iHsFPKpOw5X9sT8g4s"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h1 class="font-headline text-3xl font-extrabold tracking-tight">林峻, 27</h1>
+<p class="text-white/80 font-medium tracking-wide text-sm flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-sm">verified</span>
+                                南京大学 · 计算机科学与技术系
+                            </p>
+</div>
+</div>
+<div class="p-8 space-y-6">
+<div class="flex items-center justify-between text-sm">
+<span class="text-on-surface-variant uppercase tracking-widest font-semibold text-[10px]">学位</span>
+<span class="font-bold text-primary">硕士研究生</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-on-surface-variant uppercase tracking-widest font-semibold text-[10px]">籍贯</span>
+<span class="font-bold text-primary">浙江 · 杭州</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-on-surface-variant uppercase tracking-widest font-semibold text-[10px]">职业</span>
+<span class="font-bold text-primary">算法工程师 @ Tech Firm</span>
+</div>
+<div class="pt-6 border-t border-surface-container-high">
+<button class="w-full primary-gradient text-on-primary py-4 rounded-xl font-bold tracking-tight active:scale-95 transform transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">chat_bubble</span>
+                                发起对话
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Curated Deep-Dive -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Section: Big Five Personality -->
+<section class="bg-surface-container-low rounded-xl p-10">
+<div class="flex items-center justify-between mb-10">
+<h2 class="font-headline text-2xl font-extrabold text-primary flex items-center gap-3">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                            人格特质自测 (Big Five)
+                        </h2>
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold bg-surface-container-highest px-3 py-1 rounded-full">高契合度预警</span>
+</div>
+<div class="space-y-8">
+<!-- Chart Item -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-sm font-bold text-on-surface">外向性 (Extraversion)</span>
+<span class="text-primary font-bold">42%</span>
+</div>
+<div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 42%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed italic">偏好高质量的私密社交，但在学术讨论中富有感染力。</p>
+</div>
+<!-- Chart Item -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-sm font-bold text-on-surface">宜人性 (Agreeableness)</span>
+<span class="text-primary font-bold">88%</span>
+</div>
+<div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 88%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed italic">高度的同理心，擅长倾听并提供情绪价值。</p>
+</div>
+<!-- Chart Item -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-sm font-bold text-on-surface">尽责性 (Conscientiousness)</span>
+<span class="text-primary font-bold">95%</span>
+</div>
+<div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 95%;"></div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed italic">生活作息极度规律，对长远计划有清晰的执行力。</p>
+</div>
+</div>
+</section>
+<!-- Section: Values Alignment -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-surface-container-lowest p-8 rounded-xl border-l-4 border-primary shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">psychology</span>
+<h3 class="font-bold text-on-surface">价值观契合度</h3>
+</div>
+<div class="space-y-6">
+<div>
+<h4 class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-2">关于消费观</h4>
+<p class="text-sm text-on-surface leading-relaxed">“更倾向于为‘体验’买单而非物品。每年会有固定的旅行基金，比起名牌包，我更喜欢去冰岛看极光。”</p>
+</div>
+<div>
+<h4 class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-2">关于家庭</h4>
+<p class="text-sm text-on-surface leading-relaxed">“独立而亲密。希望双方都能保持各自的职业追求，互为避风港而非依附关系。”</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl border-l-4 border-secondary shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary">favorite</span>
+<h3 class="font-bold text-on-surface">寻找的TA</h3>
+</div>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<span class="text-sm text-on-surface">有独立见解，热爱自己的专业或事业</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<span class="text-sm text-on-surface">喜欢小动物，尤其是猫</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<span class="text-sm text-on-surface">倾向于定居在南京或长三角地区</span>
+</li>
+</ul>
+</div>
+</section>
+<!-- Section: Curated Details Bento -->
+<section class="grid grid-cols-3 gap-6">
+<div class="col-span-2 bg-surface-container-highest rounded-xl p-8 relative overflow-hidden flex flex-col justify-end min-h-[240px]">
+<div class="absolute top-0 right-0 p-8">
+<span class="material-symbols-outlined text-primary/10 text-8xl">menu_book</span>
+</div>
+<h3 class="font-headline text-xl font-extrabold text-primary mb-2">最近在读</h3>
+<p class="text-on-surface-variant text-sm italic">《有限与无限的游戏》—— 詹姆斯·卡斯</p>
+<p class="text-on-surface-variant text-xs mt-4 leading-relaxed max-w-md">这本书重新定义了我对关系的看法：恋爱不是一个为了赢而结束的游戏，而是为了让游戏持续下去的艺术。</p>
+</div>
+<div class="bg-primary-container rounded-xl p-8 flex flex-col justify-center items-center text-center gap-4">
+<span class="material-symbols-outlined text-on-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">music_note</span>
+<h3 class="font-bold text-on-primary-container">音乐偏好</h3>
+<div class="space-y-1">
+<span class="block text-xs text-on-primary-container/80">Ambient Jazz</span>
+<span class="block text-xs text-on-primary-container/80">Classical Piano</span>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-stone-50 dark:bg-stone-900 w-full py-16 px-12 mt-20 rounded-t-[3rem] border-t border-stone-200/20">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8 max-w-screen-2xl mx-auto">
+<div>
+<div class="text-xl font-bold text-purple-950 dark:text-purple-100 font-headline mb-2">NJU Date</div>
+<p class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500">© 2024 NJU Date. The Digital Curator for Nanjing University Alumni.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 dark:hover:text-purple-300 transition-colors" href="#">Privacy</a>
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 dark:hover:text-purple-300 transition-colors" href="#">Terms</a>
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 dark:hover:text-purple-300 transition-colors" href="#">Safety</a>
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 dark:hover:text-purple-300 transition-colors" href="#">Community</a>
+</div>
+</div>
+</footer>
+</body></html>

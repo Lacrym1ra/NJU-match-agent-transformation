@@ -1,0 +1,14 @@
+sequenceDiagram
+  actor U as User
+  participant R as ForumRoute
+  participant S as ForumService
+  participant DB as PostgreSQL
+
+  U->>R: POST /forum/posts/:postId/comments
+  R->>R: 校验 text/voice 互斥规则
+  R->>S: createComment(userId, postId, dto)
+  S->>DB: 校验用户信用分、帖子可见性
+  S->>DB: 写 forum_comments
+  S->>DB: 更新 forum_posts.comment_count
+  S-->>R: 评论成功
+  R-->>U: 201 Created

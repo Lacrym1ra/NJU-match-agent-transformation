@@ -58,6 +58,7 @@ jobs:
           globs: |
             **/*.md
             #node_modules
+            #NJU-Date-basic/**
 
   harness:
     name: Harness Unit

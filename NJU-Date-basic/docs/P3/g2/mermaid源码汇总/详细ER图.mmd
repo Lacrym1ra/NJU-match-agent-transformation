@@ -1,0 +1,194 @@
+erDiagram
+    users ||--o{ circles : "creator_id"
+    users ||--o{ circle_members : "member"
+    users ||--o{ circle_member_roles : "role"
+    users ||--o{ circle_join_requests : "applies"
+    users ||--o{ circle_blacklist : "blocked_user"
+    users ||--o{ circle_member_locations : "shares_location"
+    users ||--o{ circle_chat_messages : "sends"
+    users ||--o{ friendships : "circle_friend_pair"
+    users ||--o{ global_friendships : "global_friend_pair"
+    users ||--o{ friend_requests : "sender_or_receiver"
+    users ||--o{ contact_unlock_requests : "requester_or_target"
+    users ||--o{ g2_contact_secrets : "owns_secret"
+    users ||--o{ user_circle_contacts : "configures"
+    users ||--o{ teamups : "leader"
+    users ||--o{ teamup_members : "joins"
+    users ||--o{ teamup_applications : "applicant"
+    users ||--o{ teamup_member_contacts : "provides"
+    users ||--o{ notifications : "receives"
+    users ||--o{ audit_logs : "operator"
+
+    circles ||--o{ circle_members : "contains"
+    circles ||--o{ circle_join_requests : "reviews"
+    circles ||--o{ circle_blacklist : "blocks"
+    circles ||--o{ circle_member_locations : "locates"
+    circles ||--o{ circle_chat_messages : "chat_room"
+    circles ||--o{ friendships : "scopes"
+    circles ||--o{ friend_requests : "optional_scope"
+    circles ||--o{ contact_unlock_requests : "circle_source"
+    circles ||--o{ user_circle_contacts : "contact_scope"
+    circles ||--o{ teamups : "hosts"
+
+    contact_unlock_requests ||--o{ contact_unlock_grants : "approves_contacts"
+    g2_contact_secrets ||--o{ user_circle_contacts : "secret_ref"
+    user_circle_contacts ||--o{ contact_unlock_grants : "granted_contact"
+
+    teamups ||--o{ teamup_members : "contains"
+    teamups ||--o{ teamup_applications : "receives"
+    teamups ||--o{ teamup_member_contacts : "stores_contact_refs"
+    teamups ||--o{ teamup_forum_sync_jobs : "optional_sync"
+    teamups ||--o{ teamup_chat_messages : "chat_room"
+    teamup_chat_messages ||--o{ teamup_chat_read_states : "read_by"
+    circle_chat_messages ||--o{ circle_chat_read_states : "read_by"
+
+    users {
+        text id PK
+        text email UK
+        text password_hash
+        text nickname
+        text avatar_url
+        text wechat_id
+        jsonb tags
+        integer credit_score
+        timestamp created_at
+    }
+    circles {
+        text id PK
+        text slug UK
+        text name
+        text creator_id FK
+        text join_policy
+        jsonb join_questions
+        text invite_code_hash
+        integer capacity_limit
+        text status
+    }
+    circle_members {
+        text id PK
+        text circle_id FK
+        text user_id FK
+        text membership_status
+        text answers
+        boolean answers_complete
+        boolean is_active
+    }
+    circle_join_requests {
+        text id PK
+        text circle_id FK
+        text user_id FK
+        jsonb application_answers
+        text application_reason
+        text status
+        timestamp expires_at
+    }
+    circle_chat_messages {
+        text id PK
+        text circle_id FK
+        text sender_id FK
+        text client_message_id
+        text content
+        jsonb mentions
+        text status
+        timestamp deleted_at
+    }
+    friend_requests {
+        text id PK
+        text circle_id FK
+        text source_type "circle|global"
+        text sender_id FK
+        text receiver_id FK
+        text status
+        timestamp expires_at
+    }
+    contact_unlock_requests {
+        text id PK
+        text circle_id FK
+        text source_type "circle|address_book"
+        text requester_id FK
+        text target_id FK
+        text field_key
+        text status
+        timestamp revoked_at
+    }
+    g2_contact_secrets {
+        text id PK
+        text owner_user_id FK
+        text scope_type
+        text scope_id
+        text field_key
+        text ciphertext
+        text nonce
+        text auth_tag
+        text masked_value
+    }
+    user_circle_contacts {
+        text id PK
+        text user_id FK
+        text circle_id FK
+        text contact_secret_id FK
+        text field_key
+        text label
+        boolean is_enabled
+    }
+    contact_unlock_grants {
+        text id PK
+        text request_id FK
+        text requester_id FK
+        text target_id FK
+        text circle_id FK
+        text contact_id FK
+        text status
+    }
+    teamups {
+        text id PK
+        text circle_id FK
+        text leader_id FK
+        text title
+        text teamup_type "short_term|long_term"
+        text join_mode "direct|approval"
+        integer max_members
+        integer current_member_count
+        text status
+    }
+    teamup_applications {
+        text id PK
+        text teamup_id FK
+        text applicant_id FK
+        text application_type "join|waitlist"
+        text status
+        jsonb card_snapshot
+        jsonb contact_payload
+        timestamp waitlist_joined_at
+    }
+    teamup_member_contacts {
+        text id PK
+        text teamup_id FK
+        text user_id FK
+        jsonb contacts "contactSecretId refs"
+    }
+    teamup_chat_messages {
+        text id PK
+        text teamup_id FK
+        text circle_id FK
+        text sender_id FK
+        text client_message_id
+        text content
+        text status
+    }
+    notifications {
+        text id PK
+        text user_id FK
+        text type
+        text title
+        text level
+        boolean is_read
+        text idempotency_key UK
+    }
+    audit_logs {
+        serial id PK
+        text operator_id FK
+        text action
+        text target
+        text result
+    }

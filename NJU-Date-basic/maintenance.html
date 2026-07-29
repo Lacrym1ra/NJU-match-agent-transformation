@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NJU Match · 平台优化中</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper: #FCFBF8;
+      --ink: #2C2825;
+      --muted: #8B7355;
+      --soft: #EAE3D7;
+      --wine: #420047;
+      --rose: #B76474;
+      --line: rgba(139, 115, 85, 0.22);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 14%, rgba(183, 100, 116, 0.10), transparent 30%),
+        radial-gradient(circle at 82% 78%, rgba(66, 0, 71, 0.08), transparent 34%),
+        var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* 背景线条 */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(transparent 47px, rgba(234,231,225,0.55) 48px),
+        linear-gradient(90deg, transparent 47px, rgba(234,231,225,0.38) 48px);
+      background-size: 100% 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .status-mark {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2.25rem;
+      position: relative;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.78), rgba(252,251,248,0.92));
+      box-shadow:
+        0 18px 46px rgba(44, 40, 37, 0.10),
+        inset 0 0 0 8px rgba(255, 255, 255, 0.42);
+    }
+
+    .status-mark::before,
+    .status-mark::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .status-mark::before {
+      inset: 7px;
+      border: 1px dashed rgba(139,115,85,0.42);
+      animation: spin 50s linear infinite;
+    }
+
+    .status-mark::after {
+      inset: -10px;
+      border-radius: 50%;
+      border: 1px solid rgba(183, 100, 116, 0.12);
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .status-icon {
+      width: 42px;
+      height: 42px;
+      color: var(--wine);
+      filter: drop-shadow(0 8px 16px rgba(66, 0, 71, 0.14));
+      z-index: 1;
+      text-align: center;
+    }
+
+    .brand {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 2.75rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .divider {
+      width: 56px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--muted), transparent);
+      margin: 1.5rem auto;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      font-style: italic;
+    }
+
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-top: 2rem;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.42);
+      color: var(--wine);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      box-shadow: 0 10px 28px rgba(44, 40, 37, 0.06);
+    }
+
+    .meta svg {
+      width: 16px;
+      height: 16px;
+      color: var(--rose);
+    }
+
+    .quote {
+      margin-top: 1.7rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      color: #A99F94;
+      line-height: 1.8;
+    }
+
+    .quote em {
+      font-style: normal;
+      color: var(--muted);
+    }
+
+    /* 底部小字 */
+    .footer {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: #B5AFA6;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 1.4rem; }
+      .status-mark {
+        width: 86px;
+        height: 86px;
+        margin-bottom: 2rem;
+      }
+      .status-icon {
+        width: 38px;
+        height: 38px;
+      }
+      h1 { letter-spacing: 0.1em; }
+      .footer { bottom: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="status-mark" aria-hidden="true">
+      <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </div>
+
+    <p class="brand">NJU Match</p>
+
+    <h1>平台优化中</h1>
+
+    <div class="divider"></div>
+
+    <p class="subtitle">
+      我们正在为你打磨更好的体验<br/>
+      请稍候片刻，很快便会归来
+    </p>
+
+    <div class="meta">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 6v6l3.2 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M21 12a9 9 0 1 1-2.64-6.36" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M18.5 3.5V7h-3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>系统维护中 · 请稍后刷新</span>
+    </div>
+
+    <p class="quote">
+      「 斯人若彩虹，遇上方知有 」<br/>
+      <em>— 敬请期待 —</em>
+    </p>
+  </div>
+
+  <p class="footer">Nanjing University Match &nbsp;·&nbsp; njumatch.com</p>
+</body>
+</html>

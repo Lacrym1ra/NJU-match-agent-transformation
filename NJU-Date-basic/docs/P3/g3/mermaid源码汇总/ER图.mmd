@@ -1,0 +1,155 @@
+erDiagram
+  USERS ||--o{ FORUM_POSTS : creates
+  USERS ||--o{ FORUM_COMMENTS : writes
+  FORUM_POSTS ||--o{ FORUM_COMMENTS : has
+  FORUM_COMMENTS ||--o{ FORUM_COMMENTS : replies_to
+
+  FORUM_POSTS ||--o{ FORUM_POST_IMAGES : contains
+  FORUM_POSTS ||--o{ FORUM_POLL_OPTIONS : has
+  FORUM_POLL_OPTIONS ||--o{ FORUM_POLL_VOTES : voted_by
+  FORUM_POSTS ||--o{ FORUM_POST_LIKES : liked_by
+  FORUM_POSTS ||--o{ FORUM_POST_FAVORITES : favorited_by
+  FORUM_POSTS ||--o{ FORUM_POST_VIEWS : viewed_by
+  FORUM_COMMENTS ||--o{ FORUM_COMMENT_LIKES : liked_by
+
+  USERS ||--o{ FORUM_REPORTS : reporter
+  USERS ||--o{ FORUM_REPORTS : reported
+  FORUM_POSTS ||--o{ FORUM_REPORTS : reported_post
+  FORUM_COMMENTS ||--o{ FORUM_REPORTS : reported_comment
+
+  USERS ||--o{ USER_REPORTS : reporter
+  USERS ||--o{ USER_REPORTS : reported
+
+  USERS ||--o{ USER_BLOCKS : blocker
+  USERS ||--o{ USER_BLOCKS : blocked
+  USERS ||--o{ USER_FOLLOWS : follower
+  USERS ||--o{ USER_FOLLOWS : followee
+  USERS ||--|| USER_MESSAGE_SETTINGS : owns
+  USERS ||--o{ DIRECT_MESSAGE_CONVERSATIONS : user_a
+  USERS ||--o{ DIRECT_MESSAGE_CONVERSATIONS : user_b
+  DIRECT_MESSAGE_CONVERSATIONS ||--o{ DIRECT_MESSAGES : contains
+  USERS ||--o{ CREDIT_SCORE_LOGS : score_changes
+  USERS ||--o{ FORUM_ANNOUNCEMENTS : creates
+  USERS ||--o{ FORUM_GUESTBOOK_MESSAGES : leaves
+  USERS ||--o{ USER_NOTIFICATIONS : receives
+  USERS ||--o{ AUDIT_LOGS : operator
+
+  FORUM_POSTS {
+    string id PK
+    string user_id FK
+    string circle_id FK
+    string title
+    string content
+    string type
+    boolean is_anonymous
+    string visibility
+    boolean is_pinned
+    boolean is_locked
+    string pinned_comment_id FK
+    int like_count
+    int favorite_count
+    int comment_count
+    int view_count
+    float hot_score
+    boolean has_images
+    boolean has_poll
+    datetime deleted_at
+  }
+
+  FORUM_POLL_OPTIONS {
+    string id PK
+    string post_id FK
+    string option_text
+    int display_order
+    int vote_count
+    datetime created_at
+  }
+
+  FORUM_POLL_VOTES {
+    string id PK
+    string post_id FK
+    string option_id FK
+    string user_id FK
+    datetime created_at
+  }
+
+  FORUM_COMMENTS {
+    string id PK
+    string post_id FK
+    string user_id FK
+    string content
+    string comment_type
+    string voice_url
+    int voice_duration_sec
+    string transcript
+    string transcript_status
+    string parent_comment_id FK
+    string root_comment_id FK
+    int like_count
+    datetime deleted_at
+  }
+
+  FORUM_REPORTS {
+    string id PK
+    string reporter_id FK
+    string reported_user_id FK
+    string target_type
+    string post_id FK
+    string comment_id FK
+    string reason
+    string detail
+    string status
+    string admin_note
+    string reviewed_by FK
+    datetime reviewed_at
+  }
+
+  USER_REPORTS {
+    string id PK
+    string reporter_id FK
+    string reported_id FK
+    string reason
+    string detail
+    string status
+    string admin_note
+    datetime reviewed_at
+  }
+
+  CREDIT_SCORE_LOGS {
+    string id PK
+    string user_id FK
+    int delta
+    string reason
+    string source_type
+    string source_id
+    datetime created_at
+  }
+
+  USER_FOLLOWS {
+    string id PK
+    string follower_id FK
+    string followee_id FK
+    datetime created_at
+  }
+
+  USER_MESSAGE_SETTINGS {
+    string user_id PK
+    string allow_direct_messages_from
+    datetime updated_at
+  }
+
+  DIRECT_MESSAGE_CONVERSATIONS {
+    string id PK
+    string user_a_id FK
+    string user_b_id FK
+    datetime last_message_at
+  }
+
+  DIRECT_MESSAGES {
+    string id PK
+    string conversation_id FK
+    string sender_id FK
+    string receiver_id FK
+    string content
+    datetime read_at
+  }

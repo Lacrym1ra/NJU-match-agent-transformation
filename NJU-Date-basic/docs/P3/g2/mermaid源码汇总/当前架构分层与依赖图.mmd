@@ -1,0 +1,40 @@
+flowchart TB
+    classDef api fill:#eef6ff,stroke:#2563eb,stroke-width:1px
+    classDef svc fill:#f8fafc,stroke:#475569,stroke-width:1px
+    classDef infra fill:#ecfdf5,stroke:#059669,stroke-width:1px
+    classDef data fill:#fff7ed,stroke:#ea580c,stroke-width:1px
+    classDef future fill:#f5f3ff,stroke:#7c3aed,stroke-dasharray:4 3
+
+    Client["React Client"] --> Router["Express Router<br/>/circles /friends /contacts /teamups"]:::api
+    Router --> Auth["requireAuth<br/>JWT from G1"]:::api
+    Router --> Zod["Zod validation"]:::api
+
+    Auth --> CircleSvc["circleService<br/>join policy / manage / match"]:::svc
+    Auth --> CardSvc["cardService<br/>base/circle cards"]:::svc
+    Auth --> FriendSvc["friendService<br/>circle/global requests"]:::svc
+    Auth --> ContactSvc["contactsService<br/>unlock + grants"]:::svc
+    Auth --> TeamSvc["teamService<br/>teamup + waitlist"]:::svc
+    Auth --> ChatSvc["chatService<br/>circle/teamup chat"]:::svc
+
+    FriendSvc --> Social["socialGraphService"]:::svc
+    ContactSvc --> Secrets["g2ContactSecretService<br/>AES-GCM secret refs"]:::infra
+    TeamSvc --> Secrets
+    TeamSvc --> Notify["notificationService<br/>notifications / broadcast_tasks"]:::infra
+    ChatSvc --> Hubs["realtime/roomHub<br/>circleChatHub / teamupChatHub"]:::infra
+    CircleSvc --> Audit[("audit_logs")]:::data
+    FriendSvc --> Audit
+    ContactSvc --> Audit
+    TeamSvc --> Audit
+
+    CircleSvc --> DB[("PostgreSQL via Drizzle")]:::data
+    CardSvc --> DB
+    FriendSvc --> DB
+    ContactSvc --> DB
+    TeamSvc --> DB
+    ChatSvc --> DB
+    Notify --> DB
+    Secrets --> DB
+
+    FutureEvent["EventBus / Queue / Redis<br/>future contract only"]:::future
+    Notify -.-> FutureEvent
+    Hubs -.-> FutureEvent

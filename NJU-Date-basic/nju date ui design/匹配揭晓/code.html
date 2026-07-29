@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Ma+Shan+Zheng&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-bright": "#fff8f7",
+              "outline": "#82737e",
+              "on-primary-fixed": "#37003b",
+              "on-secondary": "#ffffff",
+              "background": "#fff8f7",
+              "inverse-surface": "#342f2f",
+              "secondary-container": "#fe84ad",
+              "primary-fixed": "#ffd6f9",
+              "surface-dim": "#e1d8d7",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "secondary": "#a03960",
+              "on-tertiary-container": "#a1a0a0",
+              "secondary-fixed-dim": "#ffb1c7",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#ffd9e2",
+              "surface-container-high": "#efe6e5",
+              "surface-container": "#f5eceb",
+              "on-tertiary-fixed": "#1b1c1c",
+              "on-secondary-fixed": "#3f001c",
+              "on-primary-fixed-variant": "#732477",
+              "surface": "#fff8f7",
+              "on-surface-variant": "#50434e",
+              "outline-variant": "#d4c1cf",
+              "on-secondary-fixed-variant": "#812148",
+              "on-primary-container": "#da80d8",
+              "inverse-primary": "#ffa9fb",
+              "on-secondary-container": "#781941",
+              "tertiary-fixed": "#e4e2e1",
+              "primary": "#420047",
+              "on-tertiary-fixed-variant": "#474747",
+              "on-error": "#ffffff",
+              "surface-tint": "#8f3e91",
+              "surface-container-highest": "#e9e1e0",
+              "surface-container-low": "#fbf2f1",
+              "primary-fixed-dim": "#ffa9fb",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed-dim": "#c8c6c6",
+              "surface-container-lowest": "#ffffff",
+              "tertiary": "#222222",
+              "primary-container": "#611066",
+              "inverse-on-surface": "#f8efee",
+              "on-surface": "#1e1b1a",
+              "on-error-container": "#93000a",
+              "on-background": "#1e1b1a",
+              "surface-variant": "#e9e1e0"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "cursive": ["Ma Shan Zheng", "cursive"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .gradient-primary {
+        background: linear-gradient(135deg, #611066 0%, #420047 100%);
+      }
+      body {
+        background-color: #fff8f7;
+        color: #1e1b1a;
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fff8f7]/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-none">
+<div class="flex items-center justify-between px-6 py-4 w-full relative">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#420047] dark:text-[#d0bcff]">account_balance</span>
+</div>
+<h1 class="font-['Manrope'] font-black text-[#420047] dark:text-[#d0bcff] tracking-tighter text-2xl">THE CURATOR</h1>
+<div class="w-6"></div> <!-- Spacer for centering -->
+<div class="bg-[#fbf2f1] dark:bg-slate-900 h-[1px] w-full absolute bottom-0 left-0"></div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto space-y-12">
+<!-- Weekly Reveal Branding -->
+<section class="text-center space-y-2">
+<p class="font-label text-secondary tracking-[0.2em] text-xs font-bold uppercase">Friday Reveal • 2023.10.27</p>
+<h2 class="font-headline text-primary text-4xl font-extrabold tracking-tight">本周匹配揭晓</h2>
+<div class="h-1 w-12 gradient-primary mx-auto rounded-full mt-4"></div>
+</section>
+<!-- The "Digital Gift" Unwrapping: Hero Profile Card -->
+<section class="relative group">
+<div class="absolute -inset-4 bg-primary/5 rounded-[3.5rem] blur-2xl group-hover:bg-primary/10 transition-colors duration-500"></div>
+<div class="relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_12px_32px_rgba(66,0,71,0.06)] transform transition-transform hover:scale-[1.01]">
+<div class="aspect-[3/4] relative">
+<img class="w-full h-full object-cover" data-alt="portrait of a young East Asian woman with glasses and a thoughtful expression, wearing a minimalist cream sweater in a library setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQCEiPi-XB8yGNd4PR9sQ1S1-PrvKmCP5WFLq2FzdfQklPkKwLRipjicBzy15tjczK1r2NAHEQjGggdgXHukG0u5Kbr4gt1vnKNNe6D8TEncuFblM_7Q2zYczel53Q0ddb_J2MUtjDZmFABguaQ5JbGOK0TXAXc693JmT-T5rBhicG-Qett-Pp9TvIFGDumhMotqPAm3xJ3b0D8OjgCh7w4srTKUNBoGPYD2euboMWwQFDT9kwWBc3dTgG_9a84bEEz15dYam_pUo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<div class="flex items-baseline gap-2">
+<span class="font-headline text-4xl font-bold">Lin</span>
+<span class="font-body text-xl opacity-90">24</span>
+</div>
+<p class="font-body text-lg opacity-80 mt-1">计算机科学 博士在读 (PhD)</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Algorithm Analysis: Bento Style -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-primary text-xl font-bold">算法匹配深度分析</h3>
+<span class="text-on-surface-variant/60 font-label text-[10px] tracking-widest uppercase">Matching logic v4.2</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Big Five Alignment -->
+<div class="p-6 rounded-lg bg-surface-container-low space-y-4">
+<p class="font-label text-primary font-bold text-xs">大五人格契合度 (Big Five)</p>
+<div class="space-y-3">
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] text-on-surface-variant">
+<span>开放性 Openness</span>
+<span class="font-bold">98%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full gradient-primary w-[98%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] text-on-surface-variant">
+<span>尽责性 Conscientiousness</span>
+<span class="font-bold">85%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full gradient-primary w-[85%] rounded-full"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] text-on-surface-variant">
+<span>宜人性 Agreeableness</span>
+<span class="font-bold">92%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full gradient-primary w-[92%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Values Alignment -->
+<div class="p-6 rounded-lg bg-surface-container-low space-y-4">
+<p class="font-label text-primary font-bold text-xs">价值观重合点 (Values)</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-surface-container-lowest text-primary text-[11px] font-bold rounded-full border border-primary/5">学术理想</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest text-primary text-[11px] font-bold rounded-full border border-primary/5">智识交流</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest text-primary text-[11px] font-bold rounded-full border border-primary/5">极简主义</span>
+<span class="px-3 py-1.5 bg-surface-container-lowest text-primary text-[11px] font-bold rounded-full border border-primary/5">长期主义</span>
+</div>
+<p class="text-[10px] text-on-surface-variant/80 italic leading-relaxed">基于过往 12 次深度调研问卷所得出。你们在“未来十年生活规划”一项中展现了惊人的一致性。</p>
+</div>
+</div>
+</section>
+<!-- Curator's Note -->
+<section class="relative py-12 px-8 rounded-lg bg-surface-container-highest overflow-hidden">
+<span class="material-symbols-outlined absolute -top-4 -right-4 text-primary/5 text-9xl select-none">format_quote</span>
+<div class="relative space-y-4">
+<h3 class="font-headline text-primary text-sm font-bold tracking-widest uppercase">馆长私语 / Curator's Note</h3>
+<p class="font-cursive text-2xl text-primary leading-relaxed opacity-90">
+                    “在这座数字迷宫里，Lin 像是一首精密且优雅的算法。你们对‘纯粹性’的追求如出一辙。她不仅是你智识上的镜像，更是你情感拼图里缺失的那一块。在读到她关于《查拉图斯特拉如是说》的见解时，我立刻想到了你的那篇笔记。这种共鸣，是不应被错过的。”
+                </p>
+<div class="pt-4 flex items-center gap-3">
+<div class="h-px w-8 bg-primary/30"></div>
+<span class="font-label text-[10px] text-on-surface-variant uppercase tracking-widest">Digital Curator No. 07</span>
+</div>
+</div>
+</section>
+<!-- Action Buttons -->
+<section class="flex flex-col gap-4 py-8">
+<button class="gradient-primary text-on-primary h-[3.5rem] rounded-xl font-headline font-bold text-lg shadow-[0_12px_32px_rgba(66,0,71,0.2)] active:scale-95 transition-all">
+                开启对话 / Accept Match
+            </button>
+<button class="bg-surface-container-highest text-on-surface-variant/70 h-[3.5rem] rounded-xl font-headline font-bold text-sm active:scale-95 transition-all">
+                本周先错过 / Pass for now
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-[#fff8f7]/80 dark:bg-slate-950/80 backdrop-blur-xl flex justify-around items-center px-8 pb-8 pt-4 rounded-t-[3rem] shadow-[0_-12px_32px_rgba(66,0,71,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#420047] dark:text-[#d0bcff] font-bold scale-110 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] mt-1">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1e1b1a]/50 dark:text-slate-500 hover:text-[#420047] transition-colors" href="#">
+<span class="material-symbols-outlined">person_outline</span>
+<span class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] mt-1">Profile</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1e1b1a]/50 dark:text-slate-500 hover:text-[#420047] transition-colors" href="#">
+<span class="material-symbols-outlined">info</span>
+<span class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] mt-1">About</span>
+</a>
+</nav>
+</body></html>

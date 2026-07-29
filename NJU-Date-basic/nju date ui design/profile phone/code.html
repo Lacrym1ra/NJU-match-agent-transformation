@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>个人资料与匹配申请 - NJU Date</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#f8efee",
+              "tertiary-fixed": "#e4e2e1",
+              "on-error-container": "#93000a",
+              "outline": "#82737e",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed-variant": "#812148",
+              "surface": "#fff8f7",
+              "on-tertiary-fixed": "#1b1c1c",
+              "primary": "#420047",
+              "on-secondary-fixed": "#3f001c",
+              "error-container": "#ffdad6",
+              "background": "#fff8f7",
+              "on-surface-variant": "#50434e",
+              "on-tertiary-fixed-variant": "#474747",
+              "surface-container-high": "#efe6e5",
+              "outline-variant": "#d4c1cf",
+              "tertiary-fixed-dim": "#c8c6c6",
+              "on-primary": "#ffffff",
+              "surface-container": "#f5eceb",
+              "primary-container": "#611066",
+              "surface-variant": "#e9e1e0",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-container": "#da80d8",
+              "primary-fixed-dim": "#ffa9fb",
+              "on-primary-fixed": "#37003b",
+              "on-surface": "#1e1b1a",
+              "on-tertiary-container": "#a1a0a0",
+              "on-secondary-container": "#781941",
+              "surface-container-highest": "#e9e1e0",
+              "surface-dim": "#e1d8d7",
+              "tertiary-container": "#373737",
+              "secondary-fixed": "#ffd9e2",
+              "secondary-fixed-dim": "#ffb1c7",
+              "on-background": "#1e1b1a",
+              "inverse-primary": "#ffa9fb",
+              "inverse-surface": "#342f2f",
+              "tertiary": "#222222",
+              "on-error": "#ffffff",
+              "error": "#ba1a1a",
+              "secondary-container": "#fe84ad",
+              "on-primary-fixed-variant": "#732477",
+              "primary-fixed": "#ffd6f9",
+              "surface-bright": "#fff8f7",
+              "surface-tint": "#8f3e91",
+              "surface-container-low": "#fbf2f1",
+              "on-tertiary": "#ffffff",
+              "secondary": "#a03960"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .editorial-shadow {
+            box-shadow: 0 12px 32px rgba(66, 0, 71, 0.06);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(66,0,71,0.04)]">
+<div class="flex justify-between items-center px-6 h-16 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#420047]" data-icon="school">school</span>
+<span class="text-2xl font-extrabold tracking-tighter text-[#420047]">NJU Date</span>
+</div>
+<span class="material-symbols-outlined text-[#420047]" data-icon="psychology">psychology</span>
+</div>
+<div class="bg-[#fbf2f1] dark:bg-gray-800 h-[1px] w-full opacity-20"></div>
+</header>
+<main class="pt-24 px-6 max-w-3xl mx-auto space-y-12">
+<!-- Profile Hero Section (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 relative h-96 rounded-xl overflow-hidden editorial-shadow group">
+<img alt="Profile Picture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Close-up portrait of a thoughtful young person in a library setting with warm, intellectual lighting and soft focus bookshelves background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD10SqeggQgSc24C9zfpu7e4T8Z8eI1Fj_q8--CFBaUFWhJHau4Wv8ZQocV_3lk7029TWpCHGIltOtoh7-zyQFa3U1YbC8lCbSeZ6Lhuc_vhdx8Sl4CbUmQx8ICxaQGUeQlHJPbKDuJciEk8s_OSOr77Hh4inHOReq11kaplsSvUI4R3Rvz4CpTOamkzK18xtwaEOWrlGW1S3mUHt-LuugneDh-WHUfjTFzdHmlO9opQOTYZXv_awUIinfR_X-mGLyBt6LMUIxId9o"/>
+<div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-[#420047]/80 to-transparent text-white">
+<h1 class="text-4xl font-extrabold tracking-tight">苏格拉底的小粉丝</h1>
+<p class="text-lg opacity-90">哲学系 · 博士研究生</p>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-low p-6 rounded-xl h-full flex flex-col justify-center">
+<span class="text-[11px] font-medium tracking-wide uppercase text-on-surface-variant mb-4 block">研究方向</span>
+<p class="text-lg font-semibold text-primary leading-tight">认知科学与伦理抉择中的非对称平衡</p>
+</div>
+</div>
+</section>
+<!-- Basic Info Tags -->
+<section class="flex flex-wrap gap-3">
+<div class="px-5 py-2 bg-surface-container-lowest rounded-full text-on-surface-variant border border-outline-variant/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="palette">palette</span> 德彪西 / 胶片摄影
+            </div>
+<div class="px-5 py-2 bg-surface-container-lowest rounded-full text-on-surface-variant border border-outline-variant/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="fitness_center">fitness_center</span> 攀岩 / 冥想
+            </div>
+<div class="px-5 py-2 bg-surface-container-lowest rounded-full text-on-surface-variant border border-outline-variant/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="restaurant">restaurant</span> 精致素食 / 咖啡评测
+            </div>
+</section>
+<!-- Big Five Traits Section -->
+<section class="space-y-6 bg-surface-container-low p-8 rounded-lg">
+<div class="flex items-center justify-between">
+<h2 class="text-2xl font-bold text-primary">人格特质自测 (Big Five)</h2>
+<span class="material-symbols-outlined text-primary-container" data-icon="insights">insights</span>
+</div>
+<div class="space-y-6">
+<!-- Trait Bar: Openness -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span class="text-on-surface">开放性 (Openness)</span>
+<span class="text-primary font-bold">92%</span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container to-primary rounded-full" style="width: 92%"></div>
+</div>
+<p class="text-xs text-on-surface-variant italic">极度渴望新体验，偏好抽象思维与审美探索。</p>
+</div>
+<!-- Trait Bar: Conscientiousness -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span class="text-on-surface">尽责性 (Conscientiousness)</span>
+<span class="text-primary font-bold">78%</span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container to-primary rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Trait Bar: Extraversion -->
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-medium">
+<span class="text-on-surface">外向性 (Extraversion)</span>
+<span class="text-primary font-bold">45%</span>
+</div>
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container to-primary rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<!-- More traits could go here... -->
+</div>
+</section>
+<!-- Values Compatibility Section -->
+<section class="space-y-8">
+<h2 class="text-2xl font-bold text-primary">价值观契合度</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="p-8 bg-surface-container-lowest rounded-lg editorial-shadow border-l-4 border-primary">
+<p class="text-[11px] font-medium tracking-wide uppercase text-on-surface-variant mb-3">生活方式</p>
+<h3 class="text-lg font-bold mb-4">“你更倾向于有计划的安稳，还是即兴的冒险？”</h3>
+<p class="text-on-surface-variant leading-relaxed">我偏向 70% 的计划配合 30% 的意外。完美的周六应该是有预定的美术馆行程，但晚餐可以在路边随便选一家顺眼的店。</p>
+</div>
+<div class="p-8 bg-surface-container-lowest rounded-lg editorial-shadow border-l-4 border-secondary">
+<p class="text-[11px] font-medium tracking-wide uppercase text-on-surface-variant mb-3">事业观</p>
+<h3 class="text-lg font-bold mb-4">“事业是生活的支柱还是生活的全部？”</h3>
+<p class="text-on-surface-variant leading-relaxed">它是实现自我价值的途径，但我拒绝为了事业牺牲掉感知季节变化的能力。学术研究是我的热情，而非枷锁。</p>
+</div>
+<div class="p-8 bg-surface-container-lowest rounded-lg editorial-shadow border-l-4 border-primary-fixed-dim md:col-span-2">
+<p class="text-[11px] font-medium tracking-wide uppercase text-on-surface-variant mb-3">情感观</p>
+<h3 class="text-lg font-bold mb-4">“在一段长期关系中，你最看重的特质是什么？”</h3>
+<p class="text-on-surface-variant leading-relaxed">智识上的共鸣与情绪上的温良。能够坐在一起讨论一下午的博尔赫斯，也能在对方疲惫时提供恰到好处的留白空间。</p>
+</div>
+</div>
+</section>
+<!-- Ideal Partner Section -->
+<section class="space-y-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 bg-primary-container rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="search_heart" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<h2 class="text-2xl font-bold text-primary">寻找的 TA</h2>
+</div>
+<div class="bg-surface-container-high rounded-xl p-8 space-y-4">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1" data-icon="school">school</span>
+<div>
+<p class="font-bold">学术背景</p>
+<p class="text-on-surface-variant">偏好理工科或社科背景，希望能从不同的思维维度给我启发。对交叉学科有兴趣者佳。</p>
+</div>
+</div>
+<div class="flex items-start gap-4 pt-4 border-t border-outline-variant/20">
+<span class="material-symbols-outlined text-primary mt-1" data-icon="diversity_3">diversity_3</span>
+<div>
+<p class="font-bold">性格特质</p>
+<p class="text-on-surface-variant">内心笃定，温和而有力量。不需要社交达人，但希望是一个好的倾听者和表达者。</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full z-40">
+<!-- Floating Info Bar -->
+<div class="max-w-3xl mx-auto px-6 mb-24">
+<div class="bg-white/90 backdrop-blur-xl p-4 rounded-xl editorial-shadow border border-primary/5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</div>
+<span class="text-sm font-bold text-primary">匹配筹备中...</span>
+</div>
+<button class="bg-surface-container-highest text-primary px-6 py-2 rounded-full font-bold text-sm hover:bg-surface-container-high transition-colors">
+                    修改资料
+                </button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-2xl fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 rounded-t-[2.5rem] shadow-[0_-8px_32px_rgba(66,0,71,0.08)] pb-safe">
+<div class="flex flex-col items-center justify-center text-[#1e1b1a]/50 dark:text-white/40 px-5 py-2 hover:text-[#420047] transition-all">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase">每周匹配</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#611066] to-[#420047] text-white rounded-full px-5 py-2 scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase">个人中心</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#1e1b1a]/50 dark:text-white/40 px-5 py-2 hover:text-[#420047] transition-all">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-['Inter'] text-[11px] font-medium tracking-wide uppercase">关于我们</span>
+</div>
+</nav>
+</div>
+</body></html>

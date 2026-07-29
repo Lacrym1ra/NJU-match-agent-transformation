@@ -1,0 +1,14 @@
+sequenceDiagram
+  actor A as Admin
+  participant AR as AdminRoute
+  participant DB as PostgreSQL
+  actor U as User
+  participant FR as ForumRoute
+
+  A->>AR: POST/PATCH/DELETE /admin/forum/announcements
+  AR->>DB: 写 forum_announcements
+  AR->>DB: 写 audit_logs
+  U->>FR: GET /forum/announcements
+  FR->>DB: 读取可展示公告
+  DB-->>FR: announcements
+  FR-->>U: 公告列表

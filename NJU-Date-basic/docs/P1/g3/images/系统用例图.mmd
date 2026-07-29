@@ -1,0 +1,46 @@
+﻿flowchart LR
+  %% 系统级用例图（简化版）
+  %% 说明：为避免图面过乱，本图只展示 Actor 与核心用例的关联关系。
+  %% include / extend / trigger 等关系放在 5_用例建模.md 的文字说明中描述。
+
+  student((普通学生<br/>(Actor)))
+  author((帖子作者 / 楼主<br/>(Actor)))
+  admin((学生版主 / 管理员<br/>(Actor)))
+  system((系统自动触发器<br/>(Actor)))
+
+  UC01([UC-01 浏览帖子流])
+  UC02([UC-02 搜索与筛选帖子])
+  UC03([UC-03 发布图文帖子])
+  UC04([UC-04 保存与恢复草稿])
+  UC05([UC-05 匿名与私密可见性])
+  UC06([UC-06 创建帖内投票])
+  UC07([UC-07 参与帖内投票])
+  UC08([UC-08 点赞 / 收藏 / 浏览])
+  UC09([UC-09 评论与楼中楼回复])
+  UC10([UC-10 点赞评论])
+  UC11([UC-11 楼主置顶评论])
+  UC12([UC-12 删除帖子或评论])
+  UC13([UC-13 提交帖子 / 评论举报])
+  UC14([UC-14 拉黑与屏蔽用户])
+  UC15([UC-15 审核举报与治理处理])
+
+  student --- UC01
+  student --- UC02
+  student --- UC03
+  student --- UC07
+  student --- UC08
+  student --- UC09
+  student --- UC10
+  student --- UC12
+  student --- UC13
+  student --- UC14
+
+  author --- UC03
+  author --- UC04
+  author --- UC05
+  author --- UC06
+  author --- UC11
+  author --- UC12
+
+  admin --- UC15
+  system --- UC15

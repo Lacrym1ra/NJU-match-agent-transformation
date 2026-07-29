@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    command: >
+      postgres
+      -c shared_buffers=128MB
+      -c effective_cache_size=256MB
+      -c work_mem=2MB
+      -c max_connections=30
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nju_date}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - g3_demo_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nju_date"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.demo
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-nju_date}
+      DB_SSL: "false"
+      DB_POOL_MAX: 5
+      FRONTEND_URLS: http://localhost,http://localhost:8080
+      TRUST_PROXY: "true"
+      JSON_BODY_LIMIT: 256kb
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-in-production}
+      ADMIN_KEY: ${ADMIN_KEY:-dev-admin-key-change-in-production}
+    # 启动时自动执行迁移 + 种子数据（由 Dockerfile.demo 的 ENTRYPOINT 实现）
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  g3_demo_pgdata:

@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('/fonts/material-symbols-outlined-subset-v1.woff2') format('woff2');
+}
+
+@theme {
+  --color-primary: #420047;
+  --color-primary-container: #611066;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #da80d8;
+  --color-primary-fixed: #ffd6f9;
+  --color-primary-fixed-dim: #ffa9fb;
+  --color-on-primary-fixed: #37003b;
+  --color-on-primary-fixed-variant: #732477;
+  
+  --color-secondary: #a03960;
+  --color-secondary-container: #fe84ad;
+  --color-on-secondary-container: #781941;
+  --color-secondary-fixed: #ffd9e2;
+  --color-secondary-fixed-dim: #ffb1c7;
+  --color-on-secondary-fixed: #3f001c;
+  
+  --color-surface: #fff8f7;
+  --color-surface-dim: #e1d8d7;
+  --color-surface-bright: #fff8f7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #fbf2f1;
+  --color-surface-container: #f5eceb;
+  --color-surface-container-high: #efe6e5;
+  --color-surface-container-highest: #e9e1e0;
+  --color-surface-variant: #e9e1e0;
+  
+  --color-on-surface: #1e1b1a;
+  --color-on-surface-variant: #50434e;
+  --color-outline: #82737e;
+  --color-outline-variant: #d4c1cf;
+  
+  --radius-sm: 0.5rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+
+  --tracking-display: -0.02em;
+  --tracking-label: 0.05em;
+  --leading-body: 1.6;
+
+  --font-sans: 'Inter', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', ui-serif, Georgia, serif;
+  --font-headline: 'Manrope', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  --font-body: 'Inter', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-label: 'Inter', 'PingFang SC', 'Noto Sans SC', sans-serif;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[var(--color-surface)]/80 backdrop-blur-[20px];
+  }
+  .ambient-shadow {
+    box-shadow: 0 12px 32px rgba(66, 0, 71, 0.06);
+  }
+  .ghost-border {
+    outline: 1px solid color-mix(in srgb, var(--color-outline-variant) 15%, transparent);
+  }
+  .primary-gradient {
+    background: linear-gradient(135deg, var(--color-primary-container), var(--color-primary));
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* 隐藏滚动条但保留滚动功能 */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif !important;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;  /* 基础字号，可被外层 class 覆盖 */
+  line-height: 1;
+  letter-spacing: normal !important; /* 强制覆盖 tracking-wide 类带来的破坏 */
+  text-transform: none !important;
+  display: inline-block;
+  width: 1em;
+  min-width: 1em;
+  height: 1em;
+  overflow: hidden;
+  flex-shrink: 0;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility !important;
+  font-feature-settings: 'liga' !important;
+  font-variant-ligatures: common-ligatures discretionary-ligatures !important;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+@layer base {
+
+}
+
+
+
+html {
+  overflow-x: clip;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
+  /* Custom scrollbar for user agreement */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  @keyframes marquee-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }

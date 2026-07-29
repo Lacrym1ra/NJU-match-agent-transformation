@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NJU DATE - 价值观契合度测试</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#420047",
+              "surface-dim": "#e1d8d7",
+              "surface-bright": "#fff8f7",
+              "on-secondary-container": "#781941",
+              "surface-container": "#f5eceb",
+              "on-primary-fixed-variant": "#732477",
+              "tertiary-fixed-dim": "#c8c6c6",
+              "on-tertiary": "#ffffff",
+              "surface-container-highest": "#e9e1e0",
+              "secondary-fixed-dim": "#ffb1c7",
+              "outline": "#82737e",
+              "on-error-container": "#93000a",
+              "secondary-fixed": "#ffd9e2",
+              "on-tertiary-fixed": "#1b1c1c",
+              "on-secondary": "#ffffff",
+              "tertiary-fixed": "#e4e2e1",
+              "outline-variant": "#d4c1cf",
+              "surface-variant": "#e9e1e0",
+              "inverse-surface": "#342f2f",
+              "tertiary-container": "#373737",
+              "on-primary-container": "#da80d8",
+              "on-background": "#1e1b1a",
+              "on-secondary-fixed": "#3f001c",
+              "primary-container": "#611066",
+              "on-secondary-fixed-variant": "#812148",
+              "secondary-container": "#fe84ad",
+              "on-tertiary-container": "#a1a0a0",
+              "on-error": "#ffffff",
+              "surface-container-low": "#fbf2f1",
+              "surface": "#fff8f7",
+              "background": "#fff8f7",
+              "inverse-on-surface": "#f8efee",
+              "surface-container-high": "#efe6e5",
+              "primary-fixed": "#ffd6f9",
+              "on-surface": "#1e1b1a",
+              "on-surface-variant": "#50434e",
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed-dim": "#ffa9fb",
+              "on-tertiary-fixed-variant": "#474747",
+              "on-primary-fixed": "#37003b",
+              "secondary": "#a03960",
+              "on-primary": "#ffffff",
+              "tertiary": "#222222",
+              "surface-tint": "#8f3e91",
+              "inverse-primary": "#ffa9fb",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased overflow-x-hidden">
+<!-- Top Navigation Shell (Suppressed context: Task-Focused Journey) -->
+<!-- We prioritize the Content Canvas for the survey flow -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stone-200/40 transition-colors">
+<span class="material-symbols-outlined text-fuchsia-900">close</span>
+</button>
+</div>
+<div class="font-['Manrope'] text-xl font-extrabold tracking-tight text-fuchsia-950 dark:text-fuchsia-50">
+            NJU DATE
+        </div>
+<div class="w-10"></div> <!-- Spacer for symmetry -->
+</header>
+<main class="min-h-screen pt-24 pb-32 px-6 max-w-2xl mx-auto flex flex-col justify-center">
+<!-- Progress Indicator -->
+<div class="mb-12">
+<div class="flex justify-between items-end mb-4">
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-semibold">价值观契合度测试</span>
+<span class="font-headline text-2xl font-bold text-primary italic">03<span class="text-sm not-italic font-normal text-outline">/08</span></span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container to-primary w-[37.5%] rounded-full"></div>
+</div>
+</div>
+<!-- Question Section -->
+<div class="space-y-12">
+<div class="space-y-4">
+<h1 class="font-headline text-3xl md:text-4xl font-extrabold tracking-tight leading-tight text-on-surface">
+                    关于未来生活规划，<br/>您更倾向于？
+                </h1>
+<p class="text-on-surface-variant text-lg">这有助于我们为您匹配拥有相似愿景的高质量伴侣。</p>
+</div>
+<!-- Options Bento Grid / Large Click Areas -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Option 1 -->
+<button class="group relative flex items-center justify-between p-8 bg-surface-container-lowest rounded-xl text-left transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_4px_12px_rgba(66,0,71,0.02)]">
+<div class="flex flex-col gap-1 pr-4">
+<span class="text-xl font-semibold text-on-surface group-hover:text-primary transition-colors">追求极致的职业成就</span>
+<span class="text-sm text-on-surface-variant">将自我实现与事业高度置于首位</span>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low group-hover:bg-primary-container group-hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="rocket_launch">rocket_launch</span>
+</div>
+</button>
+<!-- Option 2 (Active/Selected State Example) -->
+<button class="group relative flex items-center justify-between p-8 bg-gradient-to-br from-primary-container to-primary rounded-xl text-left transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-xl ring-4 ring-primary/10">
+<div class="flex flex-col gap-1 pr-4">
+<span class="text-xl font-semibold text-white">平衡生活与爱</span>
+<span class="text-fuchsia-200">在事业稳步上升的同时，投入同等精力经营亲密关系</span>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</button>
+<!-- Option 3 -->
+<button class="group relative flex items-center justify-between p-8 bg-surface-container-lowest rounded-xl text-left transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_4px_12px_rgba(66,0,71,0.02)]">
+<div class="flex flex-col gap-1 pr-4">
+<span class="text-xl font-semibold text-on-surface group-hover:text-primary transition-colors">探索多元的生活方式</span>
+<span class="text-sm text-on-surface-variant">不被传统定义，更看重生活体验的深度与广度</span>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low group-hover:bg-primary-container group-hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+</div>
+</button>
+<!-- Option 4 -->
+<button class="group relative flex items-center justify-between p-8 bg-surface-container-lowest rounded-xl text-left transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_4px_12px_rgba(66,0,71,0.02)]">
+<div class="flex flex-col gap-1 pr-4">
+<span class="text-xl font-semibold text-on-surface group-hover:text-primary transition-colors">回归家庭与宁静</span>
+<span class="text-sm text-on-surface-variant">向往稳定温馨的家庭生活，追求内心的平和</span>
+</div>
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low group-hover:bg-primary-container group-hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="home_heart">home</span>
+</div>
+</button>
+</div>
+</div>
+<!-- Decorative Curator Element -->
+<div class="mt-16 p-6 rounded-lg bg-surface-container-low flex items-start gap-4">
+<div class="shrink-0 w-12 h-12 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="Curator" data-alt="professional portrait of an AI digital curator, elegant and futuristic aesthetic, soft purple backlighting, cinematic focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE-oY-y406AyyvDPm8qrn9DEf_9HArm1hWLhnNoUERdLyYTUeK8rfMfB2LgU3M7ewCwFQNfBR2Za3pn7Z9c-2XONUPz__ItM9l64sorNNJ8-oJFhaMi0rdBE-n7O2A-pRSWjhrGzuR6-R3mAp2kZdO5kZ3gT9OlAJyqzDkda9KApVimuBx5HxjeoidZaHecazm6fGMYi32SD_lMc7BBStGUnUVClB8fYL0D2jxyFbM-6gfWZsIONm-3i1mA5qv9KlWADl5SEnolLk"/>
+</div>
+<div class="space-y-1">
+<span class="font-label text-[10px] uppercase font-bold tracking-widest text-primary">Digital Curator Insights</span>
+<p class="text-sm text-on-surface-variant leading-relaxed italic">
+                    “价值观是关系的骨架。在这个步骤中，请听从你内心最真实的直觉。”
+                </p>
+</div>
+</div>
+</main>
+<!-- Navigation Actions (Transactional Context) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 px-6 pb-8 pt-4 bg-surface/80 glass-effect">
+<div class="max-w-2xl mx-auto flex items-center gap-4">
+<button class="flex-1 py-4 px-6 rounded-xl bg-surface-container-highest text-primary font-bold transition-all active:scale-95">
+                上一步
+            </button>
+<button class="flex-[2] py-4 px-6 rounded-xl bg-gradient-to-br from-primary-container to-primary text-white font-bold flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95">
+                确认选择
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</footer>
+<!-- Background Decoration -->
+<div class="fixed top-0 right-0 -z-10 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="fixed bottom-0 left-0 -z-10 w-64 h-64 bg-secondary-container/10 rounded-full blur-[80px] pointer-events-none"></div>
+</body></html>
