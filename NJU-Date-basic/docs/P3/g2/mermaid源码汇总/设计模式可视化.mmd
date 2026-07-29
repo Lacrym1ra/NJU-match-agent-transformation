@@ -1,0 +1,13 @@
+flowchart LR
+    classDef pattern fill:#eef2ff,stroke:#4f46e5,stroke-width:1px
+    classDef current fill:#ecfdf5,stroke:#059669,stroke-width:1px
+    classDef future fill:#f5f3ff,stroke:#7c3aed,stroke-dasharray:4 3
+
+    Strategy["Strategy Pattern<br/>visibility/matching policy"]:::pattern --> CurrentStrategy["Current: helper functions + policy modules<br/>joinPolicy / teamup policy / matchService"]:::current
+    StateMachine["State Machine Pattern<br/>request workflows"]:::pattern --> CurrentState["Current: explicit status fields<br/>friend/contact/teamup transitions"]:::current
+    DataBoundary["Data Access Boundary<br/>Repository contract"]:::pattern --> CurrentData["Current: Drizzle queries in services<br/>Repository is future contract"]:::current
+    Observer["Observer / Notification"]:::pattern --> CurrentObserver["Current: explicit notificationService + roomHub calls"]:::current
+    SecretRef["Secret Reference Pattern"]:::pattern --> CurrentSecret["Current: g2_contact_secrets<br/>payload stores contactSecretId + maskedValue"]:::current
+
+    CurrentObserver -.-> FutureBus["EventBus / Queue<br/>optional evolution"]:::future
+    CurrentData -.-> FutureRepo["Repository interface<br/>only if data access grows"]:::future

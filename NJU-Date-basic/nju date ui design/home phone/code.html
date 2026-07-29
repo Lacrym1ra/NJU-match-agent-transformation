@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@400;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-bright": "#fff8f7",
+              "outline": "#82737e",
+              "on-primary-fixed": "#37003b",
+              "on-secondary": "#ffffff",
+              "background": "#fff8f7",
+              "inverse-surface": "#342f2f",
+              "secondary-container": "#fe84ad",
+              "primary-fixed": "#ffd6f9",
+              "surface-dim": "#e1d8d7",
+              "on-primary": "#ffffff",
+              "error": "#ba1a1a",
+              "secondary": "#a03960",
+              "on-tertiary-container": "#a1a0a0",
+              "secondary-fixed-dim": "#ffb1c7",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#ffd9e2",
+              "surface-container-high": "#efe6e5",
+              "surface-container": "#f5eceb",
+              "on-tertiary-fixed": "#1b1c1c",
+              "on-secondary-fixed": "#3f001c",
+              "on-primary-fixed-variant": "#732477",
+              "surface": "#fff8f7",
+              "on-surface-variant": "#50434e",
+              "outline-variant": "#d4c1cf",
+              "on-secondary-fixed-variant": "#812148",
+              "on-primary-container": "#da80d8",
+              "inverse-primary": "#ffa9fb",
+              "on-secondary-container": "#781941",
+              "tertiary-fixed": "#e4e2e1",
+              "primary": "#420047",
+              "on-tertiary-fixed-variant": "#474747",
+              "on-error": "#ffffff",
+              "surface-tint": "#8f3e91",
+              "surface-container-highest": "#e9e1e0",
+              "surface-container-low": "#fbf2f1",
+              "primary-fixed-dim": "#ffa9fb",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed-dim": "#c8c6c6",
+              "surface-container-lowest": "#ffffff",
+              "tertiary": "#222222",
+              "primary-container": "#611066",
+              "inverse-on-surface": "#f8efee",
+              "on-surface": "#1e1b1a",
+              "on-error-container": "#93000a",
+              "on-background": "#1e1b1a",
+              "surface-variant": "#e9e1e0"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #fff8f7;
+        color: #1e1b1a;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-nav {
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .hero-gradient {
+        background: linear-gradient(to bottom, rgba(255,248,247,0) 0%, rgba(255,248,247,1) 90%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface selection:bg-primary-fixed selection:text-primary overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fff8f7]/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-none">
+<div class="flex items-center justify-between px-6 py-4 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#420047] dark:text-[#d0bcff]">account_balance</span>
+<h1 class="font-['Manrope'] font-black text-[#420047] dark:text-[#d0bcff] tracking-tighter text-2xl">THE CURATOR</h1>
+</div>
+<!-- Desktop Nav Cluster -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] text-[#420047] dark:text-[#d0bcff] scale-110" href="#">Matches</a>
+<a class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] text-[#1e1b1a]/60 dark:text-slate-400 hover:bg-[#fbf2f1] dark:hover:bg-slate-900/50 transition-colors px-3 py-1 rounded-full" href="#">Profile</a>
+<a class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] text-[#1e1b1a]/60 dark:text-slate-400 hover:bg-[#fbf2f1] dark:hover:bg-slate-900/50 transition-colors px-3 py-1 rounded-full" href="#">About</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#1e1b1a]/60 active:scale-95 transition-transform duration-200">notifications</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a young professional man with a friendly smile, clean aesthetic photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1L_zTJQ95k68BOYQ1kl3Rwpd9w8pJ7GrXMYsZwdFqLBfzoT5Qg7lPka8MsBAcBBmibgA1khHccOeVxse417uDd50qXjId1sjVXAnkcHhcMEH1wROJT-tcQDlqi8-N_ZUnc8ZS_435i-5U3XT7_xqV6PJcW3EO1aiyOxk_mQE_OoLlUglJubKroP4ptTDtBgBreEVPjOhl7kAmY9DjVrmqEN3P4Gjoz-6TlCBSZUYNAwKKTYTnRbgESxjNuGvgog-lyWpRBOjffYc"/>
+</div>
+</div>
+</div>
+<div class="bg-[#fbf2f1] dark:bg-slate-900 h-[1px] w-full absolute bottom-0"></div>
+</header>
+<main class="pt-16 pb-32">
+<!-- Hero Section -->
+<section class="relative h-[751px] w-full flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-90" data-alt="Cinematic artistic view of Nanjing University campus classic architecture with soft morning sunlight and cherry blossoms in foreground" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjwCEzuBk6XERtRIqXcV0phmhsXs566jIVeygmChF_jVoigljeY8jc1LkZuJVnkXlvM6vRKmG8sg0x8juXSaHZKBhIGlspkiSJhEnnn6XKMaekxo1_V8c1A1ZKFa8llFk3_z5O8cy_ixsBqKCQFqjA7qq00cM77dqPIGX8K6BKQLjqiEmYEqEq_ifKiifSpHD1KEh_pFcMkSShAB_c6rDHHVae-f415nomlZfo2x_5DC8Z2dDZYWjh0Iq0CFjMPCBexAThPVd1jAI"/>
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+<span class="font-label text-primary font-bold tracking-[0.2em] uppercase text-sm mb-6 block">南京大学校友专属社区</span>
+<h2 class="font-headline text-5xl md:text-8xl text-primary font-extrabold tracking-tighter leading-tight mb-8">
+                    追寻那份<br/><span class="text-on-primary-fixed-variant">志趣相投</span>的遇见
+                </h2>
+<p class="font-body text-lg text-on-surface-variant max-w-xl mx-auto mb-10 leading-relaxed">
+                    在 THE CURATOR，我们不只是匹配。我们通过严格的学术验证与深度性格分析，为您甄选每一位志同道合的伴侣。
+                </p>
+<div class="flex flex-col md:flex-row items-center justify-center gap-4">
+<button class="px-10 py-5 rounded-xl bg-gradient-to-br from-primary-container to-primary text-on-primary font-bold text-lg shadow-[0_12px_32px_rgba(66,0,71,0.15)] active:scale-95 transition-all">
+                        开启匹配之旅
+                    </button>
+<button class="px-10 py-5 rounded-xl bg-surface-container-highest text-primary font-bold text-lg hover:bg-surface-container-high transition-colors">
+                        了解甄选标准
+                    </button>
+</div>
+</div>
+</section>
+<!-- Weekly Reveal Timer -->
+<section class="px-6 -mt-20 relative z-20">
+<div class="max-w-5xl mx-auto bg-surface-container-lowest rounded-xl p-8 md:p-12 shadow-[0_-12px_32px_rgba(66,0,71,0.06)] flex flex-col md:flex-row items-center justify-between gap-8 border border-outline-variant/10">
+<div class="flex-1 text-center md:text-left">
+<h3 class="font-headline text-2xl font-bold text-primary mb-2">周五见：每周甄选揭晓</h3>
+<p class="font-body text-on-surface-variant">策展人正在为您精心匹配本周的缘分</p>
+</div>
+<div class="flex gap-4 md:gap-8">
+<div class="flex flex-col items-center">
+<span class="font-headline text-4xl md:text-5xl font-black text-primary">02</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Days</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-headline text-4xl md:text-5xl font-black text-primary">14</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Hours</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-headline text-4xl md:text-5xl font-black text-primary">38</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Mins</span>
+</div>
+</div>
+</div>
+</section>
+<!-- The Curator Concept Section -->
+<section class="py-24 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="relative rounded-lg overflow-hidden group">
+<img class="w-full aspect-[4/5] object-cover rounded-lg" data-alt="Two intelligent looking young people having a deep conversation in a minimalist aesthetic library cafe setting, soft bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb1K9RytIAzljVxCQrMKdVL2wSm5FaRhMuYANPJ_icMtw4oT8BHlmbHNwyHOY0fMKrwY5LAWlVSqoQfMiU-HHvMnTmQICXBHuipNYqjhDB3imEXfB_RO0Ti8B9_MOyhZgeZ27WjNjUdBYnDDTGyr4V4nV0968CSC6alO-FVKM1x3ruvILptqh5pQ9UWQrqa_qPFerRY_GHWTXCVUPL1ABBy9RxCHn_EnrXh9hL2itMNy6rm5_L8EXZE4ySGPesUvUq37URYVSwJ0U"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="absolute bottom-8 left-8 right-8 p-6 bg-surface/80 backdrop-blur-md rounded-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
+<p class="font-body italic text-primary">"这里的每个人都经过实名学历认证，交流的质量完全不同。"</p>
+<p class="font-label text-xs mt-4 text-on-surface-variant">— 20届商学院校友</p>
+</div>
+</div>
+<div class="space-y-8">
+<h3 class="font-headline text-4xl md:text-5xl font-bold text-primary leading-tight">数字时代的<br/>艺术级社交。</h3>
+<p class="font-body text-lg text-on-surface-variant leading-relaxed">
+                    在 NJU Date，我们摒弃了无意义的左右滑动。我们的匹配算法是基于"Big Five"五大人格特质与共同的学术背景进行深度计算。
+                </p>
+<div class="space-y-6 pt-4">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary bg-primary-fixed p-3 rounded-full">verified_user</span>
+<div>
+<h4 class="font-bold text-primary">实名与学历双重验证</h4>
+<p class="text-sm text-on-surface-variant">确保每一位用户都是真实、可靠的南京大学校友。</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary bg-primary-fixed p-3 rounded-full">psychology</span>
+<div>
+<h4 class="font-bold text-primary">深度人格匹配算法</h4>
+<p class="text-sm text-on-surface-variant">超越外貌，基于价值观与性格特质进行精准推送。</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Why NJU Date: Bento Grid -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-6">
+<div class="text-center mb-16">
+<h3 class="font-headline text-3xl md:text-4xl font-bold text-primary">为何选择 NJU Date</h3>
+<div class="h-1 w-20 bg-primary-fixed-dim mx-auto mt-4 rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl hover:shadow-[0_20px_40px_rgba(66,0,71,0.08)] transition-all group border border-outline-variant/5">
+<div class="mb-8 overflow-hidden inline-block">
+<span class="material-symbols-outlined text-5xl text-primary group-hover:scale-110 transition-transform inline-block">school</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-primary mb-4">Academic Verification</h4>
+<p class="font-body text-on-surface-variant text-sm leading-relaxed">
+                            严格的校友身份认证流程，建立基于信任的精英社交圈层，确保沟通环境的纯净与高效。
+                        </p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl hover:shadow-[0_20px_40px_rgba(66,0,71,0.08)] transition-all group border border-outline-variant/5">
+<div class="mb-8 overflow-hidden inline-block">
+<span class="material-symbols-outlined text-5xl text-primary group-hover:scale-110 transition-transform inline-block">join_inner</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-primary mb-4">Big Five Matching</h4>
+<p class="font-body text-on-surface-variant text-sm leading-relaxed">
+                            利用五大人格心理学模型，深度解析用户潜在特质，寻找灵魂深处真正契合的另一半。
+                        </p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl hover:shadow-[0_20px_40px_rgba(66,0,71,0.08)] transition-all group border border-outline-variant/5">
+<div class="mb-8 overflow-hidden inline-block">
+<span class="material-symbols-outlined text-5xl text-primary group-hover:scale-110 transition-transform inline-block">local_cafe</span>
+</div>
+<h4 class="font-headline text-xl font-bold text-primary mb-4">Offline Connections</h4>
+<p class="font-body text-on-surface-variant text-sm leading-relaxed">
+                            从线上走向线下，定期举办校友沙龙与学术咖啡会，让缘分在真实的互动中自然萌发。
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-32 px-6">
+<div class="max-w-4xl mx-auto text-center">
+<h3 class="font-headline text-4xl font-bold text-primary mb-8">准备好遇见你的专属缘分了吗？</h3>
+<p class="font-body text-on-surface-variant mb-12 max-w-2xl mx-auto">
+                    加入 5000+ 已认证的南大校友。在这里，每一场相遇都是被珍视的艺术。
+                </p>
+<div class="relative inline-block group">
+<button class="px-12 py-6 bg-primary text-on-primary font-bold text-xl rounded-full shadow-[0_12px_32px_rgba(66,0,71,0.2)] group-hover:shadow-[0_20px_48px_rgba(66,0,71,0.3)] transition-all">
+                        立即申请加入
+                    </button>
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 blur-2xl -z-10 group-hover:opacity-100 opacity-0 transition-opacity"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-8 pb-8 pt-4 bg-[#fff8f7]/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-[0_-12px_32px_rgba(66,0,71,0.06)] rounded-t-[3rem]">
+<a class="flex flex-col items-center justify-center text-[#420047] dark:text-[#d0bcff] font-bold scale-110 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] mt-1">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1e1b1a]/50 dark:text-slate-500 hover:text-[#420047] dark:hover:text-[#d0bcff] transition-colors" href="#">
+<span class="material-symbols-outlined">person_outline</span>
+<span class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] mt-1">Profile</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1e1b1a]/50 dark:text-slate-500 hover:text-[#420047] dark:hover:text-[#d0bcff] transition-colors" href="#">
+<span class="material-symbols-outlined">info</span>
+<span class="font-['Inter'] font-medium uppercase tracking-[0.05em] text-[10px] mt-1">About</span>
+</a>
+</nav>
+<!-- Floating Action Button - Only on appropriate contexts -->
+<button class="fixed right-6 bottom-28 md:bottom-8 z-40 w-16 h-16 rounded-full bg-primary text-on-primary shadow-xl flex items-center justify-center active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</body></html>

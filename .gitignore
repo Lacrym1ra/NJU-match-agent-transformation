@@ -2,6 +2,7 @@
 .env.*
 node_modules/
 !.env.example
+!.env.*.example
 
 # Build and test output
 dist/
@@ -35,3 +36,13 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+
+# Imported application baseline: omit its former repository governance.
+/NJU-Date-basic/.github/
+/NJU-Date-basic/.gitattributes
+/NJU-Date-basic/.gitignore
+/NJU-Date-basic/**/.gitignore
+/NJU-Date-basic/**/.gitkeep
+/NJU-Date-basic/.gitlab-ci.yml
+/NJU-Date-basic/CONTRIBUTING.md
+/NJU-Date-basic/BASELINE_IMPORT.md

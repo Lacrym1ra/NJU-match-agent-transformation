@@ -1,0 +1,9 @@
+[Unit]
+Description=NJU Match backend watchdog
+Wants=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/workspace/NJU-Date
+ExecStart=/bin/sh /root/workspace/NJU-Date/scripts/backend-watchdog.sh

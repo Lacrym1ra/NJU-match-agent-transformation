@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nju-date-postgres
+    restart: unless-stopped
+    command: >
+      postgres
+      -c shared_buffers=128MB
+      -c effective_cache_size=256MB
+      -c work_mem=2MB
+      -c max_connections=30
+      -c wal_buffers=4MB
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nju_date}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nju_date"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nju-date-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-nju_date}
+      DB_SSL: "false"
+      DB_POOL_MAX: ${DB_POOL_MAX:-5}
+      FRONTEND_URLS: ${FRONTEND_URLS:-http://localhost}
+      FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:-https://njumatch.com}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-njumatch@163.com}
+      TRUST_PROXY: "true"
+      JSON_BODY_LIMIT: 256kb
+      JWT_SECRET: ${JWT_SECRET:?Please set JWT_SECRET in .env}
+      ADMIN_KEY: ${ADMIN_KEY:?Please set ADMIN_KEY in .env}
+      HEARTBOX_STUDENT_ID_PEPPER: ${HEARTBOX_STUDENT_ID_PEPPER:-}
+      EMAIL_PROVIDER: aliyun_api
+      ALIYUN_DM_ACCESS_KEY_ID: ${ALIYUN_DM_ACCESS_KEY_ID:-}
+      ALIYUN_DM_ACCESS_KEY_SECRET: ${ALIYUN_DM_ACCESS_KEY_SECRET:-}
+      ALIYUN_DM_REGION: ${ALIYUN_DM_REGION:-cn-hangzhou}
+      ALIYUN_DM_ACCOUNT_NAME: ${ALIYUN_DM_ACCOUNT_NAME:-}
+      ALIYUN_DM_FROM_ALIAS: ${ALIYUN_DM_FROM_ALIAS:-NJU Date}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      QWEN_MODEL: ${QWEN_MODEL:-qwen-plus}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nju-date-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${PORT:-80}:80"
+      - "443:443"
+    volumes:
+      - ./njumatch.com.pem:/etc/nginx/ssl/cert.pem:ro
+      - ./njumatch.com.key:/etc/nginx/ssl/cert.key:ro
+      - ./nginx-ssl.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./maintenance.html:/usr/share/nginx/html/maintenance.html:ro
+      - ./ops/maintenance:/etc/nginx/maintenance:ro
+
+volumes:
+  postgres_data:

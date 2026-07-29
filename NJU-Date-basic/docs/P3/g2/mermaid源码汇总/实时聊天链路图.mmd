@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor U as Chat User
+    participant Auth as authService(G1)
+    participant WS as realtime server
+    participant REST as chat routes
+    participant Chat as chatService
+    participant DB as Drizzle/PostgreSQL
+    participant Hub as circleChatHub/teamupChatHub
+
+    U->>Auth: POST /auth/realtime-ticket
+    Auth-->>U: short-lived realtime ticket
+    U->>WS: connect with ticket and join room
+    WS->>Chat: ensureActiveCircleChatMember or ensureActiveTeamupChatMember
+    Chat->>DB: verify circle/teamup active membership
+    WS-->>U: room joined
+
+    U->>REST: POST /circles/:circleId/chat/messages
+    REST->>Chat: sendCircleChatMessage(userId, circleId, input)
+    Chat->>DB: insert circle_chat_messages
+    Chat->>Hub: broadcast chat.message
+    Hub-->>U: realtime message event
+
+    U->>REST: PUT /circles/:circleId/chat/read-state
+    REST->>Chat: updateCircleChatReadState
+    Chat->>DB: upsert circle_chat_read_states

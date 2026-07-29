@@ -1,0 +1,20 @@
+sequenceDiagram
+  actor A as Admin
+  participant R as AdminRoute
+  participant G as ForumGovernanceService
+  participant DB as PostgreSQL
+
+  A->>R: PATCH /admin/forum/reports/:id
+  R->>R: 校验 action/adminNote/penaltyScore
+  R->>G: reviewForumReport(input)
+  G->>DB: 开启事务并读取举报单
+  G->>DB: 更新 forum_reports.status
+  alt action = approve
+    G->>DB: 软删除帖子或评论
+    G->>DB: 扣除 users.credit_score
+    G->>DB: 写 credit_score_logs
+    G->>DB: 清理同目标 pending 举报
+  end
+  G-->>R: 返回审核结果
+  R->>DB: 写 audit_logs
+  R-->>A: 审核完成

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /survey
+Disallow: /settings
+Disallow: /account
+Disallow: /reveal
+Disallow: /admin
+Disallow: /onboarding
+
+Sitemap: https://njumatch.com/sitemap.xml

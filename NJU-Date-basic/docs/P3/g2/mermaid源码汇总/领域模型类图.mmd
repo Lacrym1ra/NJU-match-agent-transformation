@@ -1,0 +1,88 @@
+classDiagram
+    direction LR
+
+    class User {
+        +String id
+        +String email
+        +String nickname
+        +JSON tags
+        +Integer creditScore
+    }
+    class Circle {
+        +String id
+        +String slug
+        +String joinPolicy
+        +JSON joinQuestions
+        +String status
+    }
+    class CircleMember {
+        +String circleId
+        +String userId
+        +String membershipStatus
+        +Boolean answersComplete
+    }
+    class CircleChatMessage {
+        +String circleId
+        +String senderId
+        +String clientMessageId
+        +String status
+    }
+    class FriendRequest {
+        +String sourceType
+        +String status
+        +Timestamp expiresAt
+    }
+    class ContactUnlockRequest {
+        +String sourceType
+        +String fieldKey
+        +String status
+        +Timestamp revokedAt
+    }
+    class G2ContactSecret {
+        +String ownerUserId
+        +String scopeType
+        +String ciphertext
+        +String maskedValue
+    }
+    class UserCircleContact {
+        +String fieldKey
+        +String label
+        +String contactSecretId
+        +Boolean isEnabled
+    }
+    class Teamup {
+        +String teamupType
+        +String joinMode
+        +Integer maxMembers
+        +String status
+    }
+    class TeamupApplication {
+        +String applicationType
+        +String status
+        +JSON contactPayload
+        +Timestamp waitlistJoinedAt
+    }
+    class TeamupChatMessage {
+        +String teamupId
+        +String senderId
+        +String clientMessageId
+        +String status
+    }
+    class Notification {
+        +String type
+        +String level
+        +Boolean isRead
+        +String idempotencyKey
+    }
+
+    User "1" --> "many" CircleMember : joins
+    Circle "1" --> "many" CircleMember : contains
+    Circle "1" --> "many" CircleChatMessage : owns room
+    User "1" --> "many" FriendRequest : sends/receives
+    User "1" --> "many" ContactUnlockRequest : requests/grants
+    G2ContactSecret "1" --> "many" UserCircleContact : referenced by
+    ContactUnlockRequest "1" --> "many" UserCircleContact : approves via grants
+    Circle "1" --> "many" Teamup : hosts
+    Teamup "1" --> "many" TeamupApplication : receives
+    Teamup "1" --> "many" TeamupChatMessage : owns room
+    User "1" --> "many" Notification : receives

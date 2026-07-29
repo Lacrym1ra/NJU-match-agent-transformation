@@ -1,0 +1,543 @@
+classDiagram
+
+class ForumController {
+  -forumService: ForumService
+  -forumGovernanceService: ForumGovernanceService
+  +listPosts(userId, query)
+  +createPost(userId, dto)
+  +getPostDetail(userId, postId)
+  +createComment(userId, postId, dto)
+  +deletePost(userId, postId)
+  +deleteComment(userId, commentId)
+  +likePost(userId, postId)
+  +favoritePost(userId, postId)
+  +pinComment(userId, postId, commentId)
+  +votePostPoll(userId, postId, optionId)
+  +submitReport(userId, dto)
+}
+
+class SocialController {
+  -socialService: SocialService
+  +getFollowRelation(userId, targetUserId)
+  +followUser(userId, targetUserId)
+  +unfollowUser(userId, targetUserId)
+  +listDirectMessageConversations(userId, query)
+  +getDirectMessageConversation(userId, targetUserId, query)
+  +sendDirectMessage(userId, targetUserId, content)
+  +updateMessagePrivacy(userId, setting)
+}
+
+class UserGovernanceController {
+  -governanceService: GovernanceService
+  +blockUser(userId, targetId)
+  +unblockUser(userId, targetId)
+  +reportUser(userId, targetId, dto)
+}
+
+class AdminGovernanceController {
+  -governanceService: GovernanceService
+  -forumGovernanceService: ForumGovernanceService
+  -auditService: AuditService
+  +listReports(query)
+  +reviewReport(adminId, reportId, dto)
+  +listForumReports(query)
+  +reviewForumReport(adminId, reportId, dto)
+  +pinPost(adminId, postId)
+  +removePost(adminId, postId)
+  +manageAnnouncement(dto)
+  +hideGuestbookMessage(messageId)
+}
+
+class ForumService {
+  -postRepo: IPostRepository
+  -commentRepo: ICommentRepository
+  -interactionRepo: IForumInteractionRepository
+  -pollRepo: IForumPollRepository
+  -notificationRepo: INotificationRepository
+  -policyService: ForumPolicyService
+  +listPosts(userId, options)
+  +listRecommendedPosts(userId, options)
+  +createPost(userId, input)
+  +getPostDetail(userId, postId)
+  +createComment(userId, postId, input)
+  +deletePost(userId, postId)
+  +deleteComment(userId, commentId)
+  +likePost(userId, postId)
+  +favoritePost(userId, postId)
+  +pinComment(userId, postId, commentId)
+  +unpinComment(userId, postId)
+  +votePostPoll(userId, postId, optionId)
+  +getHotRanking(options)
+  +listMessages(userId, page)
+}
+
+class SocialService {
+  -followRepo: IUserFollowRepository
+  -messageRepo: IDirectMessageRepository
+  -blockRepo: IUserBlockRepository
+  +getFollowRelation(userId, targetUserId)
+  +followUser(userId, targetUserId)
+  +unfollowUser(userId, targetUserId)
+  +getMessagePrivacySetting(userId)
+  +updateMessagePrivacySetting(userId, setting)
+  +getDirectMessageEligibility(userId, targetUserId)
+  +listConversations(userId, page)
+  +getConversation(userId, targetUserId, page)
+  +sendMessage(senderId, receiverId, content)
+}
+
+class ForumRecommendationService {
+  +scoreCandidate(userId, post)
+  +computeProfileMatch(userId, post)
+  +computeInteractionAffinity(userId, post)
+  +rankCandidates(userId, candidates)
+}
+
+class ForumPolicyService {
+  +ensurePostVisible(userId, post)
+  +ensurePostWritable(userId, postType)
+  +ensureCreditAllowsForumAction(userId)
+  +ensureOwner(userId, resource)
+  +ensurePinnedCommentAllowed(userId, post, comment)
+  +ensurePollVoteAllowed(userId, post, option)
+}
+
+class GovernanceService {
+  -reportRepo: IUserReportRepository
+  -auditRepo: IAuditRepository
+  -creditService: CreditService
+  +blockUser(blockerId, blockedId)
+  +unblockUser(blockerId, blockedId)
+  +reportUser(reporterId, reportedId, reasons, detail)
+  +reviewReport(adminId, reportId, decision, note, penaltyScore)
+}
+
+class ForumGovernanceService {
+  -forumReportRepo: IForumReportRepository
+  -postRepo: IPostRepository
+  -commentRepo: ICommentRepository
+  -creditService: CreditService
+  +submitForumReport(input)
+  +reviewForumReport(input)
+  +listForumReports(query)
+  +listForumCreditUsers(query)
+}
+
+class CreditService {
+  -creditLogRepo: ICreditLogRepository
+  +adjustScore(userId, delta, reason, source)
+  +resolveLevel(score)
+  +ensureForumAllowed(userId)
+}
+
+class AuditService {
+  -auditRepo: IAuditRepository
+  +logAdminAction(operatorId, action, target, detail, ip, result)
+}
+
+class ContentModerationService {
+  -sensitiveTerms: string[]
+  -maxContentLength: int
+  +normalize(text)
+  +scan(text)
+  +decide(hitTerms)
+}
+
+class IPostRepository {
+  <<interface>>
+  +findList(filter, page)
+  +findById(postId)
+  +save(post)
+  +softDelete(postId)
+  +togglePin(postId, isPinned)
+}
+
+class ICommentRepository {
+  <<interface>>
+  +findByPost(postId)
+  +findById(commentId)
+  +save(comment)
+  +softDelete(commentId)
+}
+
+class IForumInteractionRepository {
+  <<interface>>
+  +likePost(userId, postId)
+  +favoritePost(userId, postId)
+  +recordView(userId, postId)
+  +likeComment(userId, commentId)
+  +updateHotScore(postId)
+}
+
+class IForumPollRepository {
+  <<interface>>
+  +createOptions(postId, options)
+  +findOptionsByPost(postId)
+  +vote(userId, postId, optionId)
+  +findUserVote(userId, postId)
+}
+
+class IForumReportRepository {
+  <<interface>>
+  +save(report)
+  +findById(reportId)
+  +list(status, page)
+  +updateStatus(reportId, status, adminNote)
+}
+
+class IUserReportRepository {
+  <<interface>>
+  +save(report)
+  +findById(reportId)
+  +list(status, page)
+  +updateStatus(reportId, status, adminNote)
+}
+
+class ICreditLogRepository {
+  <<interface>>
+  +save(log)
+  +listByUser(userId)
+}
+
+class INotificationRepository {
+  <<interface>>
+  +save(notification)
+  +listByUser(userId, page)
+  +deleteByUser(userId, notificationId)
+}
+
+class IUserFollowRepository {
+  <<interface>>
+  +findRelation(userId, targetUserId)
+  +follow(userId, targetUserId)
+  +unfollow(userId, targetUserId)
+  +listByTab(userId, tab)
+}
+
+class IDirectMessageRepository {
+  <<interface>>
+  +findOrCreateConversation(userAId, userBId)
+  +listConversations(userId, page)
+  +listMessages(conversationId, before, limit)
+  +saveMessage(conversationId, senderId, receiverId, content)
+  +markRead(conversationId, receiverId)
+}
+
+class IUserBlockRepository {
+  <<interface>>
+  +isBlockedBetween(userAId, userBId)
+}
+
+class IAuditRepository {
+  <<interface>>
+  +save(log)
+}
+
+class DrizzlePostRepository {
+  -db: DrizzleDatabase
+  +findList(filter, page)
+  +findById(postId)
+  +save(post)
+  +softDelete(postId)
+}
+class DrizzleCommentRepository {
+  -db: DrizzleDatabase
+  +findByPost(postId)
+  +findById(commentId)
+  +save(comment)
+  +softDelete(commentId)
+}
+class DrizzleForumReportRepository {
+  -db: DrizzleDatabase
+  +save(report)
+  +findById(reportId)
+  +list(status, page)
+  +updateStatus(reportId, status, adminNote)
+}
+class DrizzleAuditRepository {
+  -db: DrizzleDatabase
+  +save(log)
+}
+
+class User {
+  +id: UUID
+  +nickname: string
+  +profileComplete: boolean
+  +creditScore: int
+  +creditLevel: CreditLevel
+  +isProfileComplete()
+}
+
+class ForumPost {
+  +id: UUID
+  +userId: UUID
+  +circleId: UUID?
+  +title: string
+  +content: string
+  +type: ForumPostType
+  +isAnonymous: boolean
+  +visibility: ForumVisibility
+  +isPinned: boolean
+  +pinnedCommentId: UUID?
+  +likeCount: int
+  +favoriteCount: int
+  +commentCount: int
+  +viewCount: int
+  +hotScore: double
+  +hasPoll: boolean
+  +deletedAt: datetime?
+  +markDeleted()
+  +pin()
+  +unpin()
+  +pinComment(commentId)
+  +unpinComment()
+  +attachPoll(options)
+}
+
+class ForumComment {
+  +id: UUID
+  +postId: UUID
+  +userId: UUID
+  +content: string?
+  +commentType: ForumCommentType
+  +voiceUrl: string?
+  +transcript: string?
+  +parentCommentId: UUID?
+  +rootCommentId: UUID?
+  +likeCount: int
+  +deletedAt: datetime?
+  +markDeleted()
+}
+
+class ForumPollOption {
+  +id: UUID
+  +postId: UUID
+  +optionText: string
+  +displayOrder: int
+  +voteCount: int
+}
+
+class ForumPollVote {
+  +id: UUID
+  +postId: UUID
+  +optionId: UUID
+  +userId: UUID
+  +createdAt: datetime
+  +isSameVoter(postId, userId)
+}
+
+class UserFollow {
+  +id: UUID
+  +followerId: UUID
+  +followeeId: UUID
+  +createdAt: datetime
+}
+
+class UserMessageSetting {
+  +userId: UUID
+  +allowDirectMessagesFrom: MessagePrivacy
+  +updatedAt: datetime
+}
+
+class DirectMessageConversation {
+  +id: UUID
+  +userAId: UUID
+  +userBId: UUID
+  +lastMessageAt: datetime
+  +contains(userId)
+}
+
+class DirectMessage {
+  +id: UUID
+  +conversationId: UUID
+  +senderId: UUID
+  +receiverId: UUID
+  +content: string
+  +createdAt: datetime
+  +readAt: datetime?
+  +markRead()
+}
+
+class ForumReport {
+  +id: UUID
+  +reporterId: UUID
+  +reportedUserId: UUID
+  +targetType: ForumReportTargetType
+  +postId: UUID?
+  +commentId: UUID?
+  +reason: string
+  +detail: string?
+  +status: ForumReportStatus
+  +adminNote: string?
+  +reviewedAt: datetime?
+  +approve(penaltyScore)
+  +reject(note)
+}
+
+class UserReport {
+  +id: UUID
+  +reporterId: UUID
+  +reportedId: UUID
+  +reason: string
+  +detail: string?
+  +status: ReportStatus
+  +adminNote: string?
+  +markReviewed(status, adminNote)
+}
+
+class UserBlock {
+  +id: UUID
+  +blockerId: UUID
+  +blockedId: UUID
+  +equalsPair(blockerId, blockedId)
+}
+
+class CreditScoreLog {
+  +id: UUID
+  +userId: UUID
+  +delta: int
+  +reason: string
+  +sourceType: string
+  +sourceId: string?
+}
+
+class ForumAnnouncement {
+  +id: UUID
+  +title: string
+  +content: string
+  +isActive: boolean
+  +priority: int
+}
+
+class ForumGuestbookMessage {
+  +id: UUID
+  +userId: UUID
+  +content: string
+  +status: string
+}
+
+class AuditLog {
+  +id: int
+  +operatorId: UUID?
+  +action: string
+  +target: string?
+  +detail: string?
+  +ip: string?
+  +result: string
+  +isSuccess()
+}
+
+class ForumPostType {
+  <<enumeration>>
+  general
+  squad
+  help
+  trade
+  activity
+}
+
+class ForumVisibility {
+  <<enumeration>>
+  public
+  private
+}
+
+class ForumCommentType {
+  <<enumeration>>
+  text
+  voice
+}
+
+class MessagePrivacy {
+  <<enumeration>>
+  all
+  following
+  mutual
+  none
+}
+
+class ForumReportStatus {
+  <<enumeration>>
+  pending
+  approved
+  rejected
+}
+
+class ForumReportTargetType {
+  <<enumeration>>
+  post
+  comment
+}
+
+class ReportStatus {
+  <<enumeration>>
+  pending
+  reviewed
+  warn_update
+  dismissed
+}
+
+class CreditLevel {
+  <<enumeration>>
+  normal
+  limited
+  banned
+}
+
+ForumController --> ForumService
+ForumController --> ForumGovernanceService
+SocialController --> SocialService
+UserGovernanceController --> GovernanceService
+AdminGovernanceController --> GovernanceService
+AdminGovernanceController --> ForumGovernanceService
+AdminGovernanceController --> AuditService
+
+ForumService --> ForumPolicyService
+ForumService --> ForumRecommendationService
+ForumService --> IPostRepository
+ForumService --> ICommentRepository
+ForumService --> IForumInteractionRepository
+ForumService --> IForumPollRepository
+ForumService --> INotificationRepository
+SocialService --> IUserFollowRepository
+SocialService --> IDirectMessageRepository
+SocialService --> IUserBlockRepository
+GovernanceService --> IUserReportRepository
+GovernanceService --> IAuditRepository
+GovernanceService --> CreditService
+ForumGovernanceService --> IForumReportRepository
+ForumGovernanceService --> IPostRepository
+ForumGovernanceService --> ICommentRepository
+ForumGovernanceService --> CreditService
+AuditService --> IAuditRepository
+CreditService --> ICreditLogRepository
+
+DrizzlePostRepository ..|> IPostRepository
+DrizzleCommentRepository ..|> ICommentRepository
+DrizzleForumReportRepository ..|> IForumReportRepository
+DrizzleAuditRepository ..|> IAuditRepository
+
+ForumPost "1" *-- "0..*" ForumComment : 组合
+ForumPost "1" *-- "0..*" ForumPollOption : 投票选项
+ForumPollOption "1" o-- "0..*" ForumPollVote : 被投票
+ForumPost "1" o-- "0..*" ForumReport : 被举报
+ForumComment "1" o-- "0..*" ForumReport : 被举报
+ForumPost "0..*" --> "1" User : 作者
+ForumComment "0..*" --> "1" User : 评论者
+ForumReport "0..*" --> "1" User : reporter
+ForumReport "0..*" --> "1" User : reported
+UserReport "0..*" --> "1" User : reporter
+UserReport "0..*" --> "1" User : reported
+UserBlock "0..*" --> "1" User : blocker
+UserBlock "0..*" --> "1" User : blocked
+UserFollow "0..*" --> "1" User : follower
+UserFollow "0..*" --> "1" User : followee
+UserMessageSetting "1" --> "1" User : owner
+DirectMessageConversation "0..*" --> "1" User : userA
+DirectMessageConversation "0..*" --> "1" User : userB
+DirectMessage "0..*" --> "1" DirectMessageConversation : belongs_to
+DirectMessage "0..*" --> "1" User : sender
+DirectMessage "0..*" --> "1" User : receiver
+CreditScoreLog "0..*" --> "1" User : user
+ForumAnnouncement "0..*" --> "1" User : createdBy
+ForumGuestbookMessage "0..*" --> "1" User : author

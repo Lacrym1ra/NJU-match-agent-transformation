@@ -1,0 +1,32 @@
+stateDiagram-v2
+    [*] --> FriendPending
+    FriendPending --> FriendAccepted: accept
+    FriendPending --> FriendRejected: reject or silent-reject
+    FriendPending --> FriendWithdrawn: sender withdraw
+    FriendPending --> FriendExpired: expiry worker
+    FriendAccepted --> [*]: create friendship/global_friendship
+    FriendRejected --> [*]
+    FriendWithdrawn --> [*]
+    FriendExpired --> [*]
+
+    [*] --> ContactPending
+    ContactPending --> ContactApproved: approve with contactIds
+    ContactPending --> ContactRejected: reject
+    ContactPending --> ContactWithdrawn: requester withdraw
+    ContactPending --> ContactExpired: expiresAt reached
+    ContactApproved --> ContactRevoked: target revokes grant
+    ContactApproved --> [*]: write contact_unlock_grants
+    ContactRejected --> [*]
+    ContactWithdrawn --> [*]
+    ContactExpired --> [*]
+    ContactRevoked --> [*]
+
+    [*] --> TeamupPending
+    TeamupPending --> TeamupApproved: leader approves
+    TeamupPending --> TeamupRejected: leader rejects
+    TeamupPending --> TeamupWithdrawn: applicant withdraws
+    TeamupApproved --> TeamupWaitlist: full and waitlistable
+    TeamupWaitlist --> TeamupApproved: promoted from queue
+    TeamupApproved --> [*]: create member or keep waitlist
+    TeamupRejected --> [*]
+    TeamupWithdrawn --> [*]

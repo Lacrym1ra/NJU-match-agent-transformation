@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NJU Date | 每周精选匹配</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#82737e",
+                        "on-surface": "#1e1b1a",
+                        "inverse-primary": "#ffa9fb",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#ffd9e2",
+                        "primary": "#420047",
+                        "surface-tint": "#8f3e91",
+                        "surface-bright": "#fff8f7",
+                        "on-secondary-container": "#781941",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "primary-container": "#611066",
+                        "on-tertiary-container": "#a1a0a0",
+                        "on-surface-variant": "#50434e",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#d4c1cf",
+                        "on-secondary-fixed-variant": "#812148",
+                        "on-background": "#1e1b1a",
+                        "surface-container-high": "#efe6e5",
+                        "background": "#fff8f7",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-primary-container": "#da80d8",
+                        "surface-container-highest": "#e9e1e0",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e4e2e1",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ffa9fb",
+                        "secondary-container": "#fe84ad",
+                        "surface-variant": "#e9e1e0",
+                        "surface": "#fff8f7",
+                        "secondary-fixed-dim": "#ffb1c7",
+                        "tertiary-container": "#373737",
+                        "surface-dim": "#e1d8d7",
+                        "on-primary-fixed-variant": "#732477",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffd6f9",
+                        "inverse-surface": "#342f2f",
+                        "on-secondary-fixed": "#3f001c",
+                        "on-primary-fixed": "#37003b",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "tertiary": "#222222",
+                        "surface-container": "#f5eceb",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#fbf2f1",
+                        "secondary": "#a03960",
+                        "inverse-on-surface": "#f8efee"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .curator-gradient {
+            background: linear-gradient(135deg, #611066 0%, #420047 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 248, 247, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+<!-- Top Navigation Anchor -->
+<nav class="sticky top-0 w-full z-50 bg-white/80 dark:bg-stone-950/80 backdrop-blur-2xl shadow-[0_12px_32px_rgba(66,0,71,0.06)]">
+<div class="flex justify-between items-center w-full px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-black text-purple-900 dark:text-purple-50 tracking-tighter italic font-headline">NJU Date</div>
+<div class="hidden md:flex items-center gap-10">
+<a class="font-manrope tracking-tight font-medium uppercase text-xs text-purple-900 dark:text-purple-50 font-bold border-b-2 border-purple-900 dark:border-purple-50 pb-1" href="#">Home</a>
+<a class="font-manrope tracking-tight font-medium uppercase text-xs text-purple-900/40 dark:text-purple-100/40 hover:text-purple-900 dark:hover:text-purple-50 transition-colors" href="#">Profile</a>
+<a class="font-manrope tracking-tight font-medium uppercase text-xs text-purple-900/40 dark:text-purple-100/40 hover:text-purple-900 dark:hover:text-purple-50 transition-colors" href="#">About</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-purple-50/50 p-2 rounded-full transition-all active:scale-95" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-purple-50/50 p-2 rounded-full transition-all active:scale-95" data-icon="settings">settings</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User avatar" data-alt="Close-up portrait of a stylish young professional man with a friendly expression, soft natural indoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsIH2jvzGdVe8WroO4XUTGg43g6vA7_ZNVIafO3cWtiElWlnrKhyNn5hBfAFNhn_k_61YHTjPqqKsBSONoHdtc-5Ftth3Sh6e5jsYBq2TNqTL5B6hwRctYK7XmKajv-ZD6_PfSfcQUyB6f4_ZliIk2UEFfY82ZEKum1Hkw8RXyEZeu4HVT6iwrzr-gK9KqR_yfMln-jyA3-umXaMmxsQFsMs-NaTAVGJTyGOWymouC0JK5NAFcFFG1TtHoQVJa1SwZ7sbj74ymles"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Reveal Canvas -->
+<main class="min-h-screen flex flex-col items-center pt-12 px-6">
+<!-- Ceremonial Header -->
+<div class="text-center mb-16 space-y-4">
+<span class="font-label text-primary font-bold tracking-[0.2em] uppercase text-xs">The Weekly Reveal</span>
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold text-primary tracking-tighter">本周专属匹配</h1>
+<p class="text-on-surface-variant text-lg max-w-lg mx-auto leading-relaxed">基于南大校友算法深度匹配，为您甄选此时此刻最契合的灵魂。</p>
+</div>
+<!-- The Gallery Exhibit / Hero Section -->
+<div class="relative w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-surface-container-low rounded-xl overflow-hidden shadow-[0_32px_64px_rgba(66,0,71,0.08)]">
+<!-- Left: Hero Image (The Exhibit) -->
+<div class="lg:col-span-7 relative min-h-[500px] lg:min-h-[700px] overflow-hidden">
+<img alt="Match Profile" class="absolute inset-0 w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" data-alt="Elegant portrait of a young woman standing in a sun-drenched library aisle, warm soft lighting, high-end editorial photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFV1ztZBaTzLYQt6Oxx2LKdqJhyD_1EW64lWSv7SCz0V16Ly4VZY8klfyl5PBbyF8D57lcMQ4UaqRtKb6MYa9z32qAlNRxHW8gBHOehQ7fQMjtGO5VJF-BmnFqmMquz0VsbklB5FjZcATc5_IKw9WgsxckJQSISBWqa-NpK1IqfT41RabejgVMNfK1wugnAoS1bf5Z7KCVUKFtZPyOH3QOLtojuhjFAReGYlG5CVts5-cmOMXtFqGL7UEUagqlQeSHHc7kO6oH9ps"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-10 left-10 text-white">
+<div class="flex items-center gap-3 mb-2">
+<span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase">Class of 2018</span>
+<span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase">商学院</span>
+</div>
+<h2 class="font-headline text-4xl font-bold tracking-tight">林清怡, 26</h2>
+<p class="opacity-90 font-medium">南京 · 艺术策展人</p>
+</div>
+</div>
+<!-- Right: The Curator's Note & Algorithm -->
+<div class="lg:col-span-5 p-10 lg:p-14 flex flex-col justify-center space-y-12 bg-surface-container-lowest">
+<!-- Curator's Note -->
+<section class="space-y-6">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h3 class="font-headline font-bold text-xl">馆长私语</h3>
+</div>
+<div class="relative">
+<span class="absolute -top-4 -left-2 text-primary/10 text-6xl font-serif">“</span>
+<p class="text-on-surface-variant leading-loose italic text-lg relative z-10">
+                            清怡在您的档案中特别提到了对《追忆似水年华》的共鸣，这与您在上周分享的阅读感悟不谋而合。她不仅在学术背景上与您高度重合，更在生活节奏上展现了极佳的同步率。
+                        </p>
+</div>
+</section>
+<!-- Algorithm Analysis -->
+<section class="space-y-8">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-lg" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<h3 class="font-headline font-bold text-xl">算法解析</h3>
+</div>
+<span class="text-primary font-bold font-headline text-2xl tracking-tighter">98% Match</span>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+<span>性格契合 Personality</span>
+<span>94%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[94%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+<span>学术志趣 Academic Goals</span>
+<span>88%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full curator-gradient rounded-full w-[88%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+<span>生活方式 Lifestyle</span>
+<span>96%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full curator-gradient rounded-full w-[96%]"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<div class="flex flex-col gap-4 pt-6">
+<button class="curator-gradient text-white h-14 rounded-xl font-bold flex items-center justify-center gap-3 active:scale-95 transition-transform shadow-[0_12px_32px_rgba(66,0,71,0.2)]">
+<span class="material-symbols-outlined text-xl" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        我感兴趣
+                    </button>
+<button class="h-14 rounded-xl font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95">
+                        暂时不看
+                    </button>
+</div>
+</div>
+</div>
+<!-- Secondary Information Cards (Bento Style) -->
+<div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 pb-20">
+<div class="bg-surface-container-low p-8 rounded-lg space-y-4">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+<h4 class="font-headline font-bold">校友认证</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">已通过南京大学校友邮箱及学位证双重认证，确保身份真实可靠。</p>
+</div>
+<div class="bg-surface-container-low p-8 rounded-lg space-y-4">
+<span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+<h4 class="font-headline font-bold">隐私保护</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">仅在此刻为您展示，双方同时表达兴趣后方可开启正式对话。</p>
+</div>
+<div class="bg-surface-container-low p-8 rounded-lg space-y-4 border-2 border-primary/5">
+<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
+<h4 class="font-headline font-bold">匹配有效期</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">本周精选将于 48 小时后失效，请把握邂逅的时机。</p>
+</div>
+</div>
+</main>
+<!-- Footer Anchor -->
+<footer class="w-full py-16 px-12 mt-20 rounded-t-[3rem] bg-stone-50 dark:bg-stone-900 border-t border-stone-200/20">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8 max-w-screen-2xl mx-auto">
+<div class="text-xl font-bold text-purple-950 dark:text-purple-100 font-headline">NJU Date</div>
+<p class="font-manrope text-[10px] tracking-widest uppercase text-purple-900 dark:text-purple-400 text-center md:text-left">
+                © 2024 NJU Date. The Digital Curator for Nanjing University Alumni.
+            </p>
+<div class="flex gap-8">
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 transition-colors" href="#">Privacy</a>
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 transition-colors" href="#">Terms</a>
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 transition-colors" href="#">Safety</a>
+<a class="font-manrope text-[10px] tracking-widest uppercase text-stone-400 dark:text-stone-500 hover:text-purple-600 transition-colors" href="#">Community</a>
+</div>
+</div>
+</footer>
+</body></html>

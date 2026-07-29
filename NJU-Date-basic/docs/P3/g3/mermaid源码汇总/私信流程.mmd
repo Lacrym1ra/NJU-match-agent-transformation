@@ -1,0 +1,16 @@
+sequenceDiagram
+  actor U as User
+  participant R as SocialRoute
+  participant S as SocialService
+  participant DB as PostgreSQL
+
+  U->>R: GET /social/messages/eligibility/:userId
+  R->>S: getDirectMessageEligibility(me, target)
+  S->>DB: 查询拉黑、关注、隐私设置
+  S-->>R: 返回是否可发
+  U->>R: POST /social/messages/:userId
+  R->>S: sendMessage(me, target, content)
+  S->>DB: 创建或复用 conversation
+  S->>DB: 写 direct_messages 并更新 last_message_at
+  S-->>R: 发送成功
+  R-->>U: 201 Created

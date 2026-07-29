@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant R as Express Router
+    participant A as requireAuth
+    participant V as Zod validate
+    participant T as teamService
+    participant S as g2ContactSecretService
+    participant DB as Drizzle/PostgreSQL
+    participant N as notificationService
+
+    U->>R: POST /circles/:circleId/teamups/:teamupId/applications
+    R->>A: verify JWT and attach req.auth.userId
+    A-->>R: authenticated userId
+    R->>V: validate applicationNote + 1..3 contacts
+    V-->>R: typed body
+    R->>T: applyToTeamup(userId, circleId, teamupId, body)
+    T->>DB: ensure active circle member and teamup joinable
+    T->>S: encrypt contacts and build contactSecretId refs
+    S->>DB: upsert g2_contact_secrets
+    T->>DB: insert teamup_applications with cardSnapshot/contactPayload
+    T->>N: notify leader about pending application
+    T-->>R: { message, application }
+    R-->>U: 201 Created
