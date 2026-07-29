@@ -1,0 +1,37 @@
+.env
+.env.*
+node_modules/
+!.env.example
+
+# Build and test output
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+*.log
+
+# Harness runtime state
+.agent-state/
+.agent-memory/
+.agent-traces/
+.agent-worktrees/
+
+# Credentials and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+credentials.*
+secrets.*
+
+# Editor and operating system
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3

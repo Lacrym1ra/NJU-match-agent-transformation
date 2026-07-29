@@ -1,0 +1,82 @@
+name: Harness Mechanism
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - "agent-harness/**"
+      - "fixtures/**"
+      - ".github/workflows/harness-mechanism.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harness-mechanism-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mechanism-demo:
+    name: Harness Mechanism Demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect Harness implementation
+        id: harness
+        shell: bash
+        run: |
+          if [ -f agent-harness/package-lock.json ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Harness package not created yet; mechanism demos are deferred."
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.harness.outputs.enabled == 'true'
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: agent-harness/package-lock.json
+
+      - name: Install
+        if: steps.harness.outputs.enabled == 'true'
+        working-directory: agent-harness
+        run: npm ci
+
+      - name: Guardrail blocks dangerous action
+        if: steps.harness.outputs.enabled == 'true'
+        working-directory: agent-harness
+        run: npm run demo:guardrail
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
+      - name: Feedback changes the next action
+        if: steps.harness.outputs.enabled == 'true'
+        working-directory: agent-harness
+        run: npm run demo:feedback
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
+      - name: HITL pauses and resumes
+        if: steps.harness.outputs.enabled == 'true'
+        working-directory: agent-harness
+        run: npm run demo:hitl
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
+      - name: Upload deterministic traces
+        if: always() && steps.harness.outputs.enabled == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-mechanism-traces
+          path: agent-harness/.agent-traces/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,40 @@
+name: Harness Feature
+description: 创建一个具有明确 Spec、测试和安全边界的 Harness Task
+title: "[TASK] "
+labels: ["task"]
+body:
+  - type: input
+    id: task
+    attributes:
+      label: Task ID
+      placeholder: TASK-010
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题
+      description: 当前行为、目标行为和价值。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 范围与非目标
+      description: 明确允许改什么、不允许改什么。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 客观验收
+      description: 列出可执行测试、Sensor 或观察证据。
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Harness 风险
+      description: 工具、权限、凭据、外部副作用和停机风险。
+    validations:
+      required: true

@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-policy:
+    name: Repository Policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reject forbidden credential files
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden="$(find . -path './.git' -prune -o -type f \
+            \( -name '.env' -o -name '*.key' -o -name '*.pem' -o -name '*.p12' -o -name '*.pfx' \) \
+            -print)"
+          if [ -n "$forbidden" ]; then
+            echo "::error::Forbidden credential-like files are tracked:"
+            printf '%s\n' "$forbidden"
+            exit 1
+          fi
+
+      - name: Require project process documents once implementation begins
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d agent-harness ]; then
+            for file in SPEC.md PLAN.md SPEC_PROCESS.md AGENT_LOG.md; do
+              test -f "$file" || {
+                echo "::error::Missing required process document: $file"
+                exit 1
+              }
+            done
+          fi
+
+  documentation:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Markdown links and style
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            **/*.md
+            #node_modules
+
+  harness:
+    name: Harness Unit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agent-harness
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect Harness package
+        id: detect
+        shell: bash
+        working-directory: .
+        run: |
+          if [ -f agent-harness/package-lock.json ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Harness package not created yet; safely skipping."
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.detect.outputs.enabled == 'true'
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: agent-harness/package-lock.json
+
+      - name: Install
+        if: steps.detect.outputs.enabled == 'true'
+        run: npm ci
+
+      - name: Type and static checks
+        if: steps.detect.outputs.enabled == 'true'
+        run: npm run lint
+
+      - name: Unit tests
+        if: steps.detect.outputs.enabled == 'true'
+        run: npm test
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
+      - name: Build
+        if: steps.detect.outputs.enabled == 'true'
+        run: npm run build
