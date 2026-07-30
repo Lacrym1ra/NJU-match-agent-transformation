@@ -51,6 +51,8 @@ rg "面向用户|业务工具|用户确认" README.md SPEC.md PLAN.md
 
 ### P1：Harness 内核
 
+状态：本地实现完成，待人工检查和 PR。
+
 #### TASK-010：初始化 TypeScript 子项目
 
 - 分支：`feat/agent-harness-core`
@@ -102,6 +104,13 @@ npm run build
   - 完全离线；
   - 无真实业务调用；
   - `npm test` 和 `npm run build` 通过。
+
+本地结果：
+
+- `npm run lint`：通过；
+- `npm test`：10/10 通过；
+- `npm run demo:core`：通过；
+- 未推送远端。
 
 ### P2：只读业务工具
 
