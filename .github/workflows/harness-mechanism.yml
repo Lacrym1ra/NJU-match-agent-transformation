@@ -3,11 +3,19 @@ name: Harness Mechanism
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "agent-harness/**"
+      - "NJU-Date-basic/backend/**"
+      - "NJU-Date-basic/frontend/**"
+      - "SPEC.md"
+      - "PLAN.md"
+      - ".github/workflows/harness-mechanism.yml"
   push:
     branches: [main]
     paths:
       - "agent-harness/**"
-      - "fixtures/**"
+      - "NJU-Date-basic/backend/**"
+      - "NJU-Date-basic/frontend/**"
       - ".github/workflows/harness-mechanism.yml"
   workflow_dispatch:
 
@@ -20,7 +28,7 @@ concurrency:
 
 jobs:
   mechanism-demo:
-    name: Harness Mechanism Demo
+    name: User-facing Agent Mechanism Demo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +41,7 @@ jobs:
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "Harness package not created yet; mechanism demos are deferred."
+            echo "Harness package not created yet; user-facing mechanism demos are deferred."
           fi
 
       - uses: actions/setup-node@v4
@@ -48,15 +56,15 @@ jobs:
         working-directory: agent-harness
         run: npm ci
 
-      - name: Guardrail blocks dangerous action
+      - name: Write action waits for user confirmation
         if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
-        run: npm run demo:guardrail
+        run: npm run demo:confirmation
         env:
           NODE_ENV: test
           HARNESS_NETWORK: deny
 
-      - name: Feedback changes the next action
+      - name: Business tool feedback changes the next action
         if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
         run: npm run demo:feedback
@@ -64,19 +72,19 @@ jobs:
           NODE_ENV: test
           HARNESS_NETWORK: deny
 
-      - name: HITL pauses and resumes
+      - name: Forged user identity is rejected
         if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
-        run: npm run demo:hitl
+        run: npm run demo:authorization
         env:
           NODE_ENV: test
           HARNESS_NETWORK: deny
 
-      - name: Upload deterministic traces
+      - name: Upload redacted deterministic traces
         if: always() && steps.harness.outputs.enabled == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: harness-mechanism-traces
+          name: social-agent-mechanism-traces
           path: agent-harness/.agent-traces/
           if-no-files-found: error
           retention-days: 30
