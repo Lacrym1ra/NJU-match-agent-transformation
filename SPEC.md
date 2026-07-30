@@ -8,7 +8,10 @@
 
 NJU-Match 已经提供问卷画像、匹配、圈子和论坛等能力，但用户必须理解不同页面和操作流程，才能组合这些功能完成“根据兴趣找到同好并参与讨论”等跨模块目标。
 
-本项目新增一个直接面向用户的 Social Agent。Agent 通过自行实现的 Harness 将自然语言目标转换成结构化业务动作，调用现有 Service，并根据工具 Observation 决定下一步。Harness 必须用确定性代码保证身份、权限、写操作确认、预算和停止条件。
+本项目新增一个直接面向用户的 Social Agent。
+Agent 通过自行实现的 Harness 将自然语言目标转换成结构化业务动作，
+调用现有 Service，并根据工具 Observation 决定下一步。
+Harness 必须用确定性代码保证身份、权限、写操作确认、预算和停止条件。
 
 ## 2. 目标与非目标
 
@@ -110,7 +113,9 @@ NJU-Match 已经提供问卷画像、匹配、圈子和论坛等能力，但用�
 
 ### 5.1 决策
 
-Harness 每轮构建受限 Context，调用 `LLMPort.decide()`，解析一个结构化 Action。真实模型仅负责建议下一步，Harness 决定该动作是否有效、允许以及能否执行。
+Harness 每轮构建受限 Context，调用 `LLMPort.decide()`，
+解析一个结构化 Action。真实模型仅负责建议下一步，
+Harness 决定该动作是否有效、允许以及能否执行。
 
 ### 5.2 工具
 

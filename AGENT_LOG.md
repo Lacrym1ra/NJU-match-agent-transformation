@@ -1,6 +1,8 @@
 # AGENT LOG
 
-本文件记录 AI 辅助开发过程、人工决策和可复现证据。它记录的是“使用开发 Agent 构建 Social Agent Harness”的过程，不是产品 Agent 的运行日志。
+本文件记录 AI 辅助开发过程、人工决策和可复现证据。
+它记录的是“使用开发 Agent 构建 Social Agent Harness”的过程，
+不是产品 Agent 的运行日志。
 
 ## 记录模板
 

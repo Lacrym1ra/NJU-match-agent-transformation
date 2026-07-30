@@ -205,7 +205,9 @@ production
 
 `production` 要求人工审批和独立 Secrets。
 
-PR、单元测试、Tool Contract 和机制演示只能使用 Mock LLM。真实 Provider smoke test 应使用 `workflow_dispatch` 或受保护 Environment，不能在 Fork PR 中暴露 Secret。
+PR、单元测试、Tool Contract 和机制演示只能使用 Mock LLM。
+真实 Provider smoke test 应使用 `workflow_dispatch`
+或受保护 Environment，不能在 Fork PR 中暴露 Secret。
 
 ## 8. 开发 Gate
 
