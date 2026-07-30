@@ -2,99 +2,107 @@
 
 ## 1. 工作流目标
 
-本仓库的 GitHub 流程需要同时证明：
+本仓库的 GitHub 流程用于证明：
 
-1. 代码质量可自动验证；
-2. Harness 核心机制可在 Mock LLM 下离线复现；
-3. 凭据与依赖风险受到检查；
-4. 每项功能通过 Branch → PR → Review → Required Checks → Merge；
-5. Release 产物可追踪、可复现；
-6. 部署只使用受保护的 GitHub Environment。
+1. NJU-Match 原业务没有因 Agent 集成而回归；
+2. Social Agent Harness 核心机制可由 Mock LLM 离线复现；
+3. 业务 Tool、身份边界和写操作确认可以确定性测试；
+4. 凭据、依赖和代码安全受到持续检查；
+5. 每项功能经过 Branch → PR → Review → Required Checks → Squash Merge；
+6. Release 和部署产物可追踪、可复现。
 
----
+GitHub Workflow 是质量保障，不是产品 Agent 的工具。Agent 不读取 CI 输出后自动修改代码。
 
-## 2. 当前仓库初始化
+## 2. 分支规则
 
-Git 可执行文件位于：
+每项工作从最新 `main` 创建单一目标分支：
 
-```powershell
-C:\Program Files\Git\cmd\git.exe
+```bash
+git switch main
+git pull --ff-only origin main
+git switch -c <type>/<short-description>
 ```
 
-可以在当前 PowerShell 会话中临时加入 PATH：
-
-```powershell
-$env:Path = "C:\Program Files\Git\cmd;$env:Path"
-```
-
-然后执行：
-
-```powershell
-cd C:\Users\X\桌面\AI4Coding\ai4coding-lab
-git branch -M main
-git status
-```
-
-首次提交前配置身份：
-
-```powershell
-git config user.name "你的 GitHub 用户名"
-git config user.email "你的 GitHub 邮箱或 noreply 邮箱"
-```
-
-首次提交：
-
-```powershell
-git add .
-git diff --cached
-git commit -m "chore: bootstrap repository governance and workflows"
-```
-
----
-
-## 3. 创建 GitHub 远程仓库
-
-在 GitHub 创建空仓库，建议名称：
+推荐命名：
 
 ```text
-nju-match-safepatch-harness
+docs/reframe-user-facing-agent
+feat/agent-harness-core
+feat/agent-read-tools
+feat/agent-hitl-actions
+feat/agent-user-interface
+test/agent-scenarios-workflow
+feat/provider-llm
+fix/...
+ci/...
 ```
 
-创建时不要额外生成 README、License 或 `.gitignore`，避免首次 Push 冲突。
+一个分支只承担一个可评审目标。不得直接 Push 到 `main`。
 
-关联远程：
+## 3. Commit 规则
 
-```powershell
-git remote add origin https://github.com/<USER>/nju-match-safepatch-harness.git
-git push -u origin main
-```
-
-如果使用 SSH：
-
-```powershell
-git remote add origin git@github.com:<USER>/nju-match-safepatch-harness.git
-git push -u origin main
-```
-
----
-
-## 4. Branch Protection
-
-在 GitHub：
+采用 Conventional Commits：
 
 ```text
-Settings
-→ Branches / Rulesets
-→ New ruleset
-→ Target: main
+docs: ...
+test: ...
+feat: ...
+fix: ...
+refactor: ...
+ci: ...
+chore: ...
 ```
 
-启用：
+提交正文建议记录：
+
+```text
+Task: TASK-...
+Agent: Codex / other
+Human changes: ...
+Tests: ...
+```
+
+不要提交：
+
+- `.env`；
+- API Key、Token、Cookie；
+- 证书或私钥；
+- 运行数据库；
+- 未脱敏 Agent Trace；
+- `node_modules`；
+- 本地 IDE 和操作系统状态。
+
+## 4. Pull Request 流程
+
+PR 必须填写：
+
+- Task 编号；
+- 对应 Spec 验收项；
+- 修改范围；
+- 红灯与绿灯证据；
+- Agent Tool/权限影响；
+- 凭据和隐私影响；
+- AI 与人工修改边界；
+- 回滚方式。
+
+评审顺序：
+
+1. Spec Compliance；
+2. 业务和 Tool Contract；
+3. Harness 机制；
+4. Security/Privacy；
+5. Workflow Checks；
+6. Human Approval。
+
+所有讨论解决且 Required Checks 全绿后，使用 `Squash and merge`，随后删除远程分支。
+
+## 5. Branch Ruleset
+
+`main` 建议启用：
 
 - Require a pull request before merging；
 - Require at least 1 approval；
 - Dismiss stale approvals；
-- 配置 `CODEOWNERS` 后再启用 Require review from Code Owners；
 - Require status checks to pass；
 - Require branches to be up to date；
 - Require conversation resolution；
@@ -108,258 +116,168 @@ Settings
 Repository Policy
 Documentation
 Secret Scan
+CodeQL
+Dependency Audit
+Docker Build
+Harness Mechanism Demo
 ```
 
-创建 `agent-harness/package-lock.json` 后增加：
+创建 `agent-harness/package-lock.json` 并稳定运行后增加：
 
 ```text
 Harness Unit
-Harness Mechanism Demo
 Harness Build
+Tool Contract
+Agent Scenario
 ```
 
-Dockerfile 完成后增加：
+Required Check 名称必须以 GitHub 实际显示的 Job 名称为准。
 
-```text
-Docker Build
-```
-
----
-
-## 5. 分支和 Worktree 规则
-
-分支格式：
-
-```text
-docs/TASK-001-spec
-feat/TASK-010-action-schema
-feat/TASK-020-agent-loop
-feat/TASK-030-guardrail
-test/TASK-040-feedback-demo
-ci/TASK-050-github-actions
-fix/TASK-060-...
-```
-
-每个 PLAN Task：
-
-1. 从最新 `main` 创建分支；
-2. 创建独立 Worktree；
-3. 先写失败测试；
-4. 保存红灯证据；
-5. 最小实现；
-6. 保存绿灯证据；
-7. Spec 合规评审；
-8. 代码质量评审；
-9. Push 并开 PR；
-10. Required Checks 全绿后合并；
-11. 在 `PLAN.md` 标记 Commit Hash；
-12. 删除 Worktree。
-
-示例：
-
-```powershell
-git fetch origin
-git worktree add ..\worktrees\TASK-010 -b feat/TASK-010-action-schema origin/main
-```
-
----
-
-## 6. Commit 规则
-
-建议采用 Conventional Commits：
-
-```text
-docs: ...
-test: ...
-feat: ...
-fix: ...
-refactor: ...
-ci: ...
-chore: ...
-```
-
-每个 Commit 只完成一个可解释变更。
-
-由 Agent 产生的 Commit 在正文注明：
-
-```text
-Task: TASK-010
-Agent: Codex
-Human changes: 修正 Action 边界与错误码
-Tests: npm test -- action.test.ts
-```
-
----
-
-## 7. PR 流程
-
-PR 必须填写：
-
-- Task 编号；
-- Spec 验收项；
-- 红灯证据；
-- 绿灯证据；
-- Harness 风险；
-- 凭据影响；
-- Agent 与人工修改边界；
-- 回滚方式。
-
-评审顺序：
-
-1. Spec Compliance；
-2. Code Quality；
-3. Security；
-4. Workflow Checks；
-5. Human Approval。
-
-不允许直接 Push 到 `main`。
-
----
-
-## 8. Workflow 文件
+## 6. Workflow 职责
 
 ### `ci.yml`
 
 负责：
 
-- 仓库策略；
-- 文档存在性；
+- Repository Policy；
+- Documentation；
 - Harness Unit；
-- Harness Build。
+- Harness Build；
+- 后续增加 Tool Contract；
+- 必要的 NJU-Match 前后端回归。
 
-在 `agent-harness` 尚未创建时，Harness 步骤会安全跳过。
+在 `agent-harness` 尚未创建时，Harness 实现步骤可以安全跳过。
 
 ### `harness-mechanism.yml`
 
-负责 Project A 三项机制：
+负责 Project A 三项产品 Agent 机制：
 
-- 危险动作拦截；
-- 失败回灌与下一步修正；
-- HITL 暂停和恢复。
+1. 写操作在用户确认前暂停且不调用 Service；
+2. 业务 Tool 的失败 Observation 改变下一步 Action；
+3. 模型伪造其他用户身份被确定性代码拒绝。
 
-生成 Trace Artifact。
+全部使用 Mock LLM，禁止网络，并上传脱敏 Trace Artifact。
 
 ### `security.yml`
 
 负责：
 
-- 禁止文件名；
-- 疑似凭据模式；
-- 依赖审计；
+- 禁止文件和疑似凭据模式；
+- Secret Scan；
+- Dependency Audit；
 - CodeQL。
+
+代码扫描发现原 NJU-Date-basic 基线问题时，应记录和分类；不能通过关闭安全 Workflow 隐藏新增风险。
 
 ### `docker.yml`
 
-创建 Dockerfile 后：
+负责：
 
-- PR 构建但不推送；
-- Main / Tag 构建并推送 GHCR；
+- PR 中构建但不推送；
+- Main/Tag 构建可发布镜像；
 - 使用 `GITHUB_TOKEN`；
-- 生成镜像元数据。
+- 生成可追踪镜像元数据。
 
----
+## 7. GitHub Secrets 与 Environments
 
-## 9. GitHub Secrets 与 Environments
+当前不要录入 API Key。
 
-现在不要录入 API Key。
-
-后续用户提供 Key 后：
+用户提供 Key 后，在：
 
 ```text
 Settings → Secrets and variables → Actions
 ```
 
-建议名称：
+建议：
 
 ```text
-LLM_API_KEY
-LLM_BASE_URL
-LLM_MODEL
+LLM_API_KEY       Secret
+LLM_BASE_URL      Variable（不敏感时）
+LLM_MODEL         Variable
 ```
 
-敏感值放 Secrets；非敏感配置放 Variables。
-
-建立 Environment：
+建立：
 
 ```text
 demo
 production
 ```
 
-`production` 要求：
+`production` 要求人工审批和独立 Secrets。
 
-- Required reviewer；
-- 仅允许 Tag 或 `main`；
-- 独立 Secrets；
-- 部署前审批。
+PR、单元测试、Tool Contract 和机制演示只能使用 Mock LLM。
+真实 Provider smoke test 应使用 `workflow_dispatch`
+或受保护 Environment，不能在 Fork PR 中暴露 Secret。
 
-测试和机制演示不得使用真实 `LLM_API_KEY`，只能使用 Mock。
+## 8. 开发 Gate
 
----
+### Gate 0：方向与规格
 
-## 10. 后续启用顺序
-
-### Gate 0：仓库治理
-
-- 首次提交；
-- Push GitHub；
-- Branch Protection；
-- PR Template；
-- CI 和 Security 通过。
-
-### Gate 1：文档
-
-- `SPEC.md`；
-- `PLAN.md`；
-- `SPEC_PROCESS.md`；
-- 冷启动验证；
+- README、SPEC、PLAN 统一为面向用户的 Social Agent；
+- 业务工具、风险分级和主贡献明确；
 - 文档 PR 合并。
 
-### Gate 2：Agent 心脏
+### Gate 1：Harness 内核
 
-- Action / Observation；
-- Mock LLM；
-- 最小 Agent Loop；
-- Trace；
-- Unit 和 Build 成为 Required。
+- Action / Observation / State；
+- LLMPort / MockLLM；
+- 有限步 Loop；
+- Reducer / StopController；
+- 脱敏 Trace；
+- Unit 和 Build 通过。
 
-### Gate 3：Harness
+### Gate 2：业务工具
 
-- Tool Dispatcher；
-- Guardrail；
-- HITL；
-- Sensors；
-- Memory；
-- Stop Controller；
-- 三项 Mechanism Demo 成为 Required。
+- Tool Registry；
+- Profile、Questionnaire、Circle、Forum 只读工具；
+- 服务端认证上下文；
+- Tool Contract Tests；
+- 空结果和异常 Observation。
 
-### Gate 4：分发
+### Gate 3：治理与 HITL
 
-- Dockerfile；
-- Docker Build；
-- GHCR；
-- Release。
+- Read/Draft/Write/Sensitive；
+- PendingAction；
+- 确认、拒绝、过期、防篡改和一次性消费；
+- 帖子草稿和受控发布；
+- 三项 Mechanism Demo。
 
-### Gate 5：部署
+### Gate 4：产品集成
 
-- 安全 Mock WebUI；
-- `demo` Environment；
-- Smoke Test；
-- 公网 URL。
+- Agent API；
+- `/agent` 页面；
+- Tool/Result/Draft Cards；
+- Confirmation Dialog；
+- 原应用回归。
 
----
+### Gate 5：评测与分发
 
-## 11. Definition of Done
+- 10 个确定性场景；
+- Docker；
+- Trace Artifact；
+- 文档与反思；
+- 全新克隆验证。
+
+### Gate 6：真实 Provider
+
+- 用户提供 API Key；
+- ProviderLLM；
+- 输出 Schema、超时、重试和费用预算；
+- 受保护的手动 smoke test。
+
+## 9. Definition of Done
 
 一个 Task 只有同时满足以下条件才完成：
 
 - Spec 验收项通过；
-- 测试先红后绿；
+- 测试先红后绿或有明确文档验收；
 - Mock 下确定性；
+- 身份和写操作边界有代码测试；
 - 无真实凭据；
-- Trace 可解释；
+- Trace 可解释且脱敏；
+- 原业务测试无回归；
 - PR 有人工评审；
 - Required Checks 全绿；
-- PLAN 和 AGENT_LOG 已更新；
-- Commit Hash 已记录；
+- `PLAN.md` 和 `AGENT_LOG.md` 已更新；
+- Commit Hash 与 PR 已记录；
 - 可安全回滚。
