@@ -10,9 +10,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test dist/tests/actionTools.test.js dist/tests/agentLoop.test.js dist/tests/readTools.test.js dist/tests/registry.test.js",
+    "test": "npm run build && node --test dist/tests/actionTools.test.js dist/tests/agentLoop.test.js dist/tests/readTools.test.js dist/tests/registry.test.js dist/tests/scenarios.test.js",
     "test:unit": "npm run test",
-    "demo:core": "npm run build && node dist/tests/core-demo.js"
+    "demo:core": "npm run build && node dist/tests/core-demo.js",
+    "demo:confirmation": "npm run build && node dist/tests/scenario-demo.js confirmation",
+    "demo:feedback": "npm run build && node dist/tests/scenario-demo.js feedback",
+    "demo:authorization": "npm run build && node dist/tests/scenario-demo.js authorization"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

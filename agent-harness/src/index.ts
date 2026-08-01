@@ -39,4 +39,6 @@ export type {
   PostDraftInput,
   PublishPostResult,
 } from "./tools/write/port.js";
+export { runMockScenario } from "./scenarios/mockScenarios.js";
+export type { ScenarioName, ScenarioResult } from "./scenarios/mockScenarios.js";
 export { MemoryTracer, type TraceEvent, type Tracer } from "./tracing/tracer.js";
