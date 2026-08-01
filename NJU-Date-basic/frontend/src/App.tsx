@@ -40,6 +40,7 @@ const Guestbook = lazy(() => import('./pages/Guestbook'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
 const Messages = lazy(() => import('./pages/Messages'));
 const FollowList = lazy(() => import('./pages/FollowList'));
+const Agent = lazy(() => import('./pages/Agent'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -84,6 +85,7 @@ function App() {
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/agent" element={<ProtectedRoute><Agent /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/survey" element={<ProtectedRoute><Survey /></ProtectedRoute>} />
