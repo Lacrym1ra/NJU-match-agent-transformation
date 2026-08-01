@@ -7,6 +7,39 @@ import { QUESTION_BANK, getQuestionsBySection, type Question } from '../db/seed.
 
 const SURVEY_VERSION = '4.0';
 
+export async function getAgentQuestionnaireStatus(userId: string) {
+  const [user] = await db
+    .select({ surveyComplete: users.surveyComplete })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) {
+    throw new NotFoundError('用户不存在');
+  }
+
+  const [submission] = await db
+    .select({
+      version: surveyAnswers.version,
+      submittedAt: surveyAnswers.submittedAt,
+      updatedAt: surveyAnswers.updatedAt,
+    })
+    .from(surveyAnswers)
+    .where(eq(surveyAnswers.userId, userId))
+    .limit(1);
+
+  const complete = Boolean(user.surveyComplete) && submission !== undefined;
+  const submittedVersion = submission?.version ?? null;
+
+  return {
+    complete,
+    currentVersion: SURVEY_VERSION,
+    submittedVersion,
+    needsUpdate: submittedVersion !== null && submittedVersion !== SURVEY_VERSION,
+    submittedAt: submission?.updatedAt ?? submission?.submittedAt ?? null,
+  };
+}
+
 // v4.0 全面改版：问题已全面重构，老用户须重新填写
 const CHANGED_QUESTION_IDS = [
   // basics — 选项更新或 ID 含义变更

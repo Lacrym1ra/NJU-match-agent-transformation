@@ -32,12 +32,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
-const isDev = (process.env.NODE_ENV || 'development') === 'development';
+const nodeEnv = process.env.NODE_ENV || 'development';
+const isDev = nodeEnv === 'development';
+const isProduction = nodeEnv === 'production';
 
 function requireSecret(envVar: string, devFallback: string): string {
   const value = process.env[envVar];
   if (value) return value;
-  if (isDev) return devFallback;
+  if (!isProduction) return devFallback;
   throw new Error(`[config] ${envVar} must be set in production`);
 }
 
@@ -49,7 +51,7 @@ const contactBlindIndexKey = requireSecret('CONTACT_BLIND_INDEX_KEY', `contact-b
 
 export const config = {
   port: parseInt(process.env.PORT || '3000', 10),
-  nodeEnv: process.env.NODE_ENV || 'development',
+  nodeEnv,
   isDev,
 
   jwt: {

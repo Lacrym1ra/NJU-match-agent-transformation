@@ -16,4 +16,16 @@ export { MockLLM, type MockDecision } from "./llm/MockLLM.js";
 export type { LLMPort } from "./llm/LLMPort.js";
 export { ToolRegistry } from "./tools/registry.js";
 export type { Tool, ToolContext } from "./tools/types.js";
+export { createNjuMatchReadTools } from "./tools/read/readTools.js";
+export type {
+  CircleSearchInput,
+  CircleSearchItem,
+  CircleSearchResult,
+  ForumPostSearchItem,
+  ForumSearchInput,
+  ForumSearchResult,
+  NjuMatchReadPort,
+  ProfileStatus,
+  QuestionnaireStatus,
+} from "./tools/read/port.js";
 export { MemoryTracer, type TraceEvent, type Tracer } from "./tracing/tracer.js";

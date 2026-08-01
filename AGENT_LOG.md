@@ -66,3 +66,26 @@
   当前 Core PR 仍由 Harness Unit 执行 lint、test 和 build。
 - 教训：核心循环应先以业务无关 Fixture 证明机制，
   再通过独立 Tool Adapter 接入现有系统，避免复制业务逻辑。
+
+---
+
+## 2026-08-01 — TASK-020 至 TASK-022
+
+- 分支：`feat/agent-read-tools`
+- Agent：Codex
+- 目标：接入资料状态、问卷状态、圈子搜索和论坛搜索。
+- 实现：
+  - 新增 `NjuMatchReadPort` 和四个只读 Tool；
+  - 使用 Zod 严格校验 Tool 输入和后端输出；
+  - 从 Tool Context 注入认证用户，拒绝模型传入 `userId`；
+  - 将空搜索结果标准化为可重试 `NO_RESULTS`；
+  - 新增后端 `agentReadService`，复用现有圈子与论坛 Service；
+  - 新增资料完成度和问卷版本状态查询；
+  - 修复论坛 Service 忽略 `circleId` 的筛选问题；
+  - CI 增加 NJU-Match Backend 类型检查和单元测试。
+- 红灯 1：Zod 可选属性与 `exactOptionalPropertyTypes` 不匹配。
+- 修正 1：在 Port 契约中明确可选字段的 `undefined` 语义，未关闭严格模式。
+- 红灯 2：原圈子 `description` 可为 `null`，不符合 Agent 输出契约。
+- 修正 2：后端 Adapter 将其归一化为空字符串。
+- 验证：Harness 19/19、后端 307/307，两个项目类型检查均通过。
+- 范围：本步骤只有只读 Tool；没有写操作、HITL、Agent API 或真实 Provider。

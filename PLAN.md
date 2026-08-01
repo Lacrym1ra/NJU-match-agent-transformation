@@ -114,6 +114,8 @@ npm run build
 
 ### P2：只读业务工具
 
+状态：本地实现完成，待最终检查、提交和 PR。
+
 #### TASK-020：Service 边界盘点
 
 - 分支：`feat/agent-read-tools`
@@ -154,6 +156,16 @@ npm run build
   - Tool Contract Tests 通过；
   - 身份来自服务端上下文；
   - 输出字段和数量受限。
+
+本地结果：
+
+- `get_my_profile`、`get_questionnaire_status`、`search_circles`
+  和 `search_forum_posts` 已注册；
+- Harness 严格类型检查通过；
+- Harness 19/19 测试通过；
+- 后端严格类型检查通过；
+- 后端 307/307 测试通过；
+- 未连接真实 LLM，不需要 API Key。
 
 ### P3：治理与 HITL
 

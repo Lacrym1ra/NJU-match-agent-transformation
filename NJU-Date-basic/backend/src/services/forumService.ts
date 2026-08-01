@@ -541,7 +541,11 @@ export async function listPosts(userId: string, options: ListPostsOptions) {
   // Visibility: only public posts (or own private posts) in lists
   // Private posts are excluded from public lists
 
-  conditions.push(isNull(forumPosts.circleId));
+  if (options.circleId) {
+    conditions.push(eq(forumPosts.circleId, options.circleId));
+  } else {
+    conditions.push(isNull(forumPosts.circleId));
+  }
 
   if (options.type) {
     conditions.push(eq(forumPosts.type, options.type));
@@ -1929,6 +1933,10 @@ async function listRecommendedPosts(
     }
   }
 
+  const circleCondition = options.circleId
+    ? sql`AND fp.circle_id = ${options.circleId}`
+    : sql`AND fp.circle_id IS NULL`;
+
   // ── Profile match component ─────────────────────────────────
   // profileMatch = (mbtiTypeMatch × 0.4 + interestFtsMatch × 0.6) × surveyW
   const profileMatchExpr = totalInter === 0
@@ -1947,7 +1955,7 @@ async function listRecommendedPosts(
         SELECT * FROM forum_posts fp
         WHERE fp.deleted_at IS NULL
           AND fp.visibility = 'public'
-          AND fp.circle_id IS NULL
+          ${circleCondition}
           AND (fp.is_pinned = TRUE OR fp.created_at > NOW() - INTERVAL '30 days')
           ${typeCondition}
           ${keywordCondition}
@@ -2059,7 +2067,7 @@ async function listRecommendedPosts(
     FROM forum_posts fp
     WHERE fp.deleted_at IS NULL
       AND fp.visibility = 'public'
-      AND fp.circle_id IS NULL
+      ${circleCondition}
       AND (fp.is_pinned = TRUE OR fp.created_at > NOW() - INTERVAL '30 days')
       ${typeCondition}
       ${keywordCondition}
