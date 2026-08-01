@@ -9,6 +9,64 @@ export interface UserStats {
   receivedFavorites: number;
 }
 
+const REQUIRED_PROFILE_FIELDS = [
+  'nickname',
+  'gender',
+  'genderPref',
+  'intention',
+  'grade',
+  'campus',
+  'department',
+] as const;
+
+export async function getAgentProfileStatus(userId: string) {
+  const [user] = await db
+    .select({
+      nickname: users.nickname,
+      gender: users.gender,
+      genderPref: users.genderPref,
+      intention: users.intention,
+      grade: users.grade,
+      campus: users.campus,
+      department: users.department,
+      mbti: users.mbti,
+      bio: users.bio,
+      signature: users.signature,
+      tags: users.tags,
+      profileComplete: users.profileComplete,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) {
+    throw new NotFoundError('用户不存在');
+  }
+
+  const missingFields = REQUIRED_PROFILE_FIELDS.filter((field) => {
+    const value = user[field];
+    return typeof value !== 'string' || value.trim().length === 0;
+  });
+
+  return {
+    profileComplete: Boolean(user.profileComplete) && missingFields.length === 0,
+    missingFields,
+    profile: {
+      nickname: user.nickname,
+      gender: user.gender,
+      genderPreference: user.genderPref,
+      intention: user.intention,
+      grade: user.grade,
+      campus: user.campus,
+      department: user.department,
+      mbti: user.mbti,
+      bio: user.bio,
+      signature: user.signature,
+      tags: user.tags,
+    },
+  };
+}
+
 export async function getUserStats(userId: string): Promise<UserStats> {
   const [user] = await db
     .select({

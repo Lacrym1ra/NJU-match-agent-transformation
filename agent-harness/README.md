@@ -27,6 +27,9 @@ RunRequest
 - Tool 注册、重复名拒绝和未知工具反馈；
 - Tool 异常与超时标准化；
 - 当前认证用户上下文传入 Tool；
+- 资料状态、问卷状态、圈子搜索和论坛搜索 Tool；
+- Zod 输入/输出契约和最多 10 条搜索结果；
+- 可注入的 `NjuMatchReadPort`；
 - 最大步数和重复动作停止；
 - LLM 异常失败状态；
 - 内存 Trace；
@@ -35,14 +38,15 @@ RunRequest
 ## 尚未实现
 
 - 真实 Provider；
-- NJU-Match Service Adapter；
-- 业务参数 Schema；
+- 写操作的业务参数 Schema；
 - 授权 Policy；
 - 写操作确认状态机；
 - 持久化会话记忆；
 - Agent API 和前端。
 
-这些能力必须按根目录 `PLAN.md` 在后续独立 PR 中实现。
+后端已提供真实 `agentReadService` Adapter；Agent API 将在后续 PR
+负责把该实现注入 Harness。其余能力必须按根目录 `PLAN.md`
+在后续独立 PR 中实现。
 
 ## 测试逻辑
 
@@ -122,7 +126,7 @@ npm run demo:core
 
 - TypeScript 严格检查通过；
 - 构建通过；
-- 10 个测试全部通过；
+- 19 个测试全部通过；
 - Demo 最终状态为 `SUCCEEDED`；
 - Demo Trace 顺序为论坛搜索、圈子搜索、完成。
 
