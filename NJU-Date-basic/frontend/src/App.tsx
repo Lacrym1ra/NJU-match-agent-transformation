@@ -41,6 +41,7 @@ const UserProfile = lazy(() => import('./pages/UserProfile'));
 const Messages = lazy(() => import('./pages/Messages'));
 const FollowList = lazy(() => import('./pages/FollowList'));
 const Agent = lazy(() => import('./pages/Agent'));
+const AgentDemo = lazy(() => import('./pages/AgentDemo'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -82,6 +83,7 @@ function App() {
             <Route path="/personality-result" element={<PersonalityResult />} />
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/agent-demo" element={<AgentDemo />} />
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
