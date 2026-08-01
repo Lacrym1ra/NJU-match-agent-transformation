@@ -37,11 +37,22 @@ jobs:
         id: harness
         shell: bash
         run: |
-          if [ -f agent-harness/package-lock.json ]; then
+          if [ ! -f agent-harness/package-lock.json ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Harness package not created yet; user-facing mechanism demos are deferred."
+          elif node -e "
+            const scripts = require('./agent-harness/package.json').scripts ?? {};
+            const required = [
+              'demo:confirmation',
+              'demo:feedback',
+              'demo:authorization'
+            ];
+            process.exit(required.every((name) => scripts[name]) ? 0 : 1);
+          "; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "Harness package not created yet; user-facing mechanism demos are deferred."
+            echo "Core exists; HITL mechanism demos are deferred until their scripts exist."
           fi
 
       - uses: actions/setup-node@v4

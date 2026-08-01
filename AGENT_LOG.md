@@ -41,3 +41,28 @@
 - 未包含：Agent 实现、真实 API Key、业务基线代码修改。
 - 教训：Harness 的反馈和危险动作必须来自目标业务域；不能因为 Project A 名称包含 Coding Agent，就把现有产品强行降格为代码修复 Fixture。
 - 验证：见本分支最终 `git diff --check`、Repository Policy 和 Documentation checks。
+
+---
+
+## 2026-07-30 — TASK-010 至 TASK-012
+
+- 分支：`feat/agent-harness-core`
+- Agent：Codex
+- 目标：建立可以由 Mock LLM 确定性验证的最小 Harness 内核。
+- 实现：
+  - 初始化独立 TypeScript 子项目和依赖锁文件；
+  - 定义 Action、Observation、AgentState 和运行配置；
+  - 实现 `LLMPort`、`MockLLM` 和有限步 Agent Loop；
+  - 实现 Tool Registry、超时与异常标准化；
+  - 实现 Reducer、最大步数、重复动作限制和 Memory Trace；
+  - 增加 10 个单元测试和一个反馈闭环 Demo。
+- 红灯 1：严格类型检查发现 Mock 决策回调的 `context` 隐式为 `any`。
+- 修正 1：显式使用导出的 `AgentContext`，未放宽 TypeScript 规则。
+- 红灯 2：Node Test Runner 未自动解析 `dist/tests` 目录。
+- 修正 2：测试命令显式列出编译后的测试文件，兼容本地与 CI。
+- 绿灯：类型检查、构建、10/10 测试和 Core Demo 全部通过。
+- 范围控制：没有接入真实业务 Service、数据库、Provider 或写操作确认。
+- Workflow：只有确认、反馈和授权三个脚本均存在时才运行完整机制 Demo；
+  当前 Core PR 仍由 Harness Unit 执行 lint、test 和 build。
+- 教训：核心循环应先以业务无关 Fixture 证明机制，
+  再通过独立 Tool Adapter 接入现有系统，避免复制业务逻辑。

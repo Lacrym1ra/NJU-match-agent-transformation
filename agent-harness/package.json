@@ -1,0 +1,21 @@
+{
+  "name": "@nju-match/agent-harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "User-facing social agent harness for NJU-Match",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test dist/tests/agentLoop.test.js dist/tests/registry.test.js",
+    "test:unit": "npm run test",
+    "demo:core": "npm run build && node dist/tests/core-demo.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
