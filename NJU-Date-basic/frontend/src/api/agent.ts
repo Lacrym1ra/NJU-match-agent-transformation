@@ -2,11 +2,11 @@ import { api } from './client';
 
 export interface AgentCircleCard {
   id: string; name: string; description: string; category: string;
-  tags: string[]; memberCount: number; isJoined: boolean;
+  tags: string[]; memberCount: number; recommendationReasons: string[];
 }
 export interface AgentPostCard {
-  id: string; circleId?: string; title: string; summary: string;
-  type: string; authorName: string; createdAt: string;
+  postId: string; circleId: string | null; title: string; summary: string | null;
+  type: string; likeCount: number; commentCount: number; createdAt: string | null;
 }
 export interface AgentDraft {
   draftId: string; title: string; content: string; type: string;

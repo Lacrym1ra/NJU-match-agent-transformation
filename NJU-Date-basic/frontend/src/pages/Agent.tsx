@@ -91,8 +91,8 @@ export default function Agent() {
       {(circles.length > 0 || posts.length > 0) && <section className="agent-section">
         <div className="agent-section__heading"><span>为你整理</span><h2>搜索结果</h2></div>
         <div className="agent-grid">
-          {circles.map((circle) => <AgentResultCard key={circle.id} eyebrow="圈子" title={circle.name} description={circle.description} meta={`${circle.memberCount} 位成员 · ${circle.category}`} action={!circle.isJoined && <button type="button" onClick={() => setPending({ kind: 'join', circle })}>申请加入</button>} />)}
-          {posts.map((post) => <AgentResultCard key={post.id} eyebrow="论坛" title={post.title} description={post.summary} meta={`${post.authorName} · ${post.type}`} action={<Link to={`/forum/${post.id}`}>查看帖子</Link>} />)}
+          {circles.map((circle) => <AgentResultCard key={circle.id} eyebrow="圈子" title={circle.name} description={circle.description} meta={`${circle.memberCount} 位成员 · ${circle.category}`} action={<button type="button" onClick={() => setPending({ kind: 'join', circle })}>申请加入</button>} />)}
+          {posts.map((post) => <AgentResultCard key={post.postId} eyebrow="论坛" title={post.title} description={post.summary ?? '暂无摘要'} meta={`${post.likeCount} 赞 · ${post.commentCount} 条评论`} action={<Link to={`/forum/${post.postId}`}>查看帖子</Link>} />)}
         </div>
       </section>}
 
