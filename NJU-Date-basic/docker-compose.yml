@@ -1,8 +1,15 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   postgres:
     image: postgres:16-alpine
     container_name: nju-date-postgres
     restart: unless-stopped
+    logging: *default-logging
     command: >
       postgres
       -c shared_buffers=128MB
@@ -17,7 +24,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d nju_date"]
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,6 +35,7 @@ services:
       dockerfile: Dockerfile
     container_name: nju-date-backend
     restart: unless-stopped
+    logging: *default-logging
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,10 +49,12 @@ services:
       FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:-https://njumatch.com}
       SUPPORT_EMAIL: ${SUPPORT_EMAIL:-njumatch@163.com}
       TRUST_PROXY: "true"
-      JSON_BODY_LIMIT: 256kb
       JWT_SECRET: ${JWT_SECRET:?Please set JWT_SECRET in .env}
       ADMIN_KEY: ${ADMIN_KEY:?Please set ADMIN_KEY in .env}
+      CONTACT_ENCRYPTION_KEY: ${CONTACT_ENCRYPTION_KEY:?Please set CONTACT_ENCRYPTION_KEY in .env}
+      CONTACT_BLIND_INDEX_KEY: ${CONTACT_BLIND_INDEX_KEY:?Please set CONTACT_BLIND_INDEX_KEY in .env}
       HEARTBOX_STUDENT_ID_PEPPER: ${HEARTBOX_STUDENT_ID_PEPPER:-}
+      JSON_BODY_LIMIT: 256kb
       EMAIL_PROVIDER: aliyun_api
       ALIYUN_DM_ACCESS_KEY_ID: ${ALIYUN_DM_ACCESS_KEY_ID:-}
       ALIYUN_DM_ACCESS_KEY_SECRET: ${ALIYUN_DM_ACCESS_KEY_SECRET:-}
@@ -53,6 +63,16 @@ services:
       ALIYUN_DM_FROM_ALIAS: ${ALIYUN_DM_FROM_ALIAS:-NJU Date}
       DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
       QWEN_MODEL: ${QWEN_MODEL:-qwen-plus}
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   frontend:
     build:
@@ -60,8 +80,10 @@ services:
       dockerfile: Dockerfile
     container_name: nju-date-frontend
     restart: unless-stopped
+    logging: *default-logging
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
       - "${PORT:-80}:80"
       - "443:443"
