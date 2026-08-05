@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, MotionConfig } from 'framer-motion';
 import AgentConfirmDialog from '../components/agent/AgentConfirmDialog';
 import AgentResultCard from '../components/agent/AgentResultCard';
 import './Agent.css';
@@ -29,8 +30,9 @@ export default function AgentDemo() {
   }
 
   return (
+    <MotionConfig reducedMotion="user">
     <main className="agent-page">
-      <header className="agent-hero">
+      <motion.header className="agent-hero" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <Link to="/" className="agent-back">← 返回首页</Link>
         <span className="agent-kicker">NJU Match Agent · 安全演示</span>
         <h1>无需登录，体验 Agent 的交互流程。</h1>
@@ -40,17 +42,17 @@ export default function AgentDemo() {
           <button className="agent-button" type="button" onClick={() => { setSearched(true); setNotice('已完成 Mock 搜索。'); }}>演示查找</button>
         </div>
         {notice && <div className="agent-notice" role="status">{notice}</div>}
-      </header>
+      </motion.header>
 
-      {searched && <section className="agent-section">
+      {searched && <motion.section className="agent-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <div className="agent-section__heading"><span>固定测试数据</span><h2>结果卡片</h2></div>
         <div className="agent-grid">
           {demoCircles.map((circle) => <AgentResultCard key={circle.id} eyebrow="圈子 Demo" title={circle.name} description={circle.description} meta={circle.meta} action={<button type="button" onClick={() => setConfirmation(`申请加入“${circle.name}”`)}>模拟加入</button>} />)}
           {demoPosts.map((post) => <AgentResultCard key={post.id} eyebrow="论坛 Demo" title={post.title} description={post.description} meta={post.meta} action={<button type="button" onClick={() => setNotice('演示帖子没有真实详情页。')}>查看演示</button>} />)}
         </div>
-      </section>}
+      </motion.section>}
 
-      <section className="agent-section agent-compose">
+      <motion.section className="agent-section agent-compose" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.12 }}>
         <div className="agent-section__heading"><span>零副作用演示</span><h2>准备一篇帖子</h2></div>
         <form onSubmit={createDraft}>
           <input name="title" required maxLength={100} defaultValue="寻找 Agent 学习搭子" />
@@ -62,9 +64,10 @@ export default function AgentDemo() {
           </div>
         </form>
         {draft && <div className="agent-draft"><span>Mock 草稿 · 未发布</span><h3>{draft.title}</h3><p>{draft.content}</p><button className="agent-button" type="button" onClick={() => setConfirmation('发布这篇演示帖子')}>模拟发布确认</button></div>}
-      </section>
+      </motion.section>
 
       <AgentConfirmDialog open={confirmation !== null} title={`确认${confirmation ?? ''}？`} description="这是纯前端演示。点击确认只会展示成功提示，不会请求后端或改变任何账户数据。" onCancel={() => setConfirmation(null)} onConfirm={() => { setConfirmation(null); setNotice('已完成确认交互演示；没有产生真实副作用。'); }} />
     </main>
+    </MotionConfig>
   );
 }

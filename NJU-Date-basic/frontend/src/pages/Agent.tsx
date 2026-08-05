@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, MotionConfig } from 'framer-motion';
 import AgentConfirmDialog from '../components/agent/AgentConfirmDialog';
 import AgentResultCard from '../components/agent/AgentResultCard';
 import {
@@ -75,8 +76,9 @@ export default function Agent() {
   }
 
   return (
+    <MotionConfig reducedMotion="user">
     <main className="agent-page">
-      <header className="agent-hero">
+      <motion.header className="agent-hero" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <Link to="/dashboard" className="agent-back">← 返回主页</Link>
         <span className="agent-kicker">NJU Match Agent</span>
         <h1>把想认识的人和想参与的事，说给我听。</h1>
@@ -86,17 +88,17 @@ export default function Agent() {
           <button className="agent-button" type="button" onClick={() => void search()} disabled={busy}>开始查找</button>
         </div>
         {notice && <div className="agent-notice" role="status">{notice}</div>}
-      </header>
+      </motion.header>
 
-      {(circles.length > 0 || posts.length > 0) && <section className="agent-section">
+      {(circles.length > 0 || posts.length > 0) && <motion.section className="agent-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
         <div className="agent-section__heading"><span>为你整理</span><h2>搜索结果</h2></div>
         <div className="agent-grid">
           {circles.map((circle) => <AgentResultCard key={circle.id} eyebrow="圈子" title={circle.name} description={circle.description} meta={`${circle.memberCount} 位成员 · ${circle.category}`} action={<button type="button" onClick={() => setPending({ kind: 'join', circle })}>申请加入</button>} />)}
           {posts.map((post) => <AgentResultCard key={post.postId} eyebrow="论坛" title={post.title} description={post.summary ?? '暂无摘要'} meta={`${post.likeCount} 赞 · ${post.commentCount} 条评论`} action={<Link to={`/forum/${post.postId}`}>查看帖子</Link>} />)}
         </div>
-      </section>}
+      </motion.section>}
 
-      <section className="agent-section agent-compose">
+      <motion.section className="agent-section agent-compose" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.12 }}>
         <div className="agent-section__heading"><span>先形成草稿，再由你决定</span><h2>准备一篇帖子</h2></div>
         <form onSubmit={(event) => void makeDraft(event)}>
           <input name="title" required maxLength={100} placeholder="帖子标题" />
@@ -108,9 +110,10 @@ export default function Agent() {
           </div>
         </form>
         {draft && <div className="agent-draft"><span>未发布草稿</span><h3>{draft.title}</h3><p>{draft.content}</p><button className="agent-button" type="button" onClick={() => setPending({ kind: 'publish', draft })}>检查无误，准备发布</button></div>}
-      </section>
+      </motion.section>
 
       <AgentConfirmDialog open={pending !== null} busy={busy} title={pending?.kind === 'publish' ? '确认发布这篇帖子？' : `确认申请加入“${pending?.kind === 'join' ? pending.circle.name : ''}”？`} description="该操作会产生真实的账户变更。确认凭据只对本次操作有效，取消不会产生任何副作用。" onCancel={() => setPending(null)} onConfirm={() => void confirmAction()} />
     </main>
+    </MotionConfig>
   );
 }

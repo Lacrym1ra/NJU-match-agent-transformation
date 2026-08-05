@@ -45,8 +45,8 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-nju_date}
       DB_SSL: "false"
       DB_POOL_MAX: ${DB_POOL_MAX:-5}
-      FRONTEND_URLS: ${FRONTEND_URLS:-http://localhost}
-      FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:-https://njumatch.com}
+      FRONTEND_URLS: ${FRONTEND_URLS:-http://localhost:8082}
+      FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:-http://localhost:8082}
       SUPPORT_EMAIL: ${SUPPORT_EMAIL:-njumatch@163.com}
       TRUST_PROXY: "true"
       JWT_SECRET: ${JWT_SECRET:?Please set JWT_SECRET in .env}
@@ -55,7 +55,7 @@ services:
       CONTACT_BLIND_INDEX_KEY: ${CONTACT_BLIND_INDEX_KEY:?Please set CONTACT_BLIND_INDEX_KEY in .env}
       HEARTBOX_STUDENT_ID_PEPPER: ${HEARTBOX_STUDENT_ID_PEPPER:-}
       JSON_BODY_LIMIT: 256kb
-      EMAIL_PROVIDER: aliyun_api
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-aliyun_api}
       ALIYUN_DM_ACCESS_KEY_ID: ${ALIYUN_DM_ACCESS_KEY_ID:-}
       ALIYUN_DM_ACCESS_KEY_SECRET: ${ALIYUN_DM_ACCESS_KEY_SECRET:-}
       ALIYUN_DM_REGION: ${ALIYUN_DM_REGION:-cn-hangzhou}
@@ -85,14 +85,18 @@ services:
       backend:
         condition: service_healthy
     ports:
-      - "${PORT:-80}:80"
-      - "443:443"
+      # Only the host gateway should bind public ports 80/443. The application
+      # is reachable locally for gateway proxying and development smoke tests.
+      - "127.0.0.1:${MATCH_BIND_PORT:-8082}:80"
     volumes:
-      - ./njumatch.com.pem:/etc/nginx/ssl/cert.pem:ro
-      - ./njumatch.com.key:/etc/nginx/ssl/cert.key:ro
-      - ./nginx-ssl.conf:/etc/nginx/conf.d/default.conf:ro
       - ./maintenance.html:/usr/share/nginx/html/maintenance.html:ro
       - ./ops/maintenance:/etc/nginx/maintenance:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
   postgres_data:
