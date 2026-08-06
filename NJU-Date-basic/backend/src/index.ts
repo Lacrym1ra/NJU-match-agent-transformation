@@ -27,6 +27,7 @@ import chatRoutes from './routes/chat.js';
 import forumRoutes from './routes/forum.js';
 import socialRoutes from './routes/social.js';
 import uploadRoutes from './routes/upload.js';
+import agentRoutes from './routes/agent.js';
 import { notificationRoutes, adminNotificationRoutes } from './routes/notification.js';
 import { initRealtimeServer } from './realtime/chatServer.js';
 import { startCronJobs } from './cron/weeklyMatch.js';
@@ -114,6 +115,7 @@ app.use('/api/v1/contacts', contactsRoutes);
 app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/social', socialRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/agent', agentRoutes);
 app.use('/api/v1/admin/notifications', adminNotificationRoutes);
 app.use('/api/v1', teamRoutes);
 

@@ -28,4 +28,17 @@ export type {
   ProfileStatus,
   QuestionnaireStatus,
 } from "./tools/read/port.js";
+export { ConfirmationStore } from "./tools/write/confirmation.js";
+export { createNjuMatchActionTools } from "./tools/write/actionTools.js";
+export type {
+  ForumPostType,
+  JoinCircleInput,
+  JoinCircleResult,
+  NjuMatchActionPort,
+  PostDraft,
+  PostDraftInput,
+  PublishPostResult,
+} from "./tools/write/port.js";
+export { runMockScenario } from "./scenarios/mockScenarios.js";
+export type { ScenarioName, ScenarioResult } from "./scenarios/mockScenarios.js";
 export { MemoryTracer, type TraceEvent, type Tracer } from "./tracing/tracer.js";

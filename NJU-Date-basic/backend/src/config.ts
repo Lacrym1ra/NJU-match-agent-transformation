@@ -92,6 +92,12 @@ export const config = {
     model: process.env.QWEN_MODEL || 'qwen-plus',
   },
 
+  agentLlm: {
+    apiKey: process.env.LLM_API_KEY || '',
+    baseUrl: process.env.LLM_BASE_URL || 'https://api.openai.com/v1',
+    model: process.env.LLM_MODEL || 'gpt-5.6-terra',
+  },
+
   frontend: {
     allowedOrigins: parseAllowedOrigins(),
     publicUrl: process.env.FRONTEND_PUBLIC_URL || process.env.FRONTEND_URL || 'http://localhost:3001',

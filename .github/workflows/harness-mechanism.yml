@@ -28,47 +28,29 @@ concurrency:
 
 jobs:
   mechanism-demo:
-    name: User-facing Agent Mechanism Demo
+    name: Mock LLM Agent Scenarios
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detect Harness implementation
-        id: harness
-        shell: bash
-        run: |
-          if [ ! -f agent-harness/package-lock.json ]; then
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "Harness package not created yet; user-facing mechanism demos are deferred."
-          elif node -e "
-            const scripts = require('./agent-harness/package.json').scripts ?? {};
-            const required = [
-              'demo:confirmation',
-              'demo:feedback',
-              'demo:authorization'
-            ];
-            process.exit(required.every((name) => scripts[name]) ? 0 : 1);
-          "; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "Core exists; HITL mechanism demos are deferred until their scripts exist."
-          fi
-
       - uses: actions/setup-node@v4
-        if: steps.harness.outputs.enabled == 'true'
         with:
           node-version: "20"
           cache: npm
           cache-dependency-path: agent-harness/package-lock.json
 
       - name: Install
-        if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
         run: npm ci
 
+      - name: Run deterministic Mock LLM scenario tests
+        working-directory: agent-harness
+        run: npm test
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
       - name: Write action waits for user confirmation
-        if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
         run: npm run demo:confirmation
         env:
@@ -76,7 +58,6 @@ jobs:
           HARNESS_NETWORK: deny
 
       - name: Business tool feedback changes the next action
-        if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
         run: npm run demo:feedback
         env:
@@ -84,7 +65,6 @@ jobs:
           HARNESS_NETWORK: deny
 
       - name: Forged user identity is rejected
-        if: steps.harness.outputs.enabled == 'true'
         working-directory: agent-harness
         run: npm run demo:authorization
         env:
@@ -92,10 +72,11 @@ jobs:
           HARNESS_NETWORK: deny
 
       - name: Upload redacted deterministic traces
-        if: always() && steps.harness.outputs.enabled == 'true'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: social-agent-mechanism-traces
           path: agent-harness/.agent-traces/
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
