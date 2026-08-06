@@ -1,0 +1,4 @@
+# Exact historical findings for deterministic, non-production local fixtures.
+# New findings in the same file remain visible to the scanner.
+40df4958ac4b7a516fe61d75af979e10307e21e6:NJU-Date-basic/.env.local-test.example:generic-api-key:11
+40df4958ac4b7a516fe61d75af979e10307e21e6:NJU-Date-basic/.env.local-test.example:generic-api-key:12

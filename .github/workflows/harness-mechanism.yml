@@ -77,5 +77,6 @@ jobs:
         with:
           name: social-agent-mechanism-traces
           path: agent-harness/.agent-traces/
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 30

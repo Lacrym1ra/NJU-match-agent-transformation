@@ -4,9 +4,18 @@ import { requireAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { agentActionService } from '../services/agentActionService.js';
 import { agentReadService } from '../services/agentReadService.js';
+import { createAgentChatReply } from '../services/agentChatService.js';
 
 const router = Router();
 const postType = z.enum(['general', 'squad', 'help', 'trade', 'activity']);
+
+router.post('/chat', requireAuth, validate(z.object({
+  message: z.string().trim().min(1).max(2_000),
+})), async (req, res, next) => {
+  try {
+    res.json(await createAgentChatReply(req.auth!.userId, req.body.message));
+  } catch (error) { next(error); }
+});
 
 router.get('/status', requireAuth, async (req, res, next) => {
   try {

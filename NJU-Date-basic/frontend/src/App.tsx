@@ -42,6 +42,7 @@ const Messages = lazy(() => import('./pages/Messages'));
 const FollowList = lazy(() => import('./pages/FollowList'));
 const Agent = lazy(() => import('./pages/Agent'));
 const AgentDemo = lazy(() => import('./pages/AgentDemo'));
+const AgentLocalEntry = lazy(() => import('./pages/AgentLocalEntry'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -84,6 +85,7 @@ function App() {
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/agent-demo" element={<AgentDemo />} />
+            <Route path="/agent-local" element={<AgentLocalEntry />} />
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

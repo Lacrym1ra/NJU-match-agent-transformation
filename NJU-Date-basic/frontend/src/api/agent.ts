@@ -13,6 +13,14 @@ export interface AgentDraft {
   circleId?: string; isAnonymous?: boolean; createdAt: string;
 }
 
+export interface AgentChatReply {
+  reply: string; provider: 'openai-compatible'; model: string;
+  circles: AgentCircleCard[]; posts: AgentPostCard[];
+}
+
+export const chatWithAgent = (message: string) =>
+  api.post<AgentChatReply>('/agent/chat', { message });
+
 export const getAgentStatus = () => api.get<{
   profile: { profileComplete: boolean; missingFields: string[] };
   questionnaire: { complete: boolean; needsUpdate: boolean };

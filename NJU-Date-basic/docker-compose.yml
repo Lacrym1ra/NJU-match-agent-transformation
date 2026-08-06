@@ -40,7 +40,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      NODE_ENV: production
+      # Production is the safe default. Local-only env files may explicitly
+      # choose development to enable the existing dev-token test endpoint.
+      NODE_ENV: ${NODE_ENV:-production}
       PORT: 3000
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-nju_date}
       DB_SSL: "false"
@@ -63,6 +65,9 @@ services:
       ALIYUN_DM_FROM_ALIAS: ${ALIYUN_DM_FROM_ALIAS:-NJU Date}
       DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
       QWEN_MODEL: ${QWEN_MODEL:-qwen-plus}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-5.6-terra}
     healthcheck:
       test:
         - CMD

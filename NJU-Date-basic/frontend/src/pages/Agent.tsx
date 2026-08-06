@@ -4,8 +4,8 @@ import { motion, MotionConfig } from 'framer-motion';
 import AgentConfirmDialog from '../components/agent/AgentConfirmDialog';
 import AgentResultCard from '../components/agent/AgentResultCard';
 import {
-  createAgentDraft, getAgentStatus, joinAgentCircle, publishAgentDraft,
-  requestAgentConfirmation, searchAgentCircles, searchAgentPosts,
+  chatWithAgent, createAgentDraft, getAgentStatus, joinAgentCircle, publishAgentDraft,
+  requestAgentConfirmation,
   type AgentCircleCard, type AgentDraft, type AgentPostCard,
 } from '../api/agent';
 import './Agent.css';
@@ -21,6 +21,7 @@ export default function Agent() {
   const [pending, setPending] = useState<PendingAction | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
+  const [agentReply, setAgentReply] = useState('');
 
   useEffect(() => {
     void getAgentStatus().then(({ profile, questionnaire }) => {
@@ -34,12 +35,10 @@ export default function Agent() {
     if (!query.trim()) return;
     setBusy(true); setNotice('');
     try {
-      const [circleResult, postResult] = await Promise.all([
-        searchAgentCircles(query.trim()), searchAgentPosts(query.trim()),
-      ]);
-      setCircles(circleResult.circles); setPosts(postResult.posts);
-      setNotice(`已找到 ${circleResult.circles.length} 个圈子和 ${postResult.posts.length} 篇帖子。`);
-    } catch { setNotice('搜索失败，请稍后重试。'); }
+      const result = await chatWithAgent(query.trim());
+      setCircles(result.circles); setPosts(result.posts); setAgentReply(result.reply);
+      setNotice(`Agent 已结合 ${result.circles.length} 个圈子和 ${result.posts.length} 篇帖子完成回答。`);
+    } catch { setNotice('Agent 暂时无法回答，请检查 LLM 配置或稍后重试。'); }
     finally { setBusy(false); }
   }
 
@@ -88,6 +87,7 @@ export default function Agent() {
           <button className="agent-button" type="button" onClick={() => void search()} disabled={busy}>开始查找</button>
         </div>
         {notice && <div className="agent-notice" role="status">{notice}</div>}
+        {agentReply && <div className="agent-reply" aria-live="polite"><span>Agent 回答</span><p>{agentReply}</p></div>}
       </motion.header>
 
       {(circles.length > 0 || posts.length > 0) && <motion.section className="agent-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
