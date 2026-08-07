@@ -71,11 +71,18 @@ jobs:
           NODE_ENV: test
           HARNESS_NETWORK: deny
 
+      - name: Coding guardrail and test-feedback mechanism
+        working-directory: agent-harness
+        run: npm run demo:coding
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
       - name: Upload redacted deterministic traces
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: social-agent-mechanism-traces
+          name: agent-harness-mechanism-traces
           path: agent-harness/.agent-traces/
           include-hidden-files: true
           if-no-files-found: error

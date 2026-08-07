@@ -50,6 +50,7 @@ import { up as upRequestWithdrawNotifications } from './migrations/043_request_w
 import { up as upCircleReviewMetadata } from './migrations/044_circle_review_metadata.js';
 import { up as upDirectMessageRecall } from './migrations/045_direct_message_recall.js';
 import { up as upForumUserReports } from './migrations/046_forum_user_reports.js';
+import { up as upAgentActionRecords } from './migrations/047_agent_action_records.js';
 
 /**
  * Create tables if they don't exist.
@@ -454,6 +455,7 @@ export async function runMigrations() {
   await upCircleReviewMetadata(db);
   await upDirectMessageRecall(db);
   await upForumUserReports(db);
+  await upAgentActionRecords(db);
 
   console.log('Database migrations completed.');
 }

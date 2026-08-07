@@ -1042,3 +1042,25 @@ export const teamupForumSyncJobs = pgTable('teamup_forum_sync_jobs', {
   index('idx_teamup_forum_sync_jobs_status_retry').on(t.status, t.nextRetryAt),
   index('idx_teamup_forum_sync_jobs_teamup').on(t.teamupId, t.createdAt),
 ]);
+
+/** Persistent Agent drafts, confirmation challenges, and execution audit records. */
+export const agentActionRecords = pgTable('agent_action_records', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  kind: text('kind').notNull(),
+  resourceId: text('resource_id').notNull(),
+  payload: jsonb('payload').$type<Record<string, unknown>>().notNull().default({}),
+  status: text('status').notNull().default('draft'),
+  confirmationTokenHash: text('confirmation_token_hash'),
+  confirmationExpiresAt: timestamp('confirmation_expires_at', { withTimezone: true, mode: 'string' }),
+  expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'string' }).notNull(),
+  consumedAt: timestamp('consumed_at', { withTimezone: true, mode: 'string' }),
+  result: jsonb('result').$type<Record<string, unknown>>(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+}, (t) => [
+  index('idx_agent_action_records_user_status').on(t.userId, t.status, t.createdAt),
+  index('idx_agent_action_records_expiry').on(t.expiresAt),
+  uniqueIndex('idx_agent_action_records_confirmation_hash').on(t.confirmationTokenHash)
+    .where(sql`${t.confirmationTokenHash} IS NOT NULL`),
+]);

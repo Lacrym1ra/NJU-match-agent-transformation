@@ -473,6 +473,28 @@ export const withdrawCircleJoinRequest = async (requestId: string) => {
   );
 };
 
+export const getLocalTestCapabilities = async () => {
+  try {
+    return await api.get<{ enabled: boolean }>('/auth/dev-status');
+  } catch {
+    return { enabled: false };
+  }
+};
+
+export const devApproveOwnCircleJoinRequest = async (requestId: string) => {
+  return await api.put<{ message: string; developmentOnly: true }>(
+    `/circles/join-requests/${requestId}/dev-approve-own`,
+    {},
+  );
+};
+
+export const devApproveCreatedCircle = async (circleId: string) => {
+  return await api.put<{ message: string; circle: Circle; developmentOnly: true }>(
+    `/circles/${circleId}/dev-approve-created`,
+    {},
+  );
+};
+
 // 3. 获取圈子详情
 export const getCircleDetail = async (circleId: string) => {
   return await api.get<{ circle: Circle; components: Question[] }>(`/circles/${circleId}`);

@@ -1,7 +1,8 @@
 # Agent Harness Core
 
-这是 NJU-Match 面向用户的 Social Agent Harness 最小内核。
-当前阶段只验证通用循环机制，不连接真实 LLM、数据库或 NJU-Match Service。
+这是 Social Agent 与 Project A Coding adapter 共用的自研 Harness 内核。
+真实 `/agent` 后端已经通过 `LLMPort` 使用该循环；离线机制测试仍全部
+使用 Mock LLM。
 
 ## 当前执行链
 
@@ -34,19 +35,23 @@ RunRequest
 - LLM 异常失败状态；
 - 内存 Trace；
 - 严格 TypeScript 构建。
+- 按认证用户与会话隔离的有界进程内记忆；
+- 声明式步骤、超时、重复动作配置及边界校验；
+- 真实 WebUI Provider Runtime 适配；
+- Coding adapter：受限文件读写、结构化命令、测试传感器；
+- Coding 护栏：路径围栏、敏感文件拒绝、危险命令硬拒绝、一次性确认。
 
-## 尚未实现
+## 尚未实现或仍有限制
 
-- 真实 Provider；
-- 写操作的业务参数 Schema；
-- 授权 Policy；
-- 写操作确认状态机；
-- 持久化会话记忆；
-- Agent API 和前端。
+- 持久化、多副本共享会话记忆；
+- 系统钥匙串式凭据录入/状态/更新/清除；
+- 独立 Coding Agent CLI/WebUI；
+- Social WebUI 不注册 Coding adapter，这是有意的权限隔离；
+- 陌生异类型 Agent 冷启动验证仍待学生执行。
 
-后端已提供真实 `agentReadService` Adapter；Agent API 将在后续 PR
-负责把该实现注入 Harness。其余能力必须按根目录 `PLAN.md`
-在后续独立 PR 中实现。
+后端通过 `agentHarnessRuntime.ts` 注入真实 Provider 和
+`agentReadService`。社交写操作继续由原后端确认状态机执行，Coding
+adapter 只用于隔离的开发者/课程机制场景。
 
 ## 测试逻辑
 
@@ -126,8 +131,18 @@ npm run demo:core
 
 - TypeScript 严格检查通过；
 - 构建通过；
-- 19 个测试全部通过；
+- 全部 Harness 测试通过；
 - Demo 最终状态为 `SUCCEEDED`；
 - Demo Trace 顺序为论坛搜索、圈子搜索、完成。
 
 所有测试使用 Mock LLM，不访问网络，也不需要 API Key。
+
+## Coding 机制演示
+
+```bash
+npm run demo:coding
+```
+
+该演示确定性证明：危险删除命令在 `CodingPort` 产生副作用前被拒绝；
+测试非零退出码转成 `VALIDATION_FAILED` 并改变 Mock LLM 下一步；文件写
+确认与用户、路径绑定且只能消费一次。

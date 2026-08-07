@@ -5,6 +5,8 @@ import { NotificationProvider } from './context/NotificationContext';
 import { ToastProvider } from './components/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotificationBell from './components/NotificationBell';
+import GlobalAgent from './components/global-agent/GlobalAgent';
+import { AgentOverlayProvider } from './context/AgentOverlayContext';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
@@ -73,8 +75,10 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
       <Router>
+        <AgentOverlayProvider>
         <ScrollToTop />
         <NotificationBell />
+        <GlobalAgent />
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -122,6 +126,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </AgentOverlayProvider>
       </Router>
       </NotificationProvider>
     </AuthProvider>

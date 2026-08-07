@@ -42,3 +42,20 @@ export type {
 export { runMockScenario } from "./scenarios/mockScenarios.js";
 export type { ScenarioName, ScenarioResult } from "./scenarios/mockScenarios.js";
 export { MemoryTracer, type TraceEvent, type Tracer } from "./tracing/tracer.js";
+export { InMemorySessionMemory } from "./memory/InMemorySessionMemory.js";
+export type { MemoryEntry, MemoryEntryKind, SessionMemory } from "./memory/types.js";
+export { loadHarnessConfig } from "./config/loadConfig.js";
+export type { HarnessConfigSource } from "./config/loadConfig.js";
+export {
+  CodingConfirmationStore,
+  createCodingTools,
+  type CodingConfirmableAction,
+  type CodingPort,
+  type CommandResult,
+} from "./tools/coding/codingTools.js";
+export { NodeCodingPort } from "./tools/coding/nodeCodingPort.js";
+export {
+  createCodingHarness,
+  type CodingHarnessOptions,
+  type CodingHarnessRunResult,
+} from "./tools/coding/codingHarness.js";

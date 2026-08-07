@@ -98,6 +98,13 @@ export const config = {
     model: process.env.LLM_MODEL || 'gpt-5.6-terra',
   },
 
+  agentHarness: {
+    maxSteps: parseBoundedInteger('AGENT_MAX_STEPS', 6, 1, 20),
+    toolTimeoutMs: parseBoundedInteger('AGENT_TOOL_TIMEOUT_MS', 10_000, 100, 60_000),
+    duplicateActionLimit: parseBoundedInteger('AGENT_DUPLICATE_ACTION_LIMIT', 2, 1, 10),
+    memoryEntries: parseBoundedInteger('AGENT_MEMORY_ENTRIES', 24, 1, 100),
+  },
+
   frontend: {
     allowedOrigins: parseAllowedOrigins(),
     publicUrl: process.env.FRONTEND_PUBLIC_URL || process.env.FRONTEND_URL || 'http://localhost:3001',

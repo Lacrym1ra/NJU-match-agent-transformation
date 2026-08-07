@@ -29,15 +29,15 @@ const sendMessageSchema = z.object({
 });
 
 const readStateSchema = z.object({
-  lastReadMessageId: z.string().uuid().optional(),
+  lastReadMessageId: z.string().trim().min(1).max(120).regex(/^[A-Za-z0-9_-]+$/).optional(),
   lastReadAt: z.string().datetime({ offset: true }).optional(),
 }).default({});
 
-function parseUuid(value: unknown, field: string) {
+function parseId(value: unknown, field: string) {
   const raw = Array.isArray(value) ? value[0] : value;
-  const result = z.string().uuid().safeParse(raw);
+  const result = z.string().trim().min(1).max(120).regex(/^[A-Za-z0-9_-]+$/).safeParse(raw);
   if (!result.success) {
-    throw new ValidationError(`${field} 必须是合法的 UUID`);
+    throw new ValidationError(`${field} 必须是合法的资源 ID`);
   }
   return result.data;
 }
@@ -54,9 +54,9 @@ function toBroadcastMessage(message: ChatMessageDto): ChatMessageDto {
 
 router.get('/:circleId/chat/messages', requireAuth, async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
+    const circleId = parseId(req.params.circleId, 'circleId');
     const before = typeof req.query.before === 'string' && req.query.before.trim()
-      ? parseUuid(req.query.before, 'before')
+      ? parseId(req.query.before, 'before')
       : undefined;
     const result = await listCircleChatMessages(req.auth!.userId, circleId, {
       before,
@@ -70,7 +70,7 @@ router.get('/:circleId/chat/messages', requireAuth, async (req, res, next) => {
 
 router.post('/:circleId/chat/messages', requireAuth, validate(sendMessageSchema), async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
+    const circleId = parseId(req.params.circleId, 'circleId');
     const message = await sendCircleChatMessage(req.auth!.userId, circleId, req.body);
     await circleChatHub.broadcast(circleId, { type: 'chat.message', message: toBroadcastMessage(message) }, {
       canReceiveMany: (userIds) => listActiveCircleChatMemberIds(circleId, userIds),
@@ -83,8 +83,8 @@ router.post('/:circleId/chat/messages', requireAuth, validate(sendMessageSchema)
 
 router.delete('/:circleId/chat/messages/:messageId', requireAuth, async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
-    const messageId = parseUuid(req.params.messageId, 'messageId');
+    const circleId = parseId(req.params.circleId, 'circleId');
+    const messageId = parseId(req.params.messageId, 'messageId');
     const result = await deleteCircleChatMessage(req.auth!.userId, circleId, messageId);
     await circleChatHub.broadcast(circleId, { type: 'chat.deleted', roomType: 'circle', circleId, messageId }, {
       canReceiveMany: (userIds) => listActiveCircleChatMemberIds(circleId, userIds),
@@ -97,7 +97,7 @@ router.delete('/:circleId/chat/messages/:messageId', requireAuth, async (req, re
 
 router.put('/:circleId/chat/read-state', requireAuth, validate(readStateSchema), async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
+    const circleId = parseId(req.params.circleId, 'circleId');
     const result = await updateCircleChatReadState(req.auth!.userId, circleId, req.body);
     res.json(result);
   } catch (err) {
@@ -107,10 +107,10 @@ router.put('/:circleId/chat/read-state', requireAuth, validate(readStateSchema),
 
 router.get('/:circleId/teamups/:teamupId/chat/messages', requireAuth, async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
-    const teamupId = parseUuid(req.params.teamupId, 'teamupId');
+    const circleId = parseId(req.params.circleId, 'circleId');
+    const teamupId = parseId(req.params.teamupId, 'teamupId');
     const before = typeof req.query.before === 'string' && req.query.before.trim()
-      ? parseUuid(req.query.before, 'before')
+      ? parseId(req.query.before, 'before')
       : undefined;
     const result = await listTeamupChatMessages(req.auth!.userId, circleId, teamupId, {
       before,
@@ -124,8 +124,8 @@ router.get('/:circleId/teamups/:teamupId/chat/messages', requireAuth, async (req
 
 router.post('/:circleId/teamups/:teamupId/chat/messages', requireAuth, validate(sendMessageSchema), async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
-    const teamupId = parseUuid(req.params.teamupId, 'teamupId');
+    const circleId = parseId(req.params.circleId, 'circleId');
+    const teamupId = parseId(req.params.teamupId, 'teamupId');
     const message = await sendTeamupChatMessage(req.auth!.userId, circleId, teamupId, req.body);
     await teamupChatHub.broadcast(teamupId, { type: 'chat.message', message: toBroadcastMessage(message) }, {
       canReceiveMany: (userIds) => listActiveTeamupChatMemberIds(circleId, teamupId, userIds),
@@ -138,9 +138,9 @@ router.post('/:circleId/teamups/:teamupId/chat/messages', requireAuth, validate(
 
 router.delete('/:circleId/teamups/:teamupId/chat/messages/:messageId', requireAuth, async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
-    const teamupId = parseUuid(req.params.teamupId, 'teamupId');
-    const messageId = parseUuid(req.params.messageId, 'messageId');
+    const circleId = parseId(req.params.circleId, 'circleId');
+    const teamupId = parseId(req.params.teamupId, 'teamupId');
+    const messageId = parseId(req.params.messageId, 'messageId');
     const result = await deleteTeamupChatMessage(req.auth!.userId, circleId, teamupId, messageId);
     await teamupChatHub.broadcast(teamupId, { type: 'chat.deleted', roomType: 'teamup', circleId, teamupId, messageId }, {
       canReceiveMany: (userIds) => listActiveTeamupChatMemberIds(circleId, teamupId, userIds),
@@ -153,8 +153,8 @@ router.delete('/:circleId/teamups/:teamupId/chat/messages/:messageId', requireAu
 
 router.put('/:circleId/teamups/:teamupId/chat/read-state', requireAuth, validate(readStateSchema), async (req, res, next) => {
   try {
-    const circleId = parseUuid(req.params.circleId, 'circleId');
-    const teamupId = parseUuid(req.params.teamupId, 'teamupId');
+    const circleId = parseId(req.params.circleId, 'circleId');
+    const teamupId = parseId(req.params.teamupId, 'teamupId');
     const result = await updateTeamupChatReadState(req.auth!.userId, circleId, teamupId, req.body);
     res.json(result);
   } catch (err) {

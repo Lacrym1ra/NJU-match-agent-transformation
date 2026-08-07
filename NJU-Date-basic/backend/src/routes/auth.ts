@@ -146,13 +146,26 @@ router.post('/realtime-ticket', requireAuth, (req, res) => {
 
 // Dev-only routes — only registered when NODE_ENV=development
 if (config.isDev) {
+  // GET /auth/dev-status — lets the UI expose development-only test helpers.
+  router.get('/dev-status', requireAuth, (req, res) => {
+    if (!req.auth!.email.toLowerCase().endsWith('@test.local')) {
+      res.status(403).json({ error: { code: 'DEV_TEST_ACCOUNT_REQUIRED', message: '开发测试入口仅允许 @test.local 账号' } });
+      return;
+    }
+    res.json({ enabled: true });
+  });
+
   // GET /auth/dev-otp?email=xxx — returns the current OTP from DB
   router.get('/dev-otp', async (req, res, next) => {
     try {
-      const email = req.query.email as string;
+      const email = typeof req.query.email === 'string' ? req.query.email : '';
       const purposeRaw = (req.query.purpose as string | undefined) || 'register';
       const purpose = purposeRaw === 'reset_password' ? 'reset_password' : 'register';
       if (!email) { res.status(400).json({ error: 'email required' }); return; }
+      if (!email.toLowerCase().endsWith('@test.local')) {
+        res.status(403).json({ error: { code: 'DEV_TEST_ACCOUNT_REQUIRED', message: '开发测试入口仅允许 @test.local 账号' } });
+        return;
+      }
       const otpRows = await db.select().from(otpCodes)
         .where(and(eq(otpCodes.email, email), eq(otpCodes.purpose, purpose))).limit(1);
       const otp = otpRows[0];
@@ -166,8 +179,12 @@ if (config.isDev) {
   // POST /auth/dev-token — bypasses OTP for testing
   router.post('/dev-token', async (req, res, next) => {
     try {
-      const email = req.body?.email as string;
+      const email = typeof req.body?.email === 'string' ? req.body.email : '';
       if (!email) { res.status(400).json({ error: 'email required' }); return; }
+      if (!email.toLowerCase().endsWith('@test.local')) {
+        res.status(403).json({ error: { code: 'DEV_TEST_ACCOUNT_REQUIRED', message: '开发测试入口仅允许 @test.local 账号' } });
+        return;
+      }
 
       const userRows = await db.select().from(users).where(eq(users.email, email)).limit(1);
       let user = userRows[0];

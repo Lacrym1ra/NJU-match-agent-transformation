@@ -4,18 +4,32 @@
   "private": true,
   "description": "User-facing social agent harness for NJU-Match",
   "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": [
+    "dist/src",
+    "config",
+    "README.md"
+  ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test dist/tests/actionTools.test.js dist/tests/agentLoop.test.js dist/tests/readTools.test.js dist/tests/registry.test.js dist/tests/scenarios.test.js",
+    "test": "npm run build && node --test dist/tests/actionTools.test.js dist/tests/agentLoop.test.js dist/tests/codingTools.test.js dist/tests/config.test.js dist/tests/memory.test.js dist/tests/readTools.test.js dist/tests/registry.test.js dist/tests/scenarios.test.js",
     "test:unit": "npm run test",
     "demo:core": "npm run build && node dist/tests/core-demo.js",
     "demo:confirmation": "npm run build && node dist/tests/scenario-demo.js confirmation",
     "demo:feedback": "npm run build && node dist/tests/scenario-demo.js feedback",
-    "demo:authorization": "npm run build && node dist/tests/scenario-demo.js authorization"
+    "demo:authorization": "npm run build && node dist/tests/scenario-demo.js authorization",
+    "demo:coding": "npm run build && node --test dist/tests/codingTools.test.js"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
