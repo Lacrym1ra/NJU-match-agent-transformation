@@ -37,4 +37,15 @@ describe('agentQueryPlanner', () => {
     const plan = planAgentQuery('想找学习搭子，也想看看共读活动和二手交换', {});
     assert.deepEqual(plan.forumTypes, ['trade', 'squad', 'activity']);
   });
+
+  it('handles long user-controlled whitespace and punctuation in linear time', () => {
+    const padding = ' '.repeat(100_000);
+    const punctuation = '"'.repeat(100_000);
+    const startedAt = performance.now();
+    const plan = planAgentQuery(`${padding}3${padding}个 ${punctuation}Agent${punctuation}`, {});
+
+    assert.equal(plan.circleLimit, 3);
+    assert.ok(plan.keywords.includes('Agent'));
+    assert.ok(performance.now() - startedAt < 1_000);
+  });
 });

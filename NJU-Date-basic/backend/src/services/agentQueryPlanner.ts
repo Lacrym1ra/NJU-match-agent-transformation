@@ -51,15 +51,27 @@ function inferTypes(message: string): ForumPostType[] {
 }
 
 function requestedLimit(message: string): number {
-  const match = message.match(/(?:最多|各|分别)?\s*([1-9])\s*(?:个|篇|条)/);
-  if (!match) return DEFAULT_RESULTS;
-  return Math.min(MAX_RESULTS, Math.max(1, Number(match[1])));
+  const resultUnits = new Set(['个', '篇', '条']);
+  for (let index = 0; index < message.length; index += 1) {
+    const digit = message[index];
+    if (!digit || digit < '1' || digit > '9') continue;
+
+    let unitIndex = index + 1;
+    while (unitIndex < message.length && /\s/u.test(message[unitIndex] ?? '')) unitIndex += 1;
+    if (resultUnits.has(message[unitIndex] ?? '')) {
+      return Math.min(MAX_RESULTS, Number(digit));
+    }
+  }
+  return DEFAULT_RESULTS;
 }
 
 function addKeyword(target: string[], seen: Set<string>, raw: string) {
-  const value = raw.trim()
-    .replace(/^["“”'‘’]+|["“”'‘’。，、！？：；]+$/g, '')
-    .replace(/[%_\\]/g, '');
+  const boundaryPunctuation = new Set(['"', '“', '”', "'", '‘', '’', '。', '，', '、', '！', '？', '：', '；']);
+  let start = 0;
+  let end = raw.length;
+  while (start < end && (boundaryPunctuation.has(raw[start] ?? '') || /\s/u.test(raw[start] ?? ''))) start += 1;
+  while (end > start && (boundaryPunctuation.has(raw[end - 1] ?? '') || /\s/u.test(raw[end - 1] ?? ''))) end -= 1;
+  const value = raw.slice(start, end).replace(/[%_\\]/g, '');
   if (value.length < 2 || value.length > 32) return;
   const key = value.toLocaleLowerCase('zh-CN');
   if (GENERIC_TOKENS.has(key) || seen.has(key)) return;
