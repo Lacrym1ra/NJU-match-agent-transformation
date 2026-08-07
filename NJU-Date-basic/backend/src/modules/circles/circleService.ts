@@ -86,6 +86,8 @@ const DISTANCE_BUCKETS = [
 type ListCirclesOptions = {
   category?: string;
   keyword?: string;
+  keywords?: string[];
+  includeJoined?: boolean;
   tags?: string[];
   department?: string;
   grade?: string;
@@ -93,6 +95,10 @@ type ListCirclesOptions = {
   page?: number;
   limit?: number;
 };
+
+function escapeLikeWildcards(value: string) {
+  return value.replace(/[%_\\]/g, '\\$&');
+}
 
 type CreateCustomCirclePayload = {
   name: string;
@@ -854,8 +860,14 @@ export async function listCircles(userId: string, options: ListCirclesOptions = 
   if (options.category) {
     filters.push(eq(circles.category, options.category));
   }
-  if (options.keyword) {
-    const keyword = `%${options.keyword.trim()}%`;
+  if (options.keywords?.length) {
+    const termFilters = options.keywords.slice(0, 8).map((term) => {
+      const pattern = `%${escapeLikeWildcards(term.trim())}%`;
+      return sql`(${circles.name} ILIKE ${pattern} OR ${circles.description} ILIKE ${pattern} OR ${circles.tag} ILIKE ${pattern} OR ${circles.tags}::text ILIKE ${pattern})`;
+    });
+    filters.push(or(...termFilters)!);
+  } else if (options.keyword) {
+    const keyword = `%${escapeLikeWildcards(options.keyword.trim())}%`;
     filters.push(sql`(${circles.name} ILIKE ${keyword} OR ${circles.description} ILIKE ${keyword} OR ${circles.tag} ILIKE ${keyword})`);
   }
   const requestedTags = normalizeCircleTags(options.tags, null);
@@ -873,7 +885,7 @@ export async function listCircles(userId: string, options: ListCirclesOptions = 
     filters.push(eq(users.grade, options.grade));
   }
 
-  if (memberships.length > 0) {
+  if (!options.includeJoined && memberships.length > 0) {
     const joinedCircleIds = memberships.map((membership) => membership.circleId);
     filters.push(sql`${circles.id} NOT IN (${sql.join(joinedCircleIds.map((id) => sql`${id}`), sql`, `)})`);
   }
@@ -896,12 +908,14 @@ export async function listCircles(userId: string, options: ListCirclesOptions = 
     .limit(limit)
     .offset(offset);
 
+  const joinedCircleIds = new Set(memberships.map((membership) => membership.circleId));
   return {
     total: Number(totalRow?.total ?? 0),
     page,
     limit,
     circles: rows.map((row) => ({
       ...serializeCircle(row.circles),
+      isJoined: joinedCircleIds.has(row.circles.id),
       recommendation: {
         reasons: buildRecommendationReasons(row.circles, row.users, viewer, requestedTags),
       },
@@ -2332,8 +2346,11 @@ export async function reviewCircleJoinRequest(
   requestId: string,
   reviewerId: string,
   payload: { status: 'approved' | 'rejected'; reason?: string | null; silent?: boolean },
+  devOverride?: { expectedApplicantId: string },
 ) {
-  await ensureCircleOwner(circleId, reviewerId);
+  if (!devOverride) {
+    await ensureCircleOwner(circleId, reviewerId);
+  }
   await expirePendingJoinRequests(circleId);
 
   const now = new Date().toISOString();
@@ -2353,6 +2370,9 @@ export async function reviewCircleJoinRequest(
       .limit(1);
     const request = requestRows[0];
     if (!request) throw new NotFoundError('入圈申请不存在');
+    if (devOverride && request.userId !== devOverride.expectedApplicantId) {
+      throw new ForbiddenError('只能处理当前测试账号自己的入圈申请');
+    }
     if (request.status !== CIRCLE_JOIN_REQUEST_STATUS.PENDING_REVIEW) {
       throw new ConflictError('该入圈申请已处理');
     }

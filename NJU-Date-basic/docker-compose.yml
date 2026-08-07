@@ -31,8 +31,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: NJU-Date-basic/backend/Dockerfile
     container_name: nju-date-backend
     restart: unless-stopped
     logging: *default-logging
@@ -68,6 +68,10 @@ services:
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
       LLM_MODEL: ${LLM_MODEL:-gpt-5.6-terra}
+      AGENT_MAX_STEPS: ${AGENT_MAX_STEPS:-6}
+      AGENT_TOOL_TIMEOUT_MS: ${AGENT_TOOL_TIMEOUT_MS:-10000}
+      AGENT_DUPLICATE_ACTION_LIMIT: ${AGENT_DUPLICATE_ACTION_LIMIT:-2}
+      AGENT_MEMORY_ENTRIES: ${AGENT_MEMORY_ENTRIES:-24}
     healthcheck:
       test:
         - CMD

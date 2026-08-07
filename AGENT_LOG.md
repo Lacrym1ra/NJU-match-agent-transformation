@@ -39,7 +39,8 @@
   - 修正 `GIT_WORKFLOW.md` 的任务和检查说明。
 - 保留：`NJU-Date-basic/` 业务基线及原有测试、Security、Docker 和仓库治理。
 - 未包含：Agent 实现、真实 API Key、业务基线代码修改。
-- 教训：Harness 的反馈和危险动作必须来自目标业务域；不能因为 Project A 名称包含 Coding Agent，就把现有产品强行降格为代码修复 Fixture。
+- 教训：Harness 的反馈和危险动作必须来自目标业务域；不能因为
+  Project A 名称包含 Coding Agent，就把产品强行降格为代码修复 Fixture。
 - 验证：见本分支最终 `git diff --check`、Repository Policy 和 Documentation checks。
 
 ---
@@ -89,3 +90,35 @@
 - 修正 2：后端 Adapter 将其归一化为空字符串。
 - 验证：Harness 19/19、后端 307/307，两个项目类型检查均通过。
 - 范围：本步骤只有只读 Tool；没有写操作、HITL、Agent API 或真实 Provider。
+
+---
+
+## 2026-08-07 — TASK-070 至 TASK-073
+
+- 分支：`feat/gateway-agent-design`（现有脏工作区上的窄范围修补，尚未提交）。
+- Agent：Codex；未调用 subagent 或陌生 Agent。
+- 目标：优先修复 Project A 特有关键缺口及不完整交付文档。
+- 审计发现：
+  - 独立 Harness 有自研循环，但真实 `/agent` 仍直接单次调用 Provider；
+  - 记忆与配置只有规划或最低实现不足；
+  - Social Agent 与 Project A 的 Coding 领域字面要求冲突；
+  - `SPEC_PROCESS.md` 与 `REFLECTION.md` 仍是占位符；
+  - 后端新增本地 Harness 依赖后，原 Docker build context 无法包含该包；
+  - 根 `.gitlab-ci.yml` 缺失，无法满足精确 `unit-test` job 要求。
+- 实现：
+  - 真实 Provider 改为每轮只给出结构化决策，由自研 Loop 执行反馈闭环；
+  - 前端传入会话 UUID，Trace 增加 Harness 状态、步数和工具序列；
+  - 增加按用户/会话隔离的有界内存与声明式配置；
+  - 增加独立 Coding adapter、文件围栏、危险命令护栏、测试传感器和确认机制；
+  - Docker 后端改用仓库根 Context 以打包本地 Harness；
+  - 新增根 `.gitlab-ci.yml` 的 `unit-test` job；
+  - 补全 README、SPEC、PLAN、SPEC_PROCESS，并将 REFLECTION 保留为学生本人填写模板。
+- TDD 红灯：`codingTools.test.ts` 首次编译因模块不存在失败；实现后第一次
+  护栏断言命中 Schema 的 `INVALID_ARGUMENT` 而非 Policy，人工将夹具改为
+  合法 UUID，使测试真正覆盖危险命令 Policy 分支。
+- 流程偏差：生产 Runtime 适配测试和实现处于同一修补批次，没有保留严格“先红后绿”证据；已在 PLAN 如实标注，未追溯性伪造。
+- 已执行验证：Harness 原有 38 项测试曾通过；Backend Runtime 1/1；后端完整 332/332；后端类型检查；前端生产构建。
+- 最终验证：Harness 43/43；Coding Demo 5/5；Backend Runtime 1/1；后端
+  332/332；前端构建；后端 Docker 干净构建及容器内包导入；Markdown
+  lint 0 issue；`git diff --check` 通过。
+- 人工/外部硬门槛：异类型陌生 Agent 冷启动、学生反思正文、最终安全凭据管理、课程方双轨方向确认、远端 CI/PR/commit/部署证据。

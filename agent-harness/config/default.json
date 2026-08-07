@@ -1,0 +1,5 @@
+{
+  "maxSteps": 6,
+  "toolTimeoutMs": 10000,
+  "duplicateActionLimit": 2
+}

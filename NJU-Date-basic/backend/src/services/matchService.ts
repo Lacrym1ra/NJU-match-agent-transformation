@@ -899,6 +899,30 @@ export async function getCurrentMatch(userId: string) {
   return rows[0];
 }
 
+/** Minimal permission-bound match context for the user-facing Agent. */
+export async function getAgentCurrentMatchContext(userId: string) {
+  const match = await getCurrentMatch(userId);
+  if (!match) return { status: 'NO_MATCH' as const };
+  const isUserA = match.userAId === userId;
+  const partnerId = isUserA ? match.userBId : match.userAId;
+  const [partner] = await db.select({
+    id: users.id, nickname: users.nickname, department: users.department,
+    grade: users.grade, campus: users.campus, mbti: users.mbti,
+    bio: users.bio, avatarUrl: users.avatarUrl,
+  }).from(users).where(eq(users.id, partnerId)).limit(1);
+  return {
+    id: match.id,
+    status: match.status,
+    source: match.source ?? 'weekly',
+    score: match.scoreVisible === false ? null : match.score,
+    curatorNote: match.curatorNote,
+    partner: partner ?? null,
+    myAction: isUserA ? match.userAAction : match.userBAction,
+    partnerActed: Boolean(isUserA ? match.userBAction : match.userAAction),
+    weekOf: match.weekOf,
+  };
+}
+
 /**
  * Record a user's action on a match.
  */

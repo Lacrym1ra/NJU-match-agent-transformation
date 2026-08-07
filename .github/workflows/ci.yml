@@ -120,7 +120,13 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: NJU-Date-basic/backend/package-lock.json
+          cache-dependency-path: |
+            agent-harness/package-lock.json
+            NJU-Date-basic/backend/package-lock.json
+
+      - name: Build local Harness dependency
+        working-directory: agent-harness
+        run: npm ci && npm run build
 
       - name: Install
         run: npm ci

@@ -16,6 +16,7 @@ export type ObservationCategory =
   | "FORBIDDEN"
   | "NOT_FOUND"
   | "NO_RESULTS"
+  | "VALIDATION_FAILED"
   | "POLICY_DENIED"
   | "SERVICE_ERROR";
 
@@ -56,7 +57,9 @@ export interface AgentContext {
   readonly step: number;
   readonly maxSteps: number;
   readonly observations: readonly Observation[];
+  readonly memory: readonly import("../memory/types.js").MemoryEntry[];
   readonly availableTools: readonly string[];
+  readonly inputContext?: unknown;
 }
 
 export interface AgentRunConfig {
@@ -69,4 +72,6 @@ export interface RunRequest {
   readonly runId: string;
   readonly goal: string;
   readonly userId: string;
+  readonly sessionId?: string;
+  readonly context?: unknown;
 }

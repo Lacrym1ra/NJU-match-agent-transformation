@@ -22,8 +22,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.demo
+      context: ..
+      dockerfile: NJU-Date-basic/backend/Dockerfile.demo
     restart: unless-stopped
     depends_on:
       postgres:

@@ -6,7 +6,10 @@ import {
   JoinCirclePayload,
   SentCircleJoinRequest,
   createCircle,
+  devApproveCreatedCircle,
+  devApproveOwnCircleJoinRequest,
   getCircles,
+  getLocalTestCapabilities,
   getMyCircles,
   getMyCreatedCircles,
   getSentCircleJoinRequests,
@@ -42,6 +45,9 @@ export const CircleHome: React.FC = () => {
   const [joiningCircle, setJoiningCircle] = useState<Circle | null>(null);
   const [joiningCircleId, setJoiningCircleId] = useState<string | null>(null);
   const [withdrawingJoinRequestId, setWithdrawingJoinRequestId] = useState<string | null>(null);
+  const [devApprovingJoinRequestId, setDevApprovingJoinRequestId] = useState<string | null>(null);
+  const [devApprovingCreatedCircleId, setDevApprovingCreatedCircleId] = useState<string | null>(null);
+  const [localTestEnabled, setLocalTestEnabled] = useState(false);
   const [leavingCircleId, setLeavingCircleId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateCircle, setShowCreateCircle] = useState(false);
@@ -54,6 +60,7 @@ export const CircleHome: React.FC = () => {
 
   useEffect(() => {
     fetchCircles();
+    void getLocalTestCapabilities().then((result) => setLocalTestEnabled(result.enabled));
   }, []);
 
   const fetchCircles = async () => {
@@ -196,6 +203,34 @@ export const CircleHome: React.FC = () => {
     }
   };
 
+  const handleDevApproveOwnRequest = async (request: SentCircleJoinRequest) => {
+    if (!localTestEnabled || devApprovingJoinRequestId) return;
+    setDevApprovingJoinRequestId(request.id);
+    try {
+      const result = await devApproveOwnCircleJoinRequest(request.id);
+      toast.success(result.message || '测试申请已通过');
+      await fetchCircles();
+    } catch (error: any) {
+      toast.error(error?.message || '测试一键通过失败');
+    } finally {
+      setDevApprovingJoinRequestId(null);
+    }
+  };
+
+  const handleDevApproveCreatedCircle = async (circle: Circle) => {
+    if (!localTestEnabled || devApprovingCreatedCircleId) return;
+    setDevApprovingCreatedCircleId(circle.id);
+    try {
+      const result = await devApproveCreatedCircle(circle.id);
+      toast.success(result.message || '测试圈子已审核通过');
+      await fetchCircles();
+    } catch (error: any) {
+      toast.error(error?.message || '圈子测试审核失败');
+    } finally {
+      setDevApprovingCreatedCircleId(null);
+    }
+  };
+
   // 提取当前存在的所有大类
   const allAvailableCategories = useMemo(() => {
     return getAvailableCircleCategories([...circles, ...createdCircles]);
@@ -320,14 +355,27 @@ export const CircleHome: React.FC = () => {
                           {request.expiresAt ? `过期于 ${new Date(request.expiresAt).toLocaleString('zh-CN')}` : '等待圈主审核'}
                         </p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => void handleWithdrawJoinRequest(request)}
-                        disabled={Boolean(withdrawingJoinRequestId)}
-                        className="shrink-0 rounded-full border border-[#B94A48]/25 px-3 py-1.5 text-xs text-[#B94A48] transition-colors hover:bg-[#B94A48]/6 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {withdrawingJoinRequestId === request.id ? '撤回中...' : '撤回'}
-                      </button>
+                      <div className="flex shrink-0 flex-wrap justify-end gap-2">
+                        {localTestEnabled && (
+                          <button
+                            type="button"
+                            onClick={() => void handleDevApproveOwnRequest(request)}
+                            disabled={Boolean(devApprovingJoinRequestId || withdrawingJoinRequestId)}
+                            title="仅本地 development 环境可用"
+                            className="rounded-full bg-[#420047] px-3 py-1.5 text-xs text-white transition-colors hover:bg-[#5b155f] disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {devApprovingJoinRequestId === request.id ? '通过中...' : '测试一键通过'}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => void handleWithdrawJoinRequest(request)}
+                          disabled={Boolean(withdrawingJoinRequestId || devApprovingJoinRequestId)}
+                          className="rounded-full border border-[#B94A48]/25 px-3 py-1.5 text-xs text-[#B94A48] transition-colors hover:bg-[#B94A48]/6 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {withdrawingJoinRequestId === request.id ? '撤回中...' : '撤回'}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -352,9 +400,22 @@ export const CircleHome: React.FC = () => {
 	                          <p className="mt-2 rounded-lg bg-[#B94A48]/6 px-3 py-2 text-xs leading-5 text-[#B94A48]">未通过原因：{circle.reviewNote}</p>
 	                        )}
 	                      </div>
-                      <span className="shrink-0 rounded-full border border-[#8B7355]/20 px-2.5 py-1 text-xs text-[#8B7355]">
-                        {getCircleStatusLabel(circle)}
-                      </span>
+                      <div className="flex shrink-0 flex-col items-end gap-2">
+                        <span className="rounded-full border border-[#8B7355]/20 px-2.5 py-1 text-xs text-[#8B7355]">
+                          {getCircleStatusLabel(circle)}
+                        </span>
+                        {localTestEnabled && circle.status === 'pending_review' && (
+                          <button
+                            type="button"
+                            onClick={() => void handleDevApproveCreatedCircle(circle)}
+                            disabled={Boolean(devApprovingCreatedCircleId)}
+                            title="仅本地 development 环境可用"
+                            className="rounded-full bg-[#420047] px-3 py-1.5 text-xs text-white transition-colors hover:bg-[#5b155f] disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {devApprovingCreatedCircleId === circle.id ? '审核中...' : '测试一键通过圈子'}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

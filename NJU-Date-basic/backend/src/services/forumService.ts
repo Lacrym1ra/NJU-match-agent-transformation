@@ -1,4 +1,4 @@
-import { eq, and, isNull, desc, asc, count, inArray, sql } from 'drizzle-orm';
+import { eq, and, or, isNull, desc, asc, count, inArray, sql } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db/connection.js';
 import {
@@ -150,11 +150,17 @@ export interface CreatePostInput {
 export interface ListPostsOptions {
   circleId?: string;
   type?: ForumPostType;
+  types?: ForumPostType[];
   page: number;
   limit: number;
   sort?: ForumSort;
   authorScope?: AuthorScope;
   keyword?: string;
+  keywords?: string[];
+}
+
+function escapeLikeWildcards(value: string) {
+  return value.replace(/[%_\\]/g, '\\$&');
 }
 
 export interface CreateCommentInput {
@@ -543,23 +549,33 @@ export async function listPosts(userId: string, options: ListPostsOptions) {
 
   if (options.circleId) {
     conditions.push(eq(forumPosts.circleId, options.circleId));
-  } else {
+  } else if (!isPrivateScope) {
+    // Public forum search without a circle is intentionally global-only.
+    // Personal collections must span both global and circle-scoped posts.
     conditions.push(isNull(forumPosts.circleId));
   }
 
-  if (options.type) {
+  if (options.types?.length) {
+    conditions.push(inArray(forumPosts.type, options.types));
+  } else if (options.type) {
     conditions.push(eq(forumPosts.type, options.type));
   }
 
   // Keyword search: common fuzzy match in title/content (all terms must match)
-  if (options.keyword?.trim()) {
+  if (options.keywords?.length) {
+    const termConditions = options.keywords.slice(0, 8).map((term) => {
+      const pattern = `%${escapeLikeWildcards(term.trim())}%`;
+      return sql`(${forumPosts.title} ILIKE ${pattern} OR ${forumPosts.content} ILIKE ${pattern})`;
+    });
+    conditions.push(or(...termConditions)!);
+  } else if (options.keyword?.trim()) {
     const terms = options.keyword
       .trim()
       .split(/\s+/)
       .filter(Boolean)
       .slice(0, 6);
     for (const term of terms) {
-      const pattern = `%${term}%`;
+      const pattern = `%${escapeLikeWildcards(term)}%`;
       conditions.push(
         sql`(${forumPosts.title} ILIKE ${pattern} OR ${forumPosts.content} ILIKE ${pattern})`,
       );
@@ -1916,19 +1932,28 @@ async function listRecommendedPosts(
   // ── Build filter conditions ────────────────────────────────
 
   let typeCondition = sql``;
-  if (options.type) {
+  if (options.types?.length) {
+    const types = options.types.slice(0, 5);
+    typeCondition = sql`AND fp.type IN (${sql.join(types.map((type) => sql`${type}`), sql`, `)})`;
+  } else if (options.type) {
     typeCondition = sql`AND fp.type = ${options.type}`;
   }
 
   let keywordCondition = sql``;
-  if (options.keyword?.trim()) {
+  if (options.keywords?.length) {
+    const clauses = options.keywords.slice(0, 8).map((term) => {
+      const pattern = `%${escapeLikeWildcards(term.trim())}%`;
+      return sql`(fp.title ILIKE ${pattern} OR fp.content ILIKE ${pattern})`;
+    });
+    keywordCondition = sql`AND (${sql.join(clauses, sql` OR `)})`;
+  } else if (options.keyword?.trim()) {
     const terms = options.keyword
       .trim()
       .split(/\s+/)
       .filter(Boolean)
       .slice(0, 6);
     for (const term of terms) {
-      const pattern = `%${term}%`;
+      const pattern = `%${escapeLikeWildcards(term)}%`;
       keywordCondition = sql`${keywordCondition} AND (fp.title ILIKE ${pattern} OR fp.content ILIKE ${pattern})`;
     }
   }

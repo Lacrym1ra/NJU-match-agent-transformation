@@ -2,13 +2,15 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
-import { ValidationError } from '../utils/errors.js';
+import { ForbiddenError, ValidationError } from '../utils/errors.js';
+import { config } from '../config.js';
 import {
   listCircles,
   getCircleDetail,
   getChannelMembers,
   getMyCircles,
   createCustomCircle,
+  updateCircle,
   listMyCreatedCircles,
   joinCircle,
   leaveCircle,
@@ -39,6 +41,12 @@ import {
 } from '../modules/circles/index.js';
 
 const router = Router();
+
+function requireDevelopmentTestAccount(email: string) {
+  if (!email.toLowerCase().endsWith('@test.local')) {
+    throw new ForbiddenError('开发测试审核仅允许 @test.local 账号');
+  }
+}
 
 // ─── Validation schemas ─────────────────────────────────────────
 
@@ -299,6 +307,49 @@ router.put('/join-requests/:requestId/withdraw', requireAuth, async (req, res, n
     next(err);
   }
 });
+
+// Development-only convenience: approve the authenticated test user's own
+// pending request. This route does not exist when NODE_ENV=production.
+if (config.isDev) {
+  router.put('/join-requests/:requestId/dev-approve-own', requireAuth, async (req, res, next) => {
+    try {
+      requireDevelopmentTestAccount(req.auth!.email);
+      const sent = await listSentJoinRequests(req.auth!.userId, 1, 100);
+      const request = sent.requests.find((item) => item.id === req.params.requestId);
+      if (!request) throw new ValidationError('只能处理当前测试账号自己的入圈申请');
+
+      const result = await reviewCircleJoinRequest(
+        request.circleId,
+        request.id,
+        req.auth!.userId,
+        { status: 'approved' },
+        { expectedApplicantId: req.auth!.userId },
+      );
+      res.json({ ...result, developmentOnly: true });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.put('/:circleId/dev-approve-created', requireAuth, async (req, res, next) => {
+    try {
+      requireDevelopmentTestAccount(req.auth!.email);
+      const created = await listMyCreatedCircles(req.auth!.userId);
+      const circle = created.find((item) => item.id === req.params.circleId);
+      if (!circle) throw new ValidationError('只能处理当前测试账号自己创建的圈子');
+      if (circle.status !== 'pending_review') throw new ValidationError('该圈子当前不是待审核状态');
+
+      const approved = await updateCircle(
+        circle.id,
+        { status: 'active', reviewNote: null },
+        req.auth!.userId,
+      );
+      res.json({ message: '测试圈子已审核通过并上线', circle: approved, developmentOnly: true });
+    } catch (err) {
+      next(err);
+    }
+  });
+}
 
 // GET /circles/:circleId/manage/overview
 router.get('/:circleId/manage/overview', requireAuth, async (req, res, next) => {

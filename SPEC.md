@@ -1,6 +1,6 @@
 # SPEC：NJU-Match Social Agent Harness
 
-> 状态：方向基线，待本 PR 人工确认。
+> 状态：实现同步版（2026-08-07）。Social WebUI 与 Project A coding 机制采用同一自研内核、不同工具集。
 >
 > 本 SPEC 只覆盖 Project A。真实模型 API Key 后续由用户提供，在此之前所有测试与演示使用 Mock LLM。
 
@@ -29,7 +29,7 @@ Harness 必须用确定性代码保证身份、权限、写操作确认、预算
 
 - 自动回答整套问卷；
 - 自动替用户建立关系或发送私聊；
-- 自动修改代码、执行 Shell 或消费 CI 反馈；
+- 让普通社交用户通过 WebUI 修改代码、执行 Shell 或读取部署机文件；
 - 用高层 Agent 框架代替 Harness 内核；
 - 四天内覆盖所有 NJU-Match 模块；
 - 在仓库中保存真实 API Key。
@@ -111,6 +111,17 @@ Harness 必须用确定性代码保证身份、权限、写操作确认、预算
 
 ## 5. 领域与机制设计
 
+### 5.0 Project A 双轨边界
+
+课程原文要求 Coding Agent Harness，而既有产品方向是 NJU-Match Social Agent。为避免把文件系统与命令权限暴露给普通用户，交付采用同一内核、两套适配器：
+
+- `NJU-Match adapter`：供 WebUI 使用，只注册资料、问卷、圈子、论坛及经确认的社交动作；
+- `Coding adapter`：供离线机制测试和开发者场景使用，注册受工作区限制的文件、命令和测试工具；
+- 两者共享 `AgentLoop`、`LLMPort`、Parser、Registry、Memory、StopController 与 Trace；
+- WebUI 后端不得注册 `NodeCodingPort`，从架构上隔离服务器文件和命令权限。
+
+这一双轨方案补足 coding 领域的确定性机制，但“产品主场景是否完全符合课程 A 命题”仍须课程方确认，不能仅凭实现自行消除该验收风险。
+
 ### 5.1 决策
 
 Harness 每轮构建受限 Context，调用 `LLMPort.decide()`，
@@ -122,7 +133,7 @@ Harness 决定该动作是否有效、允许以及能否执行。
 MVP 工具：
 
 | 名称 | 风险 | MVP |
-|---|---|---|
+| --- | --- | --- |
 | `get_my_profile` | Read | 是 |
 | `get_questionnaire_status` | Read | 是 |
 | `find_matches` | Read | 可选 |
@@ -133,6 +144,10 @@ MVP 工具：
 | `draft_forum_post` | Draft | 是 |
 | `publish_forum_post` | Write | 是 |
 | `join_circle` | Write | 可选 |
+| `read_file` | Coding Read | 是（仅 Coding adapter） |
+| `write_file` | Coding Write | 是（仅 Coding adapter，需确认） |
+| `run_tests` | Coding Feedback | 是（仅 Coding adapter） |
+| `run_command` | Coding Dangerous | 是（仅 Coding adapter，白名单或需确认） |
 
 工具必须：
 
@@ -146,7 +161,9 @@ MVP 工具：
 
 ### 5.3 上下文
 
-每轮只提供当前请求、会话摘要、最少用户资料、工具定义、最近 Observation、待确认动作和剩余预算。不得向模型提供完整数据库、完整帖子库或整个代码库。
+每轮只提供当前请求、会话摘要、最少用户资料、工具定义、最近 Observation、
+待确认动作和剩余预算。当前页的私密 Context 与可持久记忆分离；不得把完整
+页面数据写入记忆，也不得向模型提供完整数据库、帖子库或整个代码库。
 
 ### 5.4 记忆
 
@@ -185,6 +202,10 @@ MVP 使用会话级记忆，保存：
 - 写入是否成功；
 - 用户确认、拒绝或超时。
 
+Coding adapter 的客观反馈额外包括测试、lint、类型检查和构建退出码。
+非零退出码由代码确定性转换为 `VALIDATION_FAILED`，连同截断后的
+stdout/stderr 回灌；不依赖模型“自我判断是否正确”。
+
 Observation 至少包含：
 
 ```ts
@@ -198,6 +219,7 @@ type Observation = {
     | "FORBIDDEN"
     | "NOT_FOUND"
     | "NO_RESULTS"
+    | "VALIDATION_FAILED"
     | "POLICY_DENIED"
     | "SERVICE_ERROR";
   summary: string;
@@ -219,6 +241,19 @@ type Observation = {
 - 各工具启用状态。
 
 配置不能削弱代码中的身份边界和写操作确认。
+
+### 5.8 Coding 治理护栏
+
+- 文件路径必须是工作区内相对路径；拒绝绝对路径、`..`、`.git`、`.env`、私钥与证书文件；
+- 命令通过 `spawn(command, args, { shell: false })` 执行，不接受拼接 Shell 字符串；
+- `rm`、`del`、Shell 解释器以及 `git reset/clean/push` 被硬拒绝，确认令牌也不能放行；
+- `git status/diff` 与 `npm test/run lint/run build/run typecheck` 属于安全集合；
+- 其他结构化命令需要与用户、命令及参数绑定的一次性、限时确认；
+- `write_file` 需要与用户和目标路径绑定的一次性确认；
+- 输出有长度上限，避免将无限日志灌入 Context。
+- 路径适配器解析真实路径，阻止符号链接逃逸；
+- `npm test` 最终仍会执行仓库脚本，MVP 仅允许受信任工作区。未知仓库必须
+  放入独立容器/虚拟机，这是当前未实现的沙箱边界。
 
 ## 6. 主要贡献
 
@@ -323,7 +358,9 @@ POST /api/agent/sessions/:id/cancel
 
 1. `publish_forum_post` 在确认前被暂停；
 2. `NO_RESULTS` 回灌后下一步 Action 改变；
-3. 伪造 `userId` 被确定性代码拒绝。
+3. 伪造 `userId` 被确定性代码拒绝；
+4. 危险 Coding 命令在 Port 产生副作用前被拒绝；
+5. 测试失败被转换为 `VALIDATION_FAILED`，Mock LLM 据此改为读取失败相关文件。
 
 以上演示不得依赖网络或真实模型。
 
@@ -349,6 +386,8 @@ POST /api/agent/sessions/:id/cancel
 - 原应用测试无回归；
 - GitHub Required Checks 全绿；
 - 无真实凭据进入仓库。
+- 真实 `/agent` API 通过自研循环执行，并在 Trace 中给出 Harness 状态、步数和工具序列；
+- Coding adapter 的文件边界、命令护栏、测试传感器和确认机制可在移除真实 LLM 后确定性测试。
 
 ## 13. 风险与未决问题
 
@@ -358,3 +397,7 @@ POST /api/agent/sessions/:id/cancel
 - 前端 Agent 入口采用嵌入原应用还是独立部署，待核心 API 完成后决定；
 - Provider 和模型参数等待用户提供 API Key 后确定；
 - 长期记忆不进入 MVP。
+- 当前会话记忆为进程内有界实现，不跨进程或重启；
+- 系统钥匙串式凭据录入/状态/更新/清除尚未实现；
+- 陌生异类型 Agent 冷启动验证尚未执行；
+- Social WebUI + Coding adapter 的双轨方案需课程方确认是否接受为 Project A 最终领域形态。

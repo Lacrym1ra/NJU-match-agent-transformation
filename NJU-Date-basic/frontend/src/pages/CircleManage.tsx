@@ -11,6 +11,7 @@ import {
   getCircleJoinRequests,
   getCircleManageOverview,
   getCircleManageMembers,
+  getLocalTestCapabilities,
   reviewCircleJoinRequest,
   transferCircleOwner,
   updateJoinPolicy,
@@ -47,6 +48,8 @@ export default function CircleManage() {
   const [loading, setLoading] = useState(true);
   const [savingPolicy, setSavingPolicy] = useState(false);
   const [reviewingRequestId, setReviewingRequestId] = useState<string | null>(null);
+  const [localTestEnabled, setLocalTestEnabled] = useState(false);
+  const [approvingAll, setApprovingAll] = useState(false);
   const [transferringOwner, setTransferringOwner] = useState(false);
   const [dissolvingCircle, setDissolvingCircle] = useState(false);
   const [selectedPolicy, setSelectedPolicy] = useState<JoinPolicyMode>('public');
@@ -101,6 +104,10 @@ export default function CircleManage() {
   useEffect(() => {
     void loadManageData();
   }, [id, requestFilter]);
+
+  useEffect(() => {
+    void getLocalTestCapabilities().then((result) => setLocalTestEnabled(result.enabled));
+  }, []);
 
   const handleSavePolicy = async () => {
     if (!id || !overview || savingPolicy || !policyChanged) return;
@@ -163,6 +170,26 @@ export default function CircleManage() {
       toast.error(err.message || '审批失败');
     } finally {
       setReviewingRequestId(null);
+    }
+  };
+
+  const handleDevApproveAll = async () => {
+    if (!id || approvingAll || reviewingRequestId) return;
+    const pendingRequests = requests.filter((request) => request.status === 'pending_review');
+    if (pendingRequests.length === 0) return;
+
+    setApprovingAll(true);
+    try {
+      for (const request of pendingRequests) {
+        await reviewCircleJoinRequest(id, request.id, 'approve');
+      }
+      toast.success(`测试操作完成：已通过 ${pendingRequests.length} 条申请`);
+      await loadManageData();
+    } catch (err: any) {
+      toast.error(err.message || '一键通过失败');
+      await loadManageData();
+    } finally {
+      setApprovingAll(false);
     }
   };
 
@@ -380,8 +407,20 @@ export default function CircleManage() {
                 <h2 className="font-serif text-xl tracking-widest">入圈审批</h2>
                 <p className="mt-1 text-xs text-[#8B7355]">逐条核对申请说明，审批结果会写入站内通知。</p>
               </div>
-              <div className="flex gap-1 overflow-x-auto rounded-full bg-[#EAE7E1]/50 p-1">
-                {REQUEST_FILTERS.map((filter) => (
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {localTestEnabled && requestFilter === 'pending_review' && requests.some((request) => request.status === 'pending_review') && (
+                  <button
+                    type="button"
+                    onClick={() => void handleDevApproveAll()}
+                    disabled={approvingAll || Boolean(reviewingRequestId)}
+                    title="仅本地 development 环境可用"
+                    className="rounded-full bg-[#420047] px-4 py-2 text-xs tracking-widest text-white transition-colors hover:bg-[#5b155f] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {approvingAll ? '批量通过中...' : '测试一键通过全部'}
+                  </button>
+                )}
+                <div className="flex gap-1 overflow-x-auto rounded-full bg-[#EAE7E1]/50 p-1">
+                  {REQUEST_FILTERS.map((filter) => (
                   <button
                     key={filter.value}
                     type="button"
@@ -394,7 +433,8 @@ export default function CircleManage() {
                   >
                     {filter.label}
                   </button>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
 

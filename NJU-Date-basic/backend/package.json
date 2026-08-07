@@ -24,6 +24,7 @@
     "test:db:g2": "npm run test:g2:integration"
   },
   "dependencies": {
+    "@nju-match/agent-harness": "file:../../agent-harness",
     "@alicloud/dm20151123": "^1.9.0",
     "@alicloud/openapi-client": "^0.4.15",
     "@alicloud/tea-util": "^1.4.11",

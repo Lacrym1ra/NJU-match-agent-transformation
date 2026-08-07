@@ -1,5 +1,6 @@
 import { ActionParseError, parseAction } from "../actions/parser.js";
 import type { LLMPort } from "../llm/LLMPort.js";
+import type { SessionMemory } from "../memory/types.js";
 import type { ToolRegistry } from "../tools/registry.js";
 import type { Tracer } from "../tracing/tracer.js";
 import {
@@ -28,6 +29,7 @@ export interface AgentLoopDependencies {
   readonly llm: LLMPort;
   readonly tools: ToolRegistry;
   readonly tracer: Tracer;
+  readonly memory?: SessionMemory;
   readonly config?: Partial<AgentRunConfig>;
 }
 
@@ -45,12 +47,14 @@ export class AgentLoop {
   readonly #llm: LLMPort;
   readonly #tools: ToolRegistry;
   readonly #tracer: Tracer;
+  readonly #memory: SessionMemory | undefined;
   readonly #config: AgentRunConfig;
 
   public constructor(dependencies: AgentLoopDependencies) {
     this.#llm = dependencies.llm;
     this.#tools = dependencies.tools;
     this.#tracer = dependencies.tracer;
+    this.#memory = dependencies.memory;
     this.#config = {
       ...DEFAULT_RUN_CONFIG,
       ...dependencies.config,
@@ -60,6 +64,16 @@ export class AgentLoop {
   public async run(request: RunRequest): Promise<AgentState> {
     let state = initialState(request.runId);
     const stopController = new StopController(this.#config);
+    const sessionId = request.sessionId ?? request.runId;
+    const memory = this.#memory === undefined
+      ? []
+      : await this.#memory.load(request.userId, sessionId);
+
+    await this.#memory?.append(request.userId, sessionId, {
+      kind: "user_goal",
+      content: request.goal,
+      createdAt: new Date().toISOString(),
+    });
 
     while (state.status === "RUNNING") {
       state = stopController.beforeDecision(state);
@@ -73,7 +87,9 @@ export class AgentLoop {
         step: state.step,
         maxSteps: this.#config.maxSteps,
         observations: state.observations,
+        memory,
         availableTools: this.#tools.names(),
+        ...(request.context === undefined ? {} : { inputContext: request.context }),
       };
 
       let rawAction: unknown;
@@ -125,6 +141,15 @@ export class AgentLoop {
           observation,
         });
         state = reduceObservation(state, observation);
+        await this.#memory?.append(request.userId, sessionId, {
+          kind: "observation",
+          content: JSON.stringify({
+            tool: observation.tool,
+            category: observation.category,
+            summary: observation.summary,
+          }),
+          createdAt: new Date().toISOString(),
+        });
       } catch (error: unknown) {
         if (!(error instanceof ActionParseError)) {
           state = reduceFailure(state, "Unexpected action processing failure.");
@@ -144,6 +169,14 @@ export class AgentLoop {
 
     if (state.status === "RUNNING") {
       return reduceBudgetExceeded(state, "Agent stopped without a final state.");
+    }
+
+    if (state.finalSummary) {
+      await this.#memory?.append(request.userId, sessionId, {
+        kind: "assistant_summary",
+        content: state.finalSummary,
+        createdAt: new Date().toISOString(),
+      });
     }
 
     return state;

@@ -29,8 +29,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: NJU-Date-basic/backend/Dockerfile
     container_name: nju-date-g2-demo-backend
     restart: unless-stopped
     depends_on:

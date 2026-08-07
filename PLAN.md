@@ -282,10 +282,81 @@ npm run build
   - Mock 仍是 CI 默认；
   - 真实 smoke test 只允许手动触发或受保护环境。
 
+### P7：Project A 关键缺口修复
+
+状态：本地实现与离线验证完成；冷启动、凭据管理增强和远端 CI 证据仍待完成。
+
+#### TASK-070：真实 WebUI 接入自研循环
+
+- 目标：消除“独立 Harness 存在，但真实 `/agent` 绕过循环直接单次调用模型”的缺口。
+- 文件：
+  - `NJU-Date-basic/backend/src/services/agentHarnessRuntime.ts`
+  - `NJU-Date-basic/backend/src/services/agentChatService.ts`
+  - `NJU-Date-basic/backend/src/routes/agent.ts`
+  - `NJU-Date-basic/frontend/src/api/agent.ts`
+- TDD 证据：新增生产适配器测试与实现处于同一修补批次，未保存
+  “测试先于实现”的独立红灯输出；这是需要在 `AGENT_LOG.md` 如实记录的
+  流程偏差，不能补写成已发生的红灯。
+- 实现：Provider 仅产生单步结构化 Action；自研循环负责解析、工具分发、反馈、停止和 Trace；前端生成会话 UUID。
+- 验证：
+
+```bash
+cd NJU-Date-basic/backend
+npm run lint
+node --import tsx --test src/services/agentHarnessRuntime.test.ts
+npm test
+cd ../frontend
+npm run build
+```
+
+- 本地结果：Runtime 适配测试 1/1；后端 332/332；前端构建通过。
+
+#### TASK-071：有界会话记忆与声明式配置
+
+- 目标：补齐六维机制中的记忆与配置最低实现。
+- 文件：`agent-harness/src/memory/`、`agent-harness/src/config/`、`agent-harness/config/default.json`。
+- 失败测试：跨用户记忆泄漏、超过条数后不淘汰、危险预算被接受。
+- 实现：按 `userId + sessionId` 隔离的进程内有界存储；配置 Schema 限制步骤、超时和重复动作预算。
+- 限制：不是持久化或多副本共享记忆。
+
+#### TASK-072：Coding 工具、反馈传感器和治理护栏
+
+- 目标：补齐 Project A 对 coding 领域的明确要求，同时不向 Social WebUI 开放服务器能力。
+- 文件：
+  - `agent-harness/src/tools/coding/codingTools.ts`
+  - `agent-harness/src/tools/coding/nodeCodingPort.ts`
+  - `agent-harness/tests/codingTools.test.ts`
+- 红灯：新增测试因 coding 模块不存在而编译失败；护栏测试第一次因伪确认令牌未通过 Schema，随后修正测试夹具以命中真正的 Policy 分支。
+- 实现：工作区路径限制、敏感文件拒绝、`shell: false`、危险命令硬拒绝、安全命令集合、写入/其他命令的一次性确认、测试退出码传感器。
+- 验证：
+
+```bash
+cd agent-harness
+npm run lint
+npm test
+npm run demo:coding
+```
+
+- Gate：危险命令副作用为 0；测试失败回灌 `VALIDATION_FAILED`；Mock LLM 下一步动作发生变化；写令牌不可重放。
+
+#### TASK-073：分发与 CI 构建边界
+
+- 目标：本地 `file:../../agent-harness` 依赖在干净 Docker Context 和 CI 中可解析。
+- 文件：后端 Dockerfile、Compose、Docker Workflow、根 `.gitlab-ci.yml`。
+- 验证：后端镜像必须以仓库根目录为 Context 构建；GitLab 必须存在精确名为 `unit-test` 的 job。
+
+#### TASK-074：仍需人工/外部完成的硬门槛
+
+- 使用不同类型、全新会话的陌生 Agent，仅凭 `SPEC.md + PLAN.md` 实施 1–2 个 Task，并把客观结果写入 `SPEC_PROCESS.md`；
+- 学生本人完成 1500–2500 字 `REFLECTION.md`；
+- 实现或明确验收一种支持隐藏录入、状态查看、更新和清除的安全凭据存储；
+- 获取课程方对 Social WebUI + Coding adapter 双轨领域的书面确认；
+- 推送后保存最后一次 GitHub/GitLab CI 全绿证据、PR/commit hash 与部署 URL。
+
 ## 四天安排
 
 | 日期 | 工作 | 预期 PR |
-|---|---|---|
+| --- | --- | --- |
 | Day 1 | 方向修正、SPEC、类型、MockLLM、最小循环 | TASK-001、P1 |
 | Day 2 | Service 盘点、Registry、四个只读 Tool | P2 |
 | Day 3 | Risk、HITL、发帖工具、Agent API/UI | P3、P4 |
