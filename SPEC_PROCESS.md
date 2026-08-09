@@ -113,3 +113,13 @@ Demo Harness 存在，不能证明交付 WebUI 使用了该机制。
 5. 要求遇到歧义立即暂停提问；
 6. 保存问题、实现 diff、测试输出与耗时；
 7. 由学生判断是 Spec 缺陷还是 Agent 阅读错误，并据证据更新本节。
+
+统一的执行记录表和验收口径见 [`docs/COLD_START_EVIDENCE.md`](./docs/COLD_START_EVIDENCE.md)。该文件当前仍是待执行协议，不代表冷启动已经完成。
+
+## 6. Superpowers 与 TDD 证据边界
+
+七步工作流映射、可复核红—绿记录和缺失项统一见
+[`docs/SUPERPOWERS_TDD_EVIDENCE.md`](./docs/SUPERPOWERS_TDD_EVIDENCE.md)。
+当前历史能够证明若干步骤采用了相同工程方法，但不能证明 Superpowers 插件或
+对应 skill 曾在所有任务中实际触发。生产 Runtime 等没有独立红灯的批次继续
+保留为流程偏差，不进行追溯性补造。

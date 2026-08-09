@@ -1,0 +1,16 @@
+{
+  "name": "nju-match-agent-transformation-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/test-all.mjs",
+    "verify": "node scripts/test-all.mjs",
+    "bootstrap:verify": "node scripts/test-all.mjs --install",
+    "docker:windows:build": "powershell -ExecutionPolicy Bypass -File scripts/windows/build-images.ps1",
+    "docker:windows:up": "powershell -ExecutionPolicy Bypass -File scripts/windows/run-local.ps1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

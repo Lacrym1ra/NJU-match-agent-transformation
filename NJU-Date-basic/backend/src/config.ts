@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { loadSecret } from './utils/secretSource.js';
 
 function toBoolean(value: string | undefined, defaultValue: boolean): boolean {
   if (value === undefined) return defaultValue;
@@ -93,7 +94,7 @@ export const config = {
   },
 
   agentLlm: {
-    apiKey: process.env.LLM_API_KEY || '',
+    apiKey: loadSecret('LLM_API_KEY'),
     baseUrl: process.env.LLM_BASE_URL || 'https://api.openai.com/v1',
     model: process.env.LLM_MODEL || 'gpt-5.6-terra',
   },

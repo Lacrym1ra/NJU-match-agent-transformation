@@ -5,13 +5,7 @@ unit-test:
   stage: test
   image: node:20-alpine
   script:
-    - cd agent-harness
-    - npm ci
-    - npm test
-    - cd ../NJU-Date-basic/backend
-    - npm ci
-    - npm run lint
-    - npm test
+    - npm run bootstrap:verify
   variables:
     NODE_ENV: test
     HARNESS_NETWORK: deny

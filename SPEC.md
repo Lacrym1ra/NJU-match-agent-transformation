@@ -303,6 +303,50 @@ CANCELLED
 BUDGET_EXCEEDED
 ```
 
+### 7.1 技术选型与理由
+
+<!-- markdownlint-disable MD013 -->
+
+| 技术 | 选择理由 |
+| --- | --- |
+| TypeScript | 前后端与 Harness 统一语言；严格类型适合描述不可信的 Action、Observation、Tool Schema 和状态转换。 |
+| Node.js 20+ | 与既有 NJU-Match 兼容，适合异步工具调用，并能使用内置 Test Runner 完成无网络确定性测试。 |
+| Express | 复用既有后端中间件、认证与 Service，避免为了 Agent 重写业务规则。 |
+| React | 复用现有 NJU-Match 页面、组件和路由，使 Agent 成为新入口而不是平行产品。 |
+| PostgreSQL | 保留原业务关系数据、事务、权限和约束，不让 Agent 直接绕过 Service 访问数据库。 |
+| Zod | 在运行时校验模型产生的结构化参数及 Tool 输出，失败时转换为确定性 Observation。 |
+| OpenAI-compatible Provider | Provider 只实现 `LLMPort`，Harness 不绑定单个模型；CI 仍以 Mock LLM 为默认。 |
+| Docker/OCI | Linux 生产环境与 Windows Docker Desktop 共用相同镜像，减少宿主机差异。 |
+| 自研 Harness | 课程要求主循环、工具分发、治理和反馈可独立编码、可移除真实 LLM 后测试，不能由高层 Agent 框架代替。 |
+
+<!-- markdownlint-enable MD013 -->
+
+前端视觉继续遵循原 NJU-Match 的 `DESIGN.md`、既有组件和设计 Token，保持
+产品一致性。本项目不额外引入 Open Design skill；原因是任务属于已有产品的
+增量改造，而不是从零建立第二套设计系统。该选择不改变可访问性、响应式布局
+和前端验收责任。
+
+### 7.2 规模、深度与模块边界
+
+项目至少包含以下职责独立、可分别测试的模块：
+
+1. Harness Core：循环、解析、Reducer、停止预算和 Trace；
+2. Tool/Policy：业务工具、Coding 工具、身份绑定、HITL 与护栏；
+3. Feedback/Memory：Observation 回灌、失败分类和有界会话记忆；
+4. NJU-Match Backend：认证、Service Adapter、数据库和 Provider Runtime；
+5. WebUI：独立 Agent 页面、全局悬浮入口、结果卡片和确认交互；
+6. Delivery/Security：Docker、Secret Scan、CodeQL、CI 和生产凭据注入。
+
+深度重点是“治理 + HITL + 反馈闭环”，而不是单纯增加聊天文案。核心判断均
+由确定性代码执行，并通过 Mock LLM 测试。仓库根目录的 `npm test` 是统一的
+一键验证入口；`npm run bootstrap:verify` 适用于已安装 Node.js 的干净工作区，
+会先安装三个子项目依赖再执行 Harness、后端和前端的 lint、test 与 build。
+GitHub `Workspace Verification` 和 GitLab `unit-test` 调用同一命令，避免本地、
+GitHub 与 GitLab 使用三套逐渐漂移的验收逻辑。
+
+边界声明：进程内记忆不等同于生产级长期记忆；受信任工作区命令围栏不等同
+于未知仓库沙箱；本项目不会用功能数量掩盖这两个边界。
+
 ## 8. API 边界
 
 建议 Agent API：
@@ -342,6 +386,23 @@ POST /api/agent/sessions/:id/cancel
 - 步数、重试、重复动作、超时和 Token 预算；
 - Secret Scan 和 CodeQL。
 
+### 9.1 LLM API Key 生命周期
+
+本地开发允许从被 Git 忽略的 `.env` 读取 `LLM_API_KEY`，但必须明确接受其
+明文落盘和进程环境可见风险。Ubuntu 正式部署不得使用这一来源，而采用：
+
+1. 管理员通过隐藏输入运行 `deploy/ubuntu/manage-llm-credential.sh set`；
+2. `systemd-creds` 将 Key 加密保存到 `/etc/credstore.encrypted`；
+3. `LoadCredentialEncrypted` 只在服务启动时将其解密到 systemd runtime tmpfs；
+4. Compose 将该文件只读挂载为 `/run/secrets/llm_api_key`；
+5. 后端通过 `LLM_API_KEY_FILE` 读取，不把值放入 Compose、镜像或命令行；
+6. `status` 只显示是否配置，`update` 原子替换，`clear` 删除凭据并停止服务。
+
+后端拒绝同时设置 `LLM_API_KEY` 和 `LLM_API_KEY_FILE`，拒绝相对路径、非
+allowlist runtime 目录、非普通文件、空文件和大于 16 KiB 的文件。错误信息
+不得包含 Key。该读取机制有无网络单元测试；目标 Ubuntu 主机仍须完成真实
+systemd 版本、权限、重启和清除验收。
+
 ## 10. 测试与机制演示
 
 测试分层：
@@ -371,6 +432,13 @@ POST /api/agent/sessions/:id/cancel
 - 本地与 CI 默认使用 Mock LLM；
 - Provider Key 仅通过环境变量或 GitHub Secret 注入；
 - Demo 环境不开放任意工具或管理能力。
+- Ubuntu 服务器使用 `deploy/ubuntu` 中的 systemd encrypted credential unit；
+- Windows 使用 Docker Desktop 的 Linux container mode，执行
+  `npm run docker:windows:build` 构建两张本地镜像，执行
+  `npm run docker:windows:up` 启动完整 Compose；
+- Windows 方案不是 Windows Server 原生容器，而是同一 Linux OCI 镜像在
+  Docker Desktop VM 中运行，从而保持与 Ubuntu 生产镜像一致；
+- 最终发布必须记录 GHCR tag、digest 和干净机器拉取/启动证据。
 
 ## 12. 验收标准
 
@@ -398,6 +466,7 @@ POST /api/agent/sessions/:id/cancel
 - Provider 和模型参数等待用户提供 API Key 后确定；
 - 长期记忆不进入 MVP。
 - 当前会话记忆为进程内有界实现，不跨进程或重启；
-- 系统钥匙串式凭据录入/状态/更新/清除尚未实现；
+- Ubuntu systemd 加密凭据的录入/状态/更新/清除和后端文件读取已提供，仍需
+  在目标服务器完成真实部署验收；
 - 陌生异类型 Agent 冷启动验证尚未执行；
 - Social WebUI + Coding adapter 的双轨方案需课程方确认是否接受为 Project A 最终领域形态。
