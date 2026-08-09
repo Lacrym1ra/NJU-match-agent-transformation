@@ -2,7 +2,7 @@
 
 > 审计日期：2026-08-07
 >
-> 审计基线：`a07c9aa`，分支 `feat/gateway-agent-design`
+> 审计基线：PR #15 提交 `095b91d`，分支 `feat/gateway-agent-design`
 >
 > 判定依据：AI4SE 通用要求与 Project A Coding Agent Harness 专属要求。
 
@@ -41,7 +41,8 @@
 
 ### GAP-P0-02：陌生异类型 Agent 冷启动证据缺失
 
-当前状态：`SPEC_PROCESS.md` 已有执行协议，但明确标注尚未执行。
+当前状态：`SPEC_PROCESS.md` 与 `docs/COLD_START_EVIDENCE.md` 已有统一执行
+协议和记录表，但明确标注尚未执行；模板不能算结果证据。
 
 缺失内容：
 
@@ -56,25 +57,22 @@
 
 ### GAP-P0-03：安全凭据管理实现缺失
 
-当前状态：只有 `.env.example` 和环境变量注入。它们能避免把 Key 写进源码，
-但不满足“隐藏录入、查看状态、更新、清除”的完整要求。
+当前状态：开发环境保留 `.env` 兼容来源；Ubuntu 生产已提供 systemd encrypted
+credential 的隐藏录入、状态、更新、清除、tmpfs 解密和只读容器挂载，后端
+支持受限的 `LLM_API_KEY_FILE`。目标 Ubuntu 主机的真实运行证据尚未完成。
 
-缺失实现：
+已有实现：`deploy/ubuntu`、`loadSecret()` 及 5 项无网络单元测试。
 
-- Windows Credential Manager、系统钥匙串或加密凭据文件适配器；
-- 首次运行的隐藏输入；
-- 只显示“已配置/未配置”的状态查询；
-- 更新和清除命令或管理界面；
-- 对 `.env` 明文、进程环境可见性的威胁说明与迁移路径；
-- 对凭据适配器的 Mock 单元测试。
+仍缺：目标服务器 systemd 版本/主机密钥或 TPM、权限、重启、更新和清除的
+真实验收记录；其他应用秘密继续按部署平台 Secret 规则管理。
 
 验收标准：在不回显明文 Key 的前提下完成录入、状态、更新、清除四个流程，
 并保留可重复测试和 README 操作说明。
 
 ### GAP-P0-04：最终 CI/CD 通过记录缺失
 
-当前状态：GitHub Actions 和根 `.gitlab-ci.yml` 已存在，但当前分支刚推送，
-仓库中没有最后一次 Pipeline 全绿的固定证据。
+当前状态：`docs/CI_CD_EVIDENCE.md` 已固定 PR #15、提交 `095b91d` 和
+11 个成功的 GitHub Check Run；GitLab `unit-test` 仍没有远端 Pipeline 链接。
 
 缺失内容：
 
@@ -84,14 +82,16 @@
 - 机制演示 Artifact 下载链接或截图；
 - 失败后修复和重跑记录（如发生）。
 
-建议新增：`docs/CI_CD_EVIDENCE.md`。
+证据文件：`docs/CI_CD_EVIDENCE.md`。
 
 验收标准：记录与最终提交 SHA 对应，最后一次执行为 pass，而不是本地测试
 输出或 Workflow 文件存在本身。
 
 ### GAP-P0-05：公网部署 URL 与可访问证据缺失
 
-当前状态：README 只有本地 `http://127.0.0.1:8082`，没有最终公网 WebUI。
+当前状态：README 只有本地 `http://127.0.0.1:8082`；
+`docs/DEPLOYMENT_EVIDENCE.md` 已定义部署架构、验收矩阵和安全检查，但没有
+最终公网 WebUI 的真实结果。
 
 缺失内容：
 
@@ -110,6 +110,8 @@ Project A 原文要求 Coding Agent Harness。这一双轨实现降低了技术�
 自动等同于课程方接受该选题形式。
 
 缺失证据：课程教师或助教对“双轨交付”的明确确认。
+`docs/PROJECT_A_DIRECTION_CONFIRMATION.md` 已给出无诱导性的确认问题和原始
+回复记录表；表格必须由真实书面回复完成。
 
 验收标准：保存书面确认；若不被接受，则需要把 Coding Harness 提升为主要
 入口和主要演示对象，而不只是库工厂与离线测试。
@@ -226,15 +228,11 @@ Review 结论；部分 Task 粒度远大于要求的 2–5 分钟步骤。
 
 ### GAP-P1-08：第三方许可证与 NOTICE 清单缺失
 
-当前状态：package manifests 存在，但 README 没有列出关键第三方组件、用途和
-许可证，也没有 `THIRD_PARTY_NOTICES.md`。
+当前状态：已新增 `THIRD_PARTY_NOTICES.md`，按三个 lockfile 列出直接生产
+依赖的解析版本、用途和许可证，并在 README 建立索引。
 
-缺失内容：
-
-- 直接生产依赖的名称、版本范围、用途、许可证；
-- OpenAI SDK、React、Express、Zod、PostgreSQL 驱动等关键依赖；
-- 复制或改编的第三方代码来源；
-- 不兼容许可证检查。
+最终提交前仍需：lockfile 变化后重新生成清单、审计传递依赖与上游 NOTICE，
+并对未知或不兼容许可证做人工确认。
 
 ## 4. P2：已有实现，但最终交付前仍需补证据
 

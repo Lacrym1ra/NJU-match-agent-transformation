@@ -122,3 +122,46 @@
   332/332；前端构建；后端 Docker 干净构建及容器内包导入；Markdown
   lint 0 issue；`git diff --check` 通过。
 - 人工/外部硬门槛：异类型陌生 Agent 冷启动、学生反思正文、最终安全凭据管理、课程方双轨方向确认、远端 CI/PR/commit/部署证据。
+
+---
+
+## 2026-08-07 — TASK-075
+
+- Agent：Codex；未使用 subagent，也未冒充异类型陌生 Agent 冷启动。
+- 目标：补齐除 `REFLECTION.md` 正文外，当前完全缺失或不能算交付的证据文件与许可证清单。
+- 输入依据：AI4SE 通用最终交付清单、Project A 专属要求及 `DELIVERY_GAP_AUDIT.md`。
+- 已完成：
+  - 固化 PR #15、提交 `095b91d` 和全部 GitHub Check Run 链接；
+  - 记录 CodeQL Polynomial ReDoS 的失败—修复—重跑证据；
+  - 建立冷启动、部署、课程方向确认和最终验收的统一记录文件；
+  - 根据三个 lockfile 建立直接生产依赖、用途和许可证清单；
+  - 更新 README、PLAN 和 SPEC_PROCESS 的证据索引与真实状态。
+- 人工边界：未填写学生反思；未伪造 GitLab Pipeline、公网部署、公开镜像、教师回复或陌生 Agent 实测结果。
+- 过程说明：本 Task 是交付审计与文档固化，不宣称采用严格 TDD；所有可验证事实来自仓库、lockfile 和 GitHub 远端运行记录。
+
+---
+
+## 2026-08-08 — TASK-076
+
+- Agent：Codex；当前环境没有可调用的 Superpowers skill，未伪造插件触发或 subagent 记录。
+- 目标：针对通用要求第三章补充 Ubuntu 安全凭据、Windows Docker Desktop 分发、技术选型、一键验证以及工作流证据。
+- 人工决策：正式部署目标为 Ubuntu；Windows 只要求 Docker Desktop 运行
+  同一 Linux OCI 镜像；UI 继续使用原项目 `DESIGN.md`，不引入 Open Design。
+- TDD 红灯：先加入 `src/utils/secretSource.test.ts`，执行
+  `node --import tsx --test src/utils/secretSource.test.ts`，因
+  `ERR_MODULE_NOT_FOUND` 失败。
+- 绿灯：实现 `loadSecret` 后相同测试 5/5，通过 backend TypeScript lint。
+- 安全实现：环境变量和文件来源互斥；Secret 文件必须是 allowlist 目录内的绝对路径、普通文件、非空且不超过 16 KiB；错误不回显秘密。
+- 部署实现：systemd encrypted credential 隐藏录入、状态、更新、清除；运行时 tmpfs 解密并只读挂载到后端容器。
+- 分发实现：增加 Windows Docker Desktop Linux container mode 的镜像构建/
+  Compose 启动脚本，以及仓库根 `npm test`/`bootstrap:verify`。
+- 统一脚本第一次在 Windows 启动 `npm.cmd` 时因 `spawnSync EINVAL` 失败；
+  改为通过当前 npm CLI 的 Node 入口、`shell: false` 执行后通过。
+- 重构后验证：`npm run bootstrap:verify` 在重新安装依赖后通过；Harness
+  43/43、Backend 338/338、Frontend 31/31、生产构建成功。
+- 静态验证：PowerShell Parser、Git Bash `bash -n`、Compose 合并配置、
+  Markdownlint 和 `git diff --check` 通过。
+- 环境限制：Docker Desktop 引擎未启动，因此本轮未声称已在本机构建镜像；
+  Windows 脚本会拒绝该状态，镜像仍须在 Docker 启动后或远端 CI 实际构建。
+- 证据边界：`docs/SUPERPOWERS_TDD_EVIDENCE.md` 只映射可证实的流程；
+  历史没有 skill invocation、worktree 或 subagent 证据的步骤仍标为缺失。

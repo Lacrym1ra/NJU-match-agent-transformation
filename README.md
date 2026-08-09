@@ -69,8 +69,9 @@ Agent：
 ai4coding-lab/
 ├─ NJU-Date-basic/       NJU-Match 业务基线
 ├─ agent-harness/        自研 Agent Loop、工具、治理、反馈、记忆与 API
-├─ docs/                 架构、工具规范、威胁模型、评测与证据
+├─ docs/                 CI、冷启动、部署、方向确认与最终交付证据
 ├─ .github/              GitHub Workflow 与仓库治理
+├─ THIRD_PARTY_NOTICES.md
 ├─ SPEC.md
 ├─ PLAN.md
 ├─ SPEC_PROCESS.md
@@ -123,6 +124,54 @@ npm run demo:confirmation
 npm run demo:feedback
 ```
 
+### Windows Docker Desktop
+
+Windows 端使用 Docker Desktop 的 Linux container mode，构建与 Ubuntu 生产
+环境相同的 OCI 镜像，而不是维护不兼容的 Windows Server 镜像：
+
+```powershell
+Copy-Item NJU-Date-basic/.env.local-test.example NJU-Date-basic/.env.local-test
+npm run docker:windows:build
+npm run docker:windows:up
+```
+
+脚本会拒绝未启动的 Docker Desktop 和 Windows container mode。默认页面为
+`http://127.0.0.1:8082`，本地测试 `.env.local-test` 不得提交。
+
+### Ubuntu 生产 LLM 凭据
+
+Ubuntu 正式服务器使用 systemd encrypted credentials，不把 LLM Key 写入
+`.env`、Compose、镜像或命令行。完整步骤见
+[`deploy/ubuntu/README.md`](./deploy/ubuntu/README.md)。核心管理命令为：
+
+```bash
+sudo bash deploy/ubuntu/manage-llm-credential.sh set
+sudo bash deploy/ubuntu/manage-llm-credential.sh status
+sudo bash deploy/ubuntu/manage-llm-credential.sh update
+sudo bash deploy/ubuntu/manage-llm-credential.sh clear
+```
+
+`status` 不回显明文；`clear` 删除凭据并停止服务。开发环境仍可使用被忽略的
+`.env`，但它是明文兼容来源，不应复制到生产服务器。
+
+## 一键验证
+
+已有依赖时：
+
+```bash
+npm test
+```
+
+安装了 Node.js 20+ 的干净工作区：
+
+```bash
+npm run bootstrap:verify
+```
+
+该入口依次验证 Harness、后端和前端；CI 与本地都不需要真实 LLM Key。
+GitHub `Workspace Verification` 和 GitLab `unit-test` 也执行
+`npm run bootstrap:verify`，保证交付命令与远端传感器一致。
+
 ## 分发命令
 
 容器分发使用仓库根目录作为后端构建上下文，以便包含本地 Harness 包：
@@ -142,7 +191,8 @@ PostgreSQL 16。
 - Coding 工具是课程机制扩展，尚无独立 Coding WebUI，也不向社交用户开放；
 - `run_tests` 会执行仓库自身 npm script；当前只适用于受信任工作区，测试未知仓库
   前仍需容器/虚拟机沙箱；
-- `.env` 仅是开发兼容来源，不满足“系统钥匙串录入、查看状态、更新、清除”的最终增强要求；
+- Ubuntu 已提供 systemd 加密凭据录入、状态、更新和清除；目标服务器上的
+  systemd/权限/重启验收尚未完成；
 - 未完成由不同类型陌生 Agent 执行的冷启动验证，见 `SPEC_PROCESS.md`；
 - Project A 原文要求 Coding Agent，而产品主场景是 Social Agent；最终提交前需得到课程方对“双轨交付”的确认。
 
@@ -179,3 +229,15 @@ PostgreSQL 16。
 ```
 
 详细规则见 [GIT_WORKFLOW.md](./GIT_WORKFLOW.md)，需求见 [SPEC.md](./SPEC.md)，任务顺序见 [PLAN.md](./PLAN.md)。
+
+## 交付证据索引
+
+- [最终交付检查表](./docs/FINAL_DELIVERY_CHECKLIST.md)
+- [GitHub/GitLab CI/CD 证据](./docs/CI_CD_EVIDENCE.md)
+- [陌生异类型 Agent 冷启动记录](./docs/COLD_START_EVIDENCE.md)
+- [公网部署与分发证据](./docs/DEPLOYMENT_EVIDENCE.md)
+- [Project A 双轨方向确认](./docs/PROJECT_A_DIRECTION_CONFIRMATION.md)
+- [Superpowers 与 TDD 证据](./docs/SUPERPOWERS_TDD_EVIDENCE.md)
+- [第三方依赖与许可证](./THIRD_PARTY_NOTICES.md)
+
+证据文件严格区分“已有配置”“本地通过”和“远端/公网已验收”。仍标记为待填写的外部证据必须由学生在真实执行后回填，不得以计划、截图占位或 AI 推测替代。
