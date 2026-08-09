@@ -15,6 +15,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  workspace-verification:
+    name: Workspace Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install and run the repository-level verification command
+        run: npm run bootstrap:verify
+        env:
+          NODE_ENV: test
+          HARNESS_NETWORK: deny
+
   repository-policy:
     name: Repository Policy
     runs-on: ubuntu-latest

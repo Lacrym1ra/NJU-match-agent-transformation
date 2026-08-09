@@ -353,6 +353,37 @@ npm run demo:coding
 - 获取课程方对 Social WebUI + Coding adapter 双轨领域的书面确认；
 - 推送后保存最后一次 GitHub/GitLab CI 全绿证据、PR/commit hash 与部署 URL。
 
+#### TASK-075：最终交付证据与许可证基线
+
+- 状态：文档基线已建立，外部证据仍按各文件状态执行；
+- 文件：
+  - `docs/CI_CD_EVIDENCE.md`
+  - `docs/COLD_START_EVIDENCE.md`
+  - `docs/DEPLOYMENT_EVIDENCE.md`
+  - `docs/PROJECT_A_DIRECTION_CONFIRMATION.md`
+  - `docs/FINAL_DELIVERY_CHECKLIST.md`
+  - `THIRD_PARTY_NOTICES.md`
+- 已记录：PR #15 的 commit `095b91d`、11 个成功 Check Run、CodeQL 失败—修复—重跑链路，以及直接生产依赖许可证；
+- 不得宣称完成：GitLab Pipeline、公网 URL、公开镜像、异类型 Agent 冷启动和课程方确认，直至存在真实链接或原始记录；
+- 验证：Markdown lint、链接人工抽查、`git diff --check`、lockfile 依赖版本抽查。
+
+#### TASK-076：跨平台分发、Ubuntu 凭据与统一验证
+
+- 目标：满足第三章中安全配置、Windows 可运行分发、技术选型和一键测试要求；
+- 文件：
+  - `NJU-Date-basic/backend/src/utils/secretSource.ts`
+  - `deploy/ubuntu/`
+  - `scripts/windows/`
+  - `scripts/test-all.mjs`
+  - 根 `package.json`
+  - `docs/SUPERPOWERS_TDD_EVIDENCE.md`
+- 红灯：`secretSource.test.ts` 先加入，首次执行因实现模块不存在而得到 `ERR_MODULE_NOT_FOUND`；
+- 绿灯：最小实现后目标测试 5/5，后端 TypeScript lint 通过；
+- 重构后验证：后端完整测试、前端测试/构建、Harness 测试和 Markdown lint；
+- Ubuntu：Key 由 systemd encrypted credential 管理，经 tmpfs 只读文件挂载；
+- Windows：Docker Desktop Linux container mode 构建并运行与 Ubuntu 相同的 OCI 镜像；
+- 诚实边界：本轮没有可调用的 Superpowers skill，不将方法映射写成插件调用证据。
+
 ## 四天安排
 
 | 日期 | 工作 | 预期 PR |
