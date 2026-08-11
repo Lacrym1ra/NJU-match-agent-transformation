@@ -1023,6 +1023,81 @@ export async function mockRequest(path: string, options: RequestInit): Promise<a
   // Add random delay to simulate network latency
   await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
 
+  // Project B standalone modules. Kept in-memory so browser tests exercise the
+  // real page state machine without mixing these records into legacy mocks.
+  const projectBState = globalThis as typeof globalThis & {
+    __mockResonance?: any[]; __mockMeetupSafety?: any[];
+  };
+  projectBState.__mockResonance ??= [];
+  projectBState.__mockMeetupSafety ??= [];
+  if (url.pathname === '/resonance' && method === 'GET') {
+    return { capsules: projectBState.__mockResonance };
+  }
+  if (url.pathname === '/resonance' && method === 'POST') {
+    const body = getBody();
+    const capsule = {
+      id: crypto.randomUUID(), title: body.title, prompt: body.prompt,
+      status: 'awaiting_participant', role: 'creator', hasParticipant: false,
+      isRevealed: false, myResponse: null, otherResponse: null,
+      hasResponded: false, otherHasResponded: false,
+      expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+      revealedAt: null, createdAt: new Date().toISOString(),
+    };
+    projectBState.__mockResonance.unshift(capsule);
+    return { capsule, inviteCode: 'MOCK2345' };
+  }
+  if (url.pathname === '/resonance/join' && method === 'POST') {
+    const capsule = {
+      id: crypto.randomUUID(), title: '朋友发来的胶囊', prompt: '最近有什么值得记住？',
+      status: 'collecting', role: 'participant', hasParticipant: true,
+      isRevealed: false, myResponse: null, otherResponse: null,
+      hasResponded: false, otherHasResponded: true,
+      expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+      revealedAt: null, createdAt: new Date().toISOString(),
+    };
+    projectBState.__mockResonance.unshift(capsule);
+    return { capsule };
+  }
+  const resonanceMatch = url.pathname.match(/^\/resonance\/([^/]+)(?:\/(responses|cancel))?$/);
+  if (resonanceMatch) {
+    const capsule = projectBState.__mockResonance.find((item) => item.id === resonanceMatch[1]);
+    if (!capsule) throw new Error('共鸣胶囊不存在');
+    if (method === 'GET') return { capsule };
+    if (method === 'POST' && resonanceMatch[2] === 'responses') {
+      capsule.hasResponded = true;
+      capsule.myResponse = null;
+      if (capsule.otherHasResponded) {
+        capsule.status = 'revealed'; capsule.isRevealed = true;
+        capsule.myResponse = getBody().response; capsule.otherResponse = '这是一段由浏览器 Mock 提供的对方回答。';
+      }
+      return { capsule };
+    }
+    if (method === 'POST' && resonanceMatch[2] === 'cancel') {
+      capsule.status = 'cancelled'; return { capsule };
+    }
+  }
+  if (url.pathname === '/meetup-safety' && method === 'GET') {
+    return { plans: projectBState.__mockMeetupSafety };
+  }
+  if (url.pathname === '/meetup-safety' && method === 'POST') {
+    const body = getBody(); const now = new Date().toISOString();
+    const plan = {
+      id: crypto.randomUUID(), ...body, status: 'scheduled', checkedInAt: null,
+      completedAt: null, cancelledAt: null, createdAt: now, updatedAt: now,
+    };
+    projectBState.__mockMeetupSafety.unshift(plan); return { plan };
+  }
+  const safetyMatch = url.pathname.match(/^\/meetup-safety\/([^/]+)\/transitions$/);
+  if (safetyMatch && method === 'POST') {
+    const plan = projectBState.__mockMeetupSafety.find((item) => item.id === safetyMatch[1]);
+    if (!plan) throw new Error('安心赴约计划不存在');
+    const action = getBody().transition; const now = new Date().toISOString();
+    if (action === 'check_in') { plan.status = 'checked_in'; plan.checkedInAt = now; }
+    if (action === 'complete') { plan.status = 'completed'; plan.completedAt = now; }
+    if (action === 'cancel') { plan.status = 'cancelled'; plan.cancelledAt = now; }
+    plan.updatedAt = now; return { plan };
+  }
+
   if (url.pathname === '/auth/send-code' && method === 'POST') {
     return { message: 'Code sent (mock)', expiresIn: 300 };
   }

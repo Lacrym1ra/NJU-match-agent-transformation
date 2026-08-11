@@ -8,6 +8,7 @@ export const AGENT_ACTION_KINDS = [
   'publish_post', 'join_circle', 'send_circle_chat', 'comment_post',
   'like_post', 'favorite_post', 'join_teamup', 'apply_teamup',
   'send_teamup_chat', 'match_action', 'mark_notification_read', 'mark_all_notifications_read',
+  'create_resonance_capsule', 'create_meetup_safety_plan',
 ] as const;
 
 export type AgentActionKind = typeof AGENT_ACTION_KINDS[number];

@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-  [string]$EnvFile = ".env.local-test"
+  [string]$EnvFile = ".env.local-test",
+  [string]$ProjectName = "nju-match-local"
 )
 
 $ErrorActionPreference = "Stop"
@@ -18,9 +19,9 @@ if ($LASTEXITCODE -ne 0 -or $dockerOs.Trim() -ne "linux") {
 
 Push-Location $appRoot
 try {
-  docker compose --env-file $resolvedEnv up --detach --build --remove-orphans
+  docker compose --project-name $ProjectName --env-file $resolvedEnv -f docker-compose.yml -f docker-compose.local-test.yml up --detach --build --remove-orphans
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-  docker compose ps
+  docker compose --project-name $ProjectName --env-file $resolvedEnv -f docker-compose.yml -f docker-compose.local-test.yml ps
   Write-Host "NJU Match is starting at http://127.0.0.1:8082"
 } finally {
   Pop-Location

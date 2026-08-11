@@ -9,10 +9,11 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'VITE_USE_MOCK=true npm run dev',
+    command: 'npm run dev',
     url: 'http://127.0.0.1:3001',
     reuseExistingServer: true,
     timeout: 120_000,
+    env: { ...process.env, VITE_USE_MOCK: 'true' },
   },
   projects: [
     {

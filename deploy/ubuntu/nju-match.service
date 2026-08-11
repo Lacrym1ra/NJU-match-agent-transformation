@@ -9,9 +9,9 @@ Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/opt/NJU-match-agent-transformation/NJU-Date-basic
 LoadCredentialEncrypted=llm_api_key:/etc/credstore.encrypted/nju-match-llm-api-key.cred
-ExecStart=/usr/bin/docker compose --env-file /etc/nju-match/runtime.env -f docker-compose.yml -f ../deploy/ubuntu/docker-compose.credentials.yml up -d --build --remove-orphans
-ExecReload=/usr/bin/docker compose --env-file /etc/nju-match/runtime.env -f docker-compose.yml -f ../deploy/ubuntu/docker-compose.credentials.yml up -d --build --remove-orphans
-ExecStop=/usr/bin/docker compose --env-file /etc/nju-match/runtime.env -f docker-compose.yml -f ../deploy/ubuntu/docker-compose.credentials.yml down
+ExecStart=/usr/bin/docker compose --env-file /etc/nju-match/runtime.env -f docker-compose.yml -f ../deploy/ubuntu/docker-compose.release.yml -f ../deploy/ubuntu/docker-compose.credentials.yml up -d --no-build --pull never --remove-orphans
+ExecReload=/usr/bin/docker compose --env-file /etc/nju-match/runtime.env -f docker-compose.yml -f ../deploy/ubuntu/docker-compose.release.yml -f ../deploy/ubuntu/docker-compose.credentials.yml up -d --no-build --pull never --remove-orphans
+ExecStop=/usr/bin/docker compose --env-file /etc/nju-match/runtime.env -f docker-compose.yml -f ../deploy/ubuntu/docker-compose.release.yml -f ../deploy/ubuntu/docker-compose.credentials.yml down
 TimeoutStartSec=0
 
 [Install]

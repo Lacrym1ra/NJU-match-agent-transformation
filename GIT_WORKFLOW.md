@@ -150,7 +150,7 @@ Required Check 名称必须以 GitHub 实际显示的 Job 名称为准。
 
 ### `harness-mechanism.yml`
 
-负责 Project A 三项产品 Agent 机制：
+负责 Project B 应用内的三项 Agent 机制：
 
 1. 写操作在用户确认前暂停且不调用 Service；
 2. 业务 Tool 的失败 Observation 改变下一步 Action；

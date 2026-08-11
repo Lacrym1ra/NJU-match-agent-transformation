@@ -2,7 +2,11 @@
 
 <!-- markdownlint-disable MD013 -->
 
-> 状态：待课程教师或助教书面确认。
+> 状态：历史文件，已被 2026-08-11 的 Project B 最终选型取代；不再属于最终交付硬门槛。
+
+本文件只用于保留选型演进和反思证据。当前范围以
+[`PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md`](./PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md)
+与根目录 `SPEC.md` 为准，不应再向课程方发送下述 A 类确认问题。
 
 ## 需要确认的事实
 

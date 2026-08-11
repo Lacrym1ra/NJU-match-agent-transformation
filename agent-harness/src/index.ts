@@ -25,8 +25,12 @@ export type {
   ForumSearchInput,
   ForumSearchResult,
   NjuMatchReadPort,
+  MeetupSafetyStatusItem,
+  MeetupSafetyStatusResult,
   ProfileStatus,
   QuestionnaireStatus,
+  ResonanceCapsuleStatusItem,
+  ResonanceCapsuleStatusResult,
 } from "./tools/read/port.js";
 export { ConfirmationStore } from "./tools/write/confirmation.js";
 export { createNjuMatchActionTools } from "./tools/write/actionTools.js";

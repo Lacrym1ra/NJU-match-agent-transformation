@@ -36,13 +36,21 @@ export function loadSecret(envVar: string, options: SecretSourceOptions = {}): s
   }
 
   let secretPath: string;
-  let allowedRoots: string[];
   try {
     secretPath = realpathSync(configuredPath);
-    allowedRoots = (options.allowedRoots ?? defaultAllowedRoots(env)).map((root) => realpathSync(root));
   } catch {
     throw new Error(`[config] ${fileEnvVar} cannot be resolved`);
   }
+
+  const allowedRoots = (options.allowedRoots ?? defaultAllowedRoots(env)).flatMap((root) => {
+    try {
+      return [realpathSync(root)];
+    } catch {
+      // Some supported runtimes expose only one of the optional secret roots
+      // (for example Docker mounts /run/secrets without /run/credentials).
+      return [];
+    }
+  });
   if (!allowedRoots.some((root) => isWithinRoot(secretPath, root))) {
     throw new Error(`[config] ${fileEnvVar} must be inside an approved runtime secret directory`);
   }

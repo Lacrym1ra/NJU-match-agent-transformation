@@ -77,6 +77,34 @@ export interface ForumSearchResult {
   readonly posts: readonly ForumPostSearchItem[];
 }
 
+export interface ResonanceCapsuleStatusItem {
+  readonly id: string;
+  readonly title: string;
+  readonly status: string;
+  readonly role: "creator" | "participant";
+  readonly hasResponded: boolean;
+  readonly otherHasResponded: boolean;
+  readonly expiresAt: string;
+}
+
+export interface ResonanceCapsuleStatusResult {
+  readonly total: number;
+  readonly capsules: readonly ResonanceCapsuleStatusItem[];
+}
+
+export interface MeetupSafetyStatusItem {
+  readonly id: string;
+  readonly title: string;
+  readonly status: string;
+  readonly meetingAt: string;
+  readonly expectedEndAt: string;
+}
+
+export interface MeetupSafetyStatusResult {
+  readonly total: number;
+  readonly plans: readonly MeetupSafetyStatusItem[];
+}
+
 export interface NjuMatchReadPort {
   getMyProfileStatus(userId: string): Promise<ProfileStatus>;
   getQuestionnaireStatus(userId: string): Promise<QuestionnaireStatus>;
@@ -88,4 +116,7 @@ export interface NjuMatchReadPort {
     userId: string,
     input: ForumSearchInput,
   ): Promise<ForumSearchResult>;
+  /** Optional for backwards-compatible Harness consumers; production registers both Project B tools. */
+  listResonanceCapsules?(userId: string): Promise<ResonanceCapsuleStatusResult>;
+  listMeetupSafetyPlans?(userId: string): Promise<MeetupSafetyStatusResult>;
 }

@@ -9,6 +9,8 @@ import { applyToTeamup, joinTeamupDirect } from '../modules/teamups/teamService.
 import { sendTeamupChatMessage } from '../modules/chat/chatService.js';
 import { recordAction } from './matchService.js';
 import { markAllAsRead, markAsRead } from './notificationService.js';
+import { createResonanceCapsule } from './resonanceService.js';
+import { createMeetupSafetyPlan } from './meetupSafetyService.js';
 import {
   completeStoredAgentAction, consumeStoredAgentAction, createStoredAgentAction,
   failStoredAgentAction, issueStoredAgentConfirmation, type AgentActionKind,
@@ -184,10 +186,14 @@ export function createAgentActionService(deps: AgentActionDependencies) {
 
 type ContactInput = { type: string; value: string; label?: string };
 
-async function runStored<T>(record: Awaited<ReturnType<typeof consumeStoredAgentAction>>, operation: () => Promise<T>) {
+async function runStored<T>(
+  record: Awaited<ReturnType<typeof consumeStoredAgentAction>>,
+  operation: () => Promise<T>,
+  sanitizeStoredResult: (result: T) => unknown = (result) => result,
+) {
   try {
     const result = await operation();
-    await completeStoredAgentAction(record.id, result);
+    await completeStoredAgentAction(record.id, sanitizeStoredResult(result));
     return result;
   } catch (error) {
     await failStoredAgentAction(record.id, error);
@@ -275,8 +281,22 @@ export const agentActionService = {
         );
         case 'mark_notification_read': return markAsRead(userId, String(payload.notificationId));
         case 'mark_all_notifications_read': return markAllAsRead(userId);
+        case 'create_resonance_capsule': return createResonanceCapsule(userId, {
+          title: String(payload.title), prompt: String(payload.prompt),
+          expiresInDays: Number(payload.expiresInDays ?? 7),
+        });
+        case 'create_meetup_safety_plan': return createMeetupSafetyPlan(userId, {
+          title: String(payload.title), meetingPlace: String(payload.meetingPlace),
+          meetingAt: String(payload.meetingAt), expectedEndAt: String(payload.expectedEndAt),
+          ...(payload.note ? { note: String(payload.note) } : {}),
+        });
         default: throw new NotFoundError('Unsupported Agent action');
       }
-    });
+    }, kind === 'create_resonance_capsule'
+      ? (result) => {
+        const value = result as { capsule?: unknown };
+        return { capsule: value?.capsule, inviteCodeDeliveredToUser: true };
+      }
+      : (result) => result);
   },
 };

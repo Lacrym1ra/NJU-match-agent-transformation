@@ -6,6 +6,8 @@ COPY . .
 # In production, API calls go through Nginx proxy on the same domain
 ENV VITE_API_BASE=/api/v1
 ENV VITE_USE_MOCK=false
+ARG VITE_SUPPORT_EMAIL=""
+ENV VITE_SUPPORT_EMAIL=${VITE_SUPPORT_EMAIL}
 RUN npm run build
 
 FROM nginx:alpine

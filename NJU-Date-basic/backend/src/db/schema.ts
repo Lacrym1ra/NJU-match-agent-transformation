@@ -1064,3 +1064,42 @@ export const agentActionRecords = pgTable('agent_action_records', {
   uniqueIndex('idx_agent_action_records_confirmation_hash').on(t.confirmationTokenHash)
     .where(sql`${t.confirmationTokenHash} IS NOT NULL`),
 ]);
+
+/** Project B module: two-party prompts whose answers stay sealed until both respond. */
+export const resonanceCapsules = pgTable('resonance_capsules', {
+  id: text('id').primaryKey(),
+  creatorId: text('creator_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  participantId: text('participant_id').references(() => users.id, { onDelete: 'set null' }),
+  inviteCodeHash: text('invite_code_hash').notNull().unique(),
+  title: text('title').notNull(),
+  prompt: text('prompt').notNull(),
+  creatorResponse: text('creator_response'),
+  participantResponse: text('participant_response'),
+  status: text('status').notNull().default('awaiting_participant'),
+  expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'string' }).notNull(),
+  revealedAt: timestamp('revealed_at', { withTimezone: true, mode: 'string' }),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+}, (t) => [
+  index('idx_resonance_capsules_creator').on(t.creatorId, t.createdAt),
+  index('idx_resonance_capsules_participant').on(t.participantId, t.createdAt),
+]);
+
+/** Project B module: private, user-owned meetup check-in plans (not emergency dispatch). */
+export const meetupSafetyPlans = pgTable('meetup_safety_plans', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  meetingPlace: text('meeting_place').notNull(),
+  meetingAt: timestamp('meeting_at', { withTimezone: true, mode: 'string' }).notNull(),
+  expectedEndAt: timestamp('expected_end_at', { withTimezone: true, mode: 'string' }).notNull(),
+  note: text('note'),
+  status: text('status').notNull().default('scheduled'),
+  checkedInAt: timestamp('checked_in_at', { withTimezone: true, mode: 'string' }),
+  completedAt: timestamp('completed_at', { withTimezone: true, mode: 'string' }),
+  cancelledAt: timestamp('cancelled_at', { withTimezone: true, mode: 'string' }),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow(),
+}, (t) => [
+  index('idx_meetup_safety_plans_user_status').on(t.userId, t.status, t.meetingAt),
+]);

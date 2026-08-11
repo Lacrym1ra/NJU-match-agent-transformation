@@ -1,6 +1,6 @@
-# PLAN：NJU-Match Social Agent Harness
+# PLAN：NJU-Match Project B 应用类项目
 
-> 状态：方向修正后的实施基线。
+> 状态：Project B 迁移后的实施与交付基线。P0–P7 保留真实历史，P8 起按 Project B 验收。
 >
 > 原则：每个任务使用独立分支和 PR；先写失败测试或明确的文档验收，再做最小实现；真实 API Key 接入最后进行。
 
@@ -20,6 +20,40 @@
 - PR 链接。
 
 ## 阶段与任务
+
+### P9：Project B 新业务模块与旧代码边界
+
+状态：TASK-090–092 本地实现完成；后端 347/347、前端 34/34、
+Harness 44/44、真实 PostgreSQL 3/3、Chromium 6/6 与三个 production build
+通过；另外通过 Docker Compose 生产前端 + Express + PostgreSQL 的非 Mock
+创建/签到/完成冒烟。远端 CI/PR 和公网候选版仍需在提交后验收。
+
+#### TASK-090：共鸣胶囊（新增）
+
+- 数据库：`048_project_b_modules.ts` 的 `resonance_capsules`；
+- 后端：`resonancePolicy`、`resonanceService`、`routes/resonance`；
+- 前端：`/resonance`、`/resonance/:id`；
+- Agent：`list_resonance_capsules` 与确认后 `create_resonance_capsule`；
+- 禁止：Agent 代写回答、单边回答泄露、明文持久化邀请码；
+- 验收：纯策略、双账号数据库流程、Chromium 创建/封存流程。
+
+#### TASK-091：安心赴约（新增）
+
+- 数据库：`048_project_b_modules.ts` 的 `meetup_safety_plans`；
+- 后端：`meetupSafetyPolicy`、`meetupSafetyService`、`routes/meetupSafety`；
+- 前端：`/meetup-safety`；
+- Agent：`list_meetup_safety_plans` 与确认后 `create_meetup_safety_plan`；
+- 禁止：Agent 代签到/完成、跨用户读取、把功能描述为应急服务；
+- 验收：时间/状态策略、所有权数据库流程、Chromium 签到/完成流程。
+
+#### TASK-092：前端与文档收口
+
+- 两个新页面沿用 `DESIGN.md` 的纸白、墨色、棕/紫色、衬线标题、留白与 0.8 秒入场；
+- Dashboard、NavBar、独立 Agent 与全局 Agent 都提供新模块入口或结果卡；
+- 42 个路由全部进入隐私分类契约；生产 `/agent-local` 保持禁用；
+- Admin 图表依赖单独切包，Mock API 只在测试时动态加载；
+- README、SPEC、PLAN 与范围文档不得把旧功能计成本阶段新增。
+- 浏览器验收：新模块创建/封存/签到/完成、公开页悬浮层边界、未登录路由保护和 390px 遮挡检查。
 
 ### P0：方向修正
 
@@ -282,7 +316,7 @@ npm run build
   - Mock 仍是 CI 默认；
   - 真实 smoke test 只允许手动触发或受保护环境。
 
-### P7：Project A 关键缺口修复
+### P7：历史 Project A 补强（保留为可复用工程资产）
 
 状态：本地实现与离线验证完成；冷启动、凭据管理增强和远端 CI 证据仍待完成。
 
@@ -321,7 +355,7 @@ npm run build
 
 #### TASK-072：Coding 工具、反馈传感器和治理护栏
 
-- 目标：补齐 Project A 对 coding 领域的明确要求，同时不向 Social WebUI 开放服务器能力。
+- 目标：保留历史 Coding adapter 的工作区、命令与测试反馈护栏，同时不向 Project B 的 Social WebUI 开放服务器能力。
 - 文件：
   - `agent-harness/src/tools/coding/codingTools.ts`
   - `agent-harness/src/tools/coding/nodeCodingPort.ts`
@@ -345,12 +379,11 @@ npm run demo:coding
 - 文件：后端 Dockerfile、Compose、Docker Workflow、根 `.gitlab-ci.yml`。
 - 验证：后端镜像必须以仓库根目录为 Context 构建；GitLab 必须存在精确名为 `unit-test` 的 job。
 
-#### TASK-074：仍需人工/外部完成的硬门槛
+#### TASK-074：通用要求中仍需人工/外部完成的硬门槛
 
 - 使用不同类型、全新会话的陌生 Agent，仅凭 `SPEC.md + PLAN.md` 实施 1–2 个 Task，并把客观结果写入 `SPEC_PROCESS.md`；
 - 学生本人完成 1500–2500 字 `REFLECTION.md`；
 - 实现或明确验收一种支持隐藏录入、状态查看、更新和清除的安全凭据存储；
-- 获取课程方对 Social WebUI + Coding adapter 双轨领域的书面确认；
 - 推送后保存最后一次 GitHub/GitLab CI 全绿证据、PR/commit hash 与部署 URL。
 
 #### TASK-075：最终交付证据与许可证基线
@@ -360,7 +393,7 @@ npm run demo:coding
   - `docs/CI_CD_EVIDENCE.md`
   - `docs/COLD_START_EVIDENCE.md`
   - `docs/DEPLOYMENT_EVIDENCE.md`
-  - `docs/PROJECT_A_DIRECTION_CONFIRMATION.md`
+  - `docs/PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md`
   - `docs/FINAL_DELIVERY_CHECKLIST.md`
   - `THIRD_PARTY_NOTICES.md`
 - 已记录：PR #15 的 commit `095b91d`、11 个成功 Check Run、CodeQL 失败—修复—重跑链路，以及直接生产依赖许可证；
@@ -383,6 +416,75 @@ npm run demo:coding
 - Ubuntu：Key 由 systemd encrypted credential 管理，经 tmpfs 只读文件挂载；
 - Windows：Docker Desktop Linux container mode 构建并运行与 Ubuntu 相同的 OCI 镜像；
 - 诚实边界：本轮没有可调用的 Superpowers skill，不将方法映射写成插件调用证据。
+
+### P8：Project B 范围迁移与隐私分离
+
+#### TASK-080：交付口径与功能基线
+
+- 目标：以 Project B + 通用要求作为唯一最终验收口径；
+- 文件：`README.md`、`SPEC.md`、`PLAN.md`、`SPEC_PROCESS.md`、最终检查表；
+- 产出：原项目基线与本阶段新增/改进功能逐项区分；
+- Gate：至少三个业务模块职责、入口、主要数据和测试均可说明，Agent 单列为创新模块。
+
+#### TASK-081：全站前端隐私分离
+
+- 目标：课程衍生版不复用原项目运营身份、联系渠道或生产数据；
+- 实现：
+  - 所有 App 路由具有 `public/personal/community/agent/privileged/development` 分类；
+  - 所有页面通过全局标识展示当前数据边界；
+  - `/agent-local` 只在 Vite development 构建启用；
+  - 隐私页、关于页、Footer、用户协议和注销文案采用课程衍生版口径；
+  - 移除原项目邮箱和社交媒体联系入口。
+- TDD：路由隐私契约测试读取 `App.tsx`，新增未分类路由时失败。
+- 验证：
+
+```bash
+cd NJU-Date-basic/frontend
+npm run lint
+npm test
+npm run build
+```
+
+- 本地结果：类型检查通过，34/34 单元测试通过，生产构建通过。
+
+#### TASK-082：Project B 最终交付收口
+
+- 学生本人完成 `REFLECTION.md`；
+- 使用陌生异类型 Agent 完成冷启动验证并记录真实差异；
+- 同一候选 SHA 的 GitHub Required Checks 与 GitLab `unit-test` 通过；
+- 记录可访问公网 URL、容器镜像 tag/digest 和干净环境启动证据；
+- 为真实用户配置非公开隐私联系渠道、保存期限、备份删除和模型 Provider 数据说明；
+- 完成 42 个路由模式的多角色浏览器检查矩阵，重点检查响应式、键盘访问和敏感字段。
+
+### P9：完整测试、演示数据与离线部署包
+
+#### TASK-093：端到端测试文档与 Project B 演示数据
+
+- 目标：提供从 Windows 自部署、登录到两个新增模块和 Agent 的可重复测试路径；
+- 文件：`test.md`、`projectBDemoFixtures.ts`、`seedProjectBModules.ts`、
+  `docker-compose.local-test.yml`；
+- 红灯：先加入 `projectBDemoFixtures.test.ts`，因实现文件不存在得到
+  `ERR_MODULE_NOT_FOUND`；
+- 绿灯：固定 UUID、生命周期状态、邀请码格式和赴约时间窗口测试 2/2 通过；
+- 数据：本地 PostgreSQL 实际写入 4 个胶囊和 5 个赴约计划，覆盖待加入、
+  进行中、揭晓、取消、待签到、已签到、完成、逾期和取消；
+- 真实验收：Alice 密码登录成功，认证 API 返回 4 个胶囊和 3 个本人计划；
+  PostgreSQL 3/3、Chromium 6/6 通过；
+- 安全边界：种子脚本不随生产启动执行，`--reset` 只删除固定 UUID 白名单。
+
+#### TASK-094：Windows linux/amd64 镜像与服务器更新包
+
+- 目标：从已提交候选版本生成可由 Xftp 上传、Xshell 校验和加载的离线包；
+- 文件：`build-images.ps1`、`export-deployment-package.ps1`、
+  `run-powershell.mjs`、Docker Workflow；
+- Windows 修正：npm 子进程找不到 `powershell.exe` 时，改由 Node 从
+  `%SystemRoot%` 定位并以 `shell: false` 启动；
+- 导出修正：Docker Hub 拉取 PostgreSQL manifest TLS 超时时，若本地镜像已经是
+  `linux/amd64`，直接复用验证后的本地镜像；
+- 产物：Backend、Frontend、PostgreSQL 合并镜像包、同提交源码 ZIP、SHA-256
+  和 JSON manifest；
+- CI：Docker Workflow 显式构建 `linux/amd64`，PR 只构建、主分支/Tag 才推送；
+- Gate：三个镜像平台均为 `linux/amd64`，校验和与源码必需文件检查通过。
 
 ## 四天安排
 

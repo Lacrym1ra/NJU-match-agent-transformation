@@ -1,12 +1,13 @@
-# SPEC：NJU-Match Social Agent Harness
+# SPEC：NJU-Match Project B 应用类项目
 
-> 状态：实现同步版（2026-08-07）。Social WebUI 与 Project A coding 机制采用同一自研内核、不同工具集。
+> 状态：Project B 迁移版（2026-08-11）。应用本体是交付主体，自研
+> Harness Agent 是创新模块；历史 Coding adapter 仅为隔离的附加工程资产。
 >
-> 本 SPEC 只覆盖 Project A。真实模型 API Key 后续由用户提供，在此之前所有测试与演示使用 Mock LLM。
+> 本 SPEC 以 Project B 与通用要求为唯一最终验收口径。CI 与核心 Agent 测试默认使用 Mock LLM，不依赖真实 API Key。
 
 ## 1. 问题陈述
 
-NJU-Match 已经提供问卷画像、匹配、圈子和论坛等能力，但用户必须理解不同页面和操作流程，才能组合这些功能完成“根据兴趣找到同好并参与讨论”等跨模块目标。
+NJU-Match 已经提供问卷画像、匹配、圈子和论坛等能力，但原始功能之间缺少统一编排、完整的圈子协作链路、可验证的工程分发和课程衍生版隐私边界。用户必须理解不同页面和操作流程，才能组合这些功能完成“根据兴趣找到同好并参与讨论”等跨模块目标。
 
 本项目新增一个直接面向用户的 Social Agent。
 Agent 通过自行实现的 Harness 将自然语言目标转换成结构化业务动作，
@@ -24,6 +25,11 @@ Harness 必须用确定性代码保证身份、权限、写操作确认、预算
 - 使用 Mock LLM 离线验证核心机制；
 - 让写操作在服务器端确认后才执行；
 - 保持现有传统 UI 和业务测试无回归。
+- 以至少三个职责清晰的业务模块交付可实际运行的 Project B 应用；
+- 本阶段新增“共鸣胶囊”和“安心赴约”两个具有独立数据库、API 与页面的业务模块；
+- 以两个新业务模块加 Harness Agent 构成三个本阶段可验收模块，旧 NJU-Match 不用于凑数；
+- 明确区分原项目基线与本阶段新增/改进，不将继承代码冒充本阶段贡献；
+- 通过独立仓库、域名、数据库、联系渠道和全站页面提示与原项目形成隐私边界。
 
 ### 2.2 非目标
 
@@ -109,18 +115,47 @@ Harness 必须用确定性代码保证身份、权限、写操作确认、预算
 - 无权限 Observation 不会通过重试绕过；
 - Trace 不记录 Token、Cookie 或完整敏感资料。
 
+### US-07：双人共鸣胶囊
+
+作为希望进行慢对话的用户，我希望向另一位用户发出一个问题，并在双方都回应后同时看到答案。
+
+验收：
+
+- 创建时返回一次性邀请码，数据库只保存邀请码哈希；
+- 发起者不能使用自己的邀请码加入；
+- 查询与回应只允许发起者和参与者；
+- 任何单边答案在另一方提交前都不返回给客户端；
+- Agent 可查询状态并在确认后创建，但不能代写任何一方答案。
+
+### US-08：安心赴约计划
+
+作为准备线下见面的用户，我希望保存一个仅自己可见的计划，并由本人标记抵达和结束。
+
+验收：
+
+- 计划、地点和备注只允许所有者读取；
+- 见面时间必须在未来，预计结束必须晚于见面且相差不超过 24 小时；
+- `scheduled` 必须经本人 `check_in` 才能 `complete`；
+- 超过预计时间只显示为 `overdue`，不能伪造签到；
+- Agent 可查询状态并在确认后创建，但不能代签到、代完成或冒充应急服务。
+
 ## 5. 领域与机制设计
 
-### 5.0 Project A 双轨边界
+### 5.0 Project B 应用与 Agent 边界
 
-课程原文要求 Coding Agent Harness，而既有产品方向是 NJU-Match Social Agent。为避免把文件系统与命令权限暴露给普通用户，交付采用同一内核、两套适配器：
+Project B 的交付主体是 NJU-Match 应用。本阶段三个可验收模块是共鸣胶囊、
+安心赴约和 Harness Agent；原 NJU-Match 业务仅作为继承基线。Agent 作为集成模块，
+因包含自主循环而继续满足 Project B 对内嵌 Agent 的额外约束：自行实现 Loop、
+Tool Dispatch 和 Guardrail，并能在移除真实模型后确定性测试。
+
+仓库保留同一内核下的两套适配器，但只有第一套属于 Project B 产品路径：
 
 - `NJU-Match adapter`：供 WebUI 使用，只注册资料、问卷、圈子、论坛及经确认的社交动作；
-- `Coding adapter`：供离线机制测试和开发者场景使用，注册受工作区限制的文件、命令和测试工具；
+- `Coding adapter`：历史开发者扩展，供离线机制研究使用，注册受工作区限制的文件、命令和测试工具；不计入 Project B 三个业务模块；
 - 两者共享 `AgentLoop`、`LLMPort`、Parser、Registry、Memory、StopController 与 Trace；
 - WebUI 后端不得注册 `NodeCodingPort`，从架构上隔离服务器文件和命令权限。
 
-这一双轨方案补足 coding 领域的确定性机制，但“产品主场景是否完全符合课程 A 命题”仍须课程方确认，不能仅凭实现自行消除该验收风险。
+Project B 不要求把 Coding adapter 提升为最终用户入口。该扩展仍须保持隔离，避免普通用户获得服务器文件或命令权限。
 
 ### 5.1 决策
 
@@ -140,10 +175,14 @@ MVP 工具：
 | `search_circles` | Read | 是 |
 | `get_circle_details` | Read | 可选 |
 | `search_forum_posts` | Read | 是 |
+| `list_resonance_capsules` | Read | 是（本阶段新增） |
+| `list_meetup_safety_plans` | Read | 是（本阶段新增） |
 | `get_forum_post` | Read | 可选 |
 | `draft_forum_post` | Draft | 是 |
 | `publish_forum_post` | Write | 是 |
 | `join_circle` | Write | 可选 |
+| `create_resonance_capsule` | Write | 是（需确认） |
+| `create_meetup_safety_plan` | Write | 是（需确认） |
 | `read_file` | Coding Read | 是（仅 Coding adapter） |
 | `write_file` | Coding Write | 是（仅 Coding adapter，需确认） |
 | `run_tests` | Coding Feedback | 是（仅 Coding adapter） |
@@ -242,7 +281,7 @@ type Observation = {
 
 配置不能削弱代码中的身份边界和写操作确认。
 
-### 5.8 Coding 治理护栏
+### 5.8 历史 Coding adapter 隔离护栏
 
 - 文件路径必须是工作区内相对路径；拒绝绝对路径、`..`、`.git`、`.env`、私钥与证书文件；
 - 命令通过 `spawn(command, args, { shell: false })` 执行，不接受拼接 Shell 字符串；
@@ -255,11 +294,11 @@ type Observation = {
 - `npm test` 最终仍会执行仓库脚本，MVP 仅允许受信任工作区。未知仓库必须
   放入独立容器/虚拟机，这是当前未实现的沙箱边界。
 
-## 6. 主要贡献
+## 6. 本阶段主要贡献
 
 主要贡献选择：
 
-> **面向社交业务工具的治理与 HITL 状态机，并与多轮工具反馈闭环集成。**
+> **在旧 NJU-Match 基线上独立开发共鸣胶囊与安心赴约，并用可验证 Harness Agent 将新旧模块安全联动为可部署的 Project B 应用。**
 
 需要深入证明：
 
@@ -291,6 +330,8 @@ Agent API
 - `PendingAction`：动作摘要、参数哈希、过期时间和确认状态；
 - `SessionMemory`：目标、约束、结果引用和摘要；
 - `TraceEvent`：脱敏后的动作、观察、状态变化和耗时。
+- `ResonanceCapsule`：双人身份、邀请码哈希、双方封存回答与揭晓状态；
+- `MeetupSafetyPlan`：当前用户私有的地点、时间窗口与签到状态。
 
 状态：
 
@@ -328,14 +369,14 @@ BUDGET_EXCEEDED
 
 ### 7.2 规模、深度与模块边界
 
-项目至少包含以下职责独立、可分别测试的模块：
+本阶段包含以下职责独立、可分别测试的模块：
 
-1. Harness Core：循环、解析、Reducer、停止预算和 Trace；
-2. Tool/Policy：业务工具、Coding 工具、身份绑定、HITL 与护栏；
-3. Feedback/Memory：Observation 回灌、失败分类和有界会话记忆；
-4. NJU-Match Backend：认证、Service Adapter、数据库和 Provider Runtime；
-5. WebUI：独立 Agent 页面、全局悬浮入口、结果卡片和确认交互；
-6. Delivery/Security：Docker、Secret Scan、CodeQL、CI 和生产凭据注入。
+1. 共鸣胶囊：`resonance_capsules`、独立 REST API、列表/详情页面和双人封存状态机；
+2. 安心赴约：`meetup_safety_plans`、独立 REST API、计划页面和本人签到状态机；
+3. Harness Agent：循环、旧/新业务工具、HITL、Observation、记忆和 Trace。
+
+旧版身份/匹配、圈子/组队、论坛/社交只作为可联动基线；WebUI/隐私和
+Delivery/Security 属于横切工程保障，均不重复计算为三个本阶段模块。
 
 深度重点是“治理 + HITL + 反馈闭环”，而不是单纯增加聊天文案。核心判断均
 由确定性代码执行，并通过 Mock LLM 测试。仓库根目录的 `npm test` 是统一的
@@ -358,6 +399,16 @@ GET  /api/agent/sessions/:id
 POST /api/agent/sessions/:id/actions/:actionId/confirm
 POST /api/agent/sessions/:id/actions/:actionId/reject
 POST /api/agent/sessions/:id/cancel
+
+GET  /api/v1/resonance
+POST /api/v1/resonance
+POST /api/v1/resonance/join
+GET  /api/v1/resonance/:id
+POST /api/v1/resonance/:id/responses
+
+GET  /api/v1/meetup-safety
+POST /api/v1/meetup-safety
+POST /api/v1/meetup-safety/:id/transitions
 ```
 
 所有接口必须使用现有认证中间件。确认接口只消费服务端已经保存的动作。
@@ -414,6 +465,8 @@ systemd 版本、权限、重启和清除验收。
 - Mock LLM Scenario Tests；
 - 前端确认流程测试；
 - 原应用回归测试。
+- 两个新模块的纯状态机测试与 PostgreSQL 双账号/所有权集成测试；
+- 两个新模块的真实 Chromium 页面操作与移动端无横向溢出测试。
 
 三项必演示：
 
@@ -444,7 +497,7 @@ systemd 版本、权限、重启和清除验收。
 
 - 自研主循环可运行；
 - Mock LLM 可替换真实 Provider；
-- 至少三个业务域工具；
+- 至少三个本阶段模块：共鸣胶囊、安心赴约、Harness Agent；
 - 至少一个跨模块多步骤任务；
 - 写操作确认机制通过确定性测试；
 - 身份越权被代码拒绝；
@@ -454,6 +507,10 @@ systemd 版本、权限、重启和清除验收。
 - 原应用测试无回归；
 - GitHub Required Checks 全绿；
 - 无真实凭据进入仓库。
+- 原有功能与本阶段新增/改进功能有可核对清单；
+- 共鸣胶囊和安心赴约具有独立前端、后端、数据模型与测试，旧模块不计入新增数量；
+- 根目录 `npm test` 可一键验证 Harness、后端和前端；
+- App 中的每个前端路由都有显式隐私分类，生产构建不开放 `/agent-local` 免登录入口；
 - 真实 `/agent` API 通过自研循环执行，并在 Trace 中给出 Harness 状态、步数和工具序列；
 - Coding adapter 的文件边界、命令护栏、测试传感器和确认机制可在移除真实 LLM 后确定性测试。
 
@@ -469,4 +526,5 @@ systemd 版本、权限、重启和清除验收。
 - Ubuntu systemd 加密凭据的录入/状态/更新/清除和后端文件读取已提供，仍需
   在目标服务器完成真实部署验收；
 - 陌生异类型 Agent 冷启动验证尚未执行；
-- Social WebUI + Coding adapter 的双轨方案需课程方确认是否接受为 Project A 最终领域形态。
+- 独立的隐私联系渠道、数据导出和完整物理删除流程尚未完成，正式接收真实用户前必须补齐；
+- 全站路由已经有统一隐私标识，但仍需逐页完成真实浏览器可访问性、响应式布局和敏感字段检查。

@@ -28,6 +28,8 @@ import forumRoutes from './routes/forum.js';
 import socialRoutes from './routes/social.js';
 import uploadRoutes from './routes/upload.js';
 import agentRoutes from './routes/agent.js';
+import resonanceRoutes from './routes/resonance.js';
+import meetupSafetyRoutes from './routes/meetupSafety.js';
 import { notificationRoutes, adminNotificationRoutes } from './routes/notification.js';
 import { initRealtimeServer } from './realtime/chatServer.js';
 import { startCronJobs } from './cron/weeklyMatch.js';
@@ -116,6 +118,8 @@ app.use('/api/v1/forum', forumRoutes);
 app.use('/api/v1/social', socialRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/agent', agentRoutes);
+app.use('/api/v1/resonance', resonanceRoutes);
+app.use('/api/v1/meetup-safety', meetupSafetyRoutes);
 app.use('/api/v1/admin/notifications', adminNotificationRoutes);
 app.use('/api/v1', teamRoutes);
 

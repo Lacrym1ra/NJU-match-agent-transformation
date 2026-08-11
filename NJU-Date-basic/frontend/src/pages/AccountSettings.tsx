@@ -195,9 +195,7 @@ export default function AccountSettings() {
                 <p className="text-red-800/90 font-serif text-xl tracking-wide mb-2">注销账号</p>
                 <p className="text-xs md:text-sm text-red-800/60 font-light leading-relaxed max-w-md">
                   决绝地离开。注销后，您的<strong className="font-medium">问卷数据</strong>将被匿名化处理（移除所有可识别字段）；<strong className="font-medium">配对记录</strong>以匿名形式留存用于算法改进；账号将<strong className="font-medium">无法恢复</strong>。<br />
-                  如需完整删除全部数据，请发送邮件至{' '}
-                  <a href="mailto:njumatch@163.com" className="underline underline-offset-2 hover:text-red-800/90 transition-colors">njumatch@163.com</a>
-                  ，我们将在 7 个工作日内处理。
+                  当前课程测试版尚未配置独立的物理删除工单渠道；在该渠道与备份删除流程验收前，请勿录入不必要的真实敏感信息。
                 </p>
               </div>
               <button

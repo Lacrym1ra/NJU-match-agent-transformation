@@ -1,10 +1,28 @@
-# NJU-Match Social Agent Harness
+# NJU-Match 应用类项目（Project B）
 
-本仓库用于完成 AI4SE Project A：在 NJU-Match 现有社交系统上构建
-一个**直接面向用户、内核自行实现的 Agent Harness**，并在独立 Harness
-包中实现课程要求的 coding 工具、测试传感器与治理护栏。
+本仓库用于完成 AI4SE Project B：以原 NJU-Match 为业务基线，交付一个可公开
+访问、具有真实业务深度的校园社交应用。项目保留并扩展问卷匹配、圈子、论坛、
+组队和私信等模块，同时把自行实现的 Harness Agent 作为本阶段的创新交互模块，
+而不是把整个项目重新定义为 Coding Agent Harness。
 
-NJU-Match 已有的问卷、人格画像、匹配、圈子和论坛功能继续作为稳定业务模块。新增 Agent 负责理解用户目标、选择业务工具、执行多步骤任务、处理失败反馈，并在发帖、评论、加入圈子等写操作前请求用户确认。
+NJU-Match 已有的问卷、人格画像、匹配、圈子和论坛功能只作为
+继承基线，不计入本阶段新增模块。本阶段单独开发“共鸣胶囊”和
+“安心赴约”两套前后端；Harness Agent 负责理解用户目标、联动旧/新业务工具
+并在写操作前请求确认。原有与新增边界见
+[`docs/PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md`](./docs/PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md)。
+
+## Project B 功能模块
+
+| 模块 | 来源 | 当前能力 |
+| --- | --- | --- |
+| 原 NJU-Match | 原项目基线，不计本阶段模块 | 身份、资料、问卷、匹配、圈子、论坛、关系与通知，作为 Agent 工具上下文 |
+| 共鸣胶囊 | 本阶段新增业务模块 | 邀请码双人互动、单边封存、双方回应后同时揭晓 |
+| 安心赴约 | 本阶段新增业务模块 | 私有赴约计划、本人签到、签到后完成、超时状态 |
+| Harness Agent | 本阶段新增编排模块 | 联动旧/新业务，受控写操作、HITL、Mock LLM 和脱敏 Trace |
+| 部署、隐私与治理 | 本阶段新增/改进 | 一键测试、Docker、CI、加密凭据、路由隐私契约与课程衍生身份分离 |
+
+本阶段以“共鸣胶囊 + 安心赴约 + Harness Agent”构成三个可独立验收模块；
+旧系统规模不作为凑数依据，Agent 也不以聊天文案替代真实数据库写入。
 
 ## 项目边界
 
@@ -15,8 +33,9 @@ NJU-Match 已有的问卷、人格画像、匹配、圈子和论坛功能继续�
 - 让面向普通用户的 NJU-Match WebUI 暴露任意文件或 Shell 权限；
 - 使用 LangChain AgentExecutor、AutoGen、CrewAI 等高层循环代替自行实现的 Harness。
 
-GitHub Actions、CodeQL 和 Secret Scan 是项目的工程保障。课程 A 所需的
-coding 机制只存在于受限的 `agent-harness` 扩展中，不对社交 WebUI 开放。
+GitHub Actions、CodeQL 和 Secret Scan 是项目的工程保障。历史阶段形成的
+Coding adapter 继续保存在受限的 `agent-harness` 扩展中，作为额外工程资产，
+不属于 Project B 主演示路径，也不对社交 WebUI 开放。
 
 ## 总体架构
 
@@ -36,11 +55,9 @@ Agent 对话入口
   └─ Stop Controller / Trace
        ↓
 NJU-Match 业务工具适配层
-  ├─ Profile
-  ├─ Questionnaire
-  ├─ Matching
-  ├─ Circle
-  └─ Forum
+  ├─ 旧基线：Profile / Questionnaire / Matching / Circle / Forum
+  ├─ 新模块：Resonance Capsule
+  └─ 新模块：Meetup Safety Plan
        ↓
 现有 Service、数据库与业务规则
 ```
@@ -68,8 +85,8 @@ Agent：
 ```text
 ai4coding-lab/
 ├─ NJU-Date-basic/       NJU-Match 业务基线
-├─ agent-harness/        自研 Agent Loop、工具、治理、反馈、记忆与 API
-├─ docs/                 CI、冷启动、部署、方向确认与最终交付证据
+├─ agent-harness/        Project B 创新 Agent 的 Loop、工具、治理、反馈与记忆
+├─ docs/                 CI、冷启动、部署、功能边界、隐私审计与最终交付证据
 ├─ .github/              GitHub Workflow 与仓库治理
 ├─ THIRD_PARTY_NOTICES.md
 ├─ SPEC.md
@@ -133,10 +150,25 @@ Windows 端使用 Docker Desktop 的 Linux container mode，构建与 Ubuntu 生
 Copy-Item NJU-Date-basic/.env.local-test.example NJU-Date-basic/.env.local-test
 npm run docker:windows:build
 npm run docker:windows:up
+npm run docker:windows:export
 ```
 
 脚本会拒绝未启动的 Docker Desktop 和 Windows container mode。默认页面为
-`http://127.0.0.1:8082`，本地测试 `.env.local-test` 不得提交。
+`http://127.0.0.1:8082`，本地测试 `.env.local-test` 不得提交。导出命令只接受
+已提交的干净版本，产出 Backend、Frontend、PostgreSQL 三镜像离线包、同提交
+源码包、SHA-256 和 manifest；产物保存在被 Git 忽略的 `deployment-packages/`。
+
+完整的部署、登录、演示数据、新模块、Agent、浏览器和服务器回归流程见
+[`test.md`](./test.md)。本地容器可用以下命令写入 Alice/Bob 演示账号及两个
+Project B 模块的固定样例；这些命令不得对生产数据库执行：
+
+```powershell
+cd NJU-Date-basic
+docker compose --project-name nju-match-local --env-file .env.local-test `
+  exec backend node dist/db/seedDemoData.js --reset
+docker compose --project-name nju-match-local --env-file .env.local-test `
+  exec backend node dist/db/seedProjectBModules.js --reset
+```
 
 ### Ubuntu 生产 LLM 凭据
 
@@ -188,13 +220,14 @@ PostgreSQL 16。
 ## 已知限制
 
 - 会话记忆当前是进程内有界存储，重启后丢失，不适合多副本共享；
-- Coding 工具是课程机制扩展，尚无独立 Coding WebUI，也不向社交用户开放；
+- Coding 工具是历史开发者扩展，尚无独立 Coding WebUI，也不向社交用户开放；
 - `run_tests` 会执行仓库自身 npm script；当前只适用于受信任工作区，测试未知仓库
   前仍需容器/虚拟机沙箱；
 - Ubuntu 已提供 systemd 加密凭据录入、状态、更新和清除；目标服务器上的
   systemd/权限/重启验收尚未完成；
 - 未完成由不同类型陌生 Agent 执行的冷启动验证，见 `SPEC_PROCESS.md`；
-- Project A 原文要求 Coding Agent，而产品主场景是 Social Agent；最终提交前需得到课程方对“双轨交付”的确认。
+- 生产级隐私联系渠道、完整数据导出/物理删除流程仍待部署者在接收真实用户前完成；
+- `/admin` 使用独立管理员 Key 与网络来源限制，不复用普通用户会话；需要在目标服务器继续验证反向代理来源 IP 配置。
 
 ## MVP 能力
 
@@ -236,7 +269,8 @@ PostgreSQL 16。
 - [GitHub/GitLab CI/CD 证据](./docs/CI_CD_EVIDENCE.md)
 - [陌生异类型 Agent 冷启动记录](./docs/COLD_START_EVIDENCE.md)
 - [公网部署与分发证据](./docs/DEPLOYMENT_EVIDENCE.md)
-- [Project A 双轨方向确认](./docs/PROJECT_A_DIRECTION_CONFIRMATION.md)
+- [Project B 范围与原有/新增功能基线](./docs/PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md)
+- [全站前端隐私分离审计](./docs/FRONTEND_PRIVACY_SEPARATION_AUDIT.md)
 - [Superpowers 与 TDD 证据](./docs/SUPERPOWERS_TDD_EVIDENCE.md)
 - [第三方依赖与许可证](./THIRD_PARTY_NOTICES.md)
 

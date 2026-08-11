@@ -87,6 +87,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_SUPPORT_EMAIL: ${VITE_SUPPORT_EMAIL:-}
     container_name: nju-date-frontend
     restart: unless-stopped
     logging: *default-logging

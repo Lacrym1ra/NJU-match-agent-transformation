@@ -14,9 +14,9 @@ if ($LASTEXITCODE -ne 0 -or $dockerOs.Trim() -ne "linux") {
   throw "Docker Desktop must be running in Linux container mode."
 }
 
-docker build --file "$repoRoot\NJU-Date-basic\backend\Dockerfile" --tag "nju-match-backend:$Tag" "$repoRoot"
+docker build --platform linux/amd64 --file "$repoRoot\NJU-Date-basic\backend\Dockerfile" --tag "nju-match-backend:$Tag" "$repoRoot"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-docker build --file "$repoRoot\NJU-Date-basic\frontend\Dockerfile" --tag "nju-match-frontend:$Tag" "$repoRoot\NJU-Date-basic\frontend"
+docker build --platform linux/amd64 --file "$repoRoot\NJU-Date-basic\frontend\Dockerfile" --tag "nju-match-frontend:$Tag" "$repoRoot\NJU-Date-basic\frontend"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "Built nju-match-backend:$Tag and nju-match-frontend:$Tag"

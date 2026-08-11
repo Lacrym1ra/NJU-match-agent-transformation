@@ -62,6 +62,7 @@ jobs:
       - name: Build and optionally push
         uses: docker/build-push-action@v6
         with:
+          platforms: linux/amd64
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
           push: ${{ github.event_name != 'pull_request' }}
