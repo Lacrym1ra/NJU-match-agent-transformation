@@ -456,6 +456,36 @@ npm run build
 - 为真实用户配置非公开隐私联系渠道、保存期限、备份删除和模型 Provider 数据说明；
 - 完成 42 个路由模式的多角色浏览器检查矩阵，重点检查响应式、键盘访问和敏感字段。
 
+### P9：完整测试、演示数据与离线部署包
+
+#### TASK-093：端到端测试文档与 Project B 演示数据
+
+- 目标：提供从 Windows 自部署、登录到两个新增模块和 Agent 的可重复测试路径；
+- 文件：`test.md`、`projectBDemoFixtures.ts`、`seedProjectBModules.ts`、
+  `docker-compose.local-test.yml`；
+- 红灯：先加入 `projectBDemoFixtures.test.ts`，因实现文件不存在得到
+  `ERR_MODULE_NOT_FOUND`；
+- 绿灯：固定 UUID、生命周期状态、邀请码格式和赴约时间窗口测试 2/2 通过；
+- 数据：本地 PostgreSQL 实际写入 4 个胶囊和 5 个赴约计划，覆盖待加入、
+  进行中、揭晓、取消、待签到、已签到、完成、逾期和取消；
+- 真实验收：Alice 密码登录成功，认证 API 返回 4 个胶囊和 3 个本人计划；
+  PostgreSQL 3/3、Chromium 6/6 通过；
+- 安全边界：种子脚本不随生产启动执行，`--reset` 只删除固定 UUID 白名单。
+
+#### TASK-094：Windows linux/amd64 镜像与服务器更新包
+
+- 目标：从已提交候选版本生成可由 Xftp 上传、Xshell 校验和加载的离线包；
+- 文件：`build-images.ps1`、`export-deployment-package.ps1`、
+  `run-powershell.mjs`、Docker Workflow；
+- Windows 修正：npm 子进程找不到 `powershell.exe` 时，改由 Node 从
+  `%SystemRoot%` 定位并以 `shell: false` 启动；
+- 导出修正：Docker Hub 拉取 PostgreSQL manifest TLS 超时时，若本地镜像已经是
+  `linux/amd64`，直接复用验证后的本地镜像；
+- 产物：Backend、Frontend、PostgreSQL 合并镜像包、同提交源码 ZIP、SHA-256
+  和 JSON manifest；
+- CI：Docker Workflow 显式构建 `linux/amd64`，PR 只构建、主分支/Tag 才推送；
+- Gate：三个镜像平台均为 `linux/amd64`，校验和与源码必需文件检查通过。
+
 ## 四天安排
 
 | 日期 | 工作 | 预期 PR |

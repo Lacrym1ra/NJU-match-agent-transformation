@@ -214,3 +214,31 @@
   Docker Compose production frontend + Express + PostgreSQL 非 Mock 浏览器冒烟通过。
 - UI：两个新页面沿用 `DESIGN.md` 的纸白、墨色、棕/紫、衬线标题、大留白、柔和玻璃光影与 0.8 秒入场动效。
 - 未伪造的外部边界：尚未产生本批次的远端 CI/PR、公网浏览器或多角色 42 路由完整矩阵证据。
+
+---
+
+## 2026-08-11 — TASK-093 至 TASK-094
+
+- Agent：Codex；未使用 subagent，未伪造 Superpowers 插件调用记录。
+- 目标：补齐从自部署到登录/新模块的完整测试文档、Project B 演示数据以及
+  Windows 端服务器离线部署包。
+- TDD 红灯：先加入 `projectBDemoFixtures.test.ts`，执行单文件测试时因
+  `projectBDemoFixtures.js` 不存在得到 `ERR_MODULE_NOT_FOUND`。
+- 绿灯：实现纯 Fixture Builder 后 2/2 通过；后端完整测试增加到 349 项，
+  仓库根 `npm test` 返回 0。
+- 数据设计：固定 UUID 白名单承载 4 个共鸣胶囊与 5 个安心赴约样例；测试覆盖
+  全生命周期，逾期仅为服务层派生视图，数据库保持 `scheduled`。
+- 实际写入：Docker Compose PostgreSQL 中胶囊四种持久状态各一条；赴约包含
+  `scheduled` 两条及 `checked_in`、`completed`、`cancelled` 各一条。
+- 真实验证：PostgreSQL 集成 3/3、Chromium 6/6；Alice 通过真实 Backend 登录，
+  认证读取 4 个胶囊和 3 个本人计划，未发生 `/survey` 强制跳转。
+- Windows 反馈一：npm 子进程找不到 `powershell.exe`；新增 Node 启动器，从
+  `%SystemRoot%` 定位 PowerShell 后原命令成功。
+- Compose 反馈：此前 `nju-local-clean` 项目占用固定容器名；确认标签来自同一
+  工作区后，保留旧数据卷、替换容器，并固定新项目名为 `nju-match-local`。
+- 导出反馈：Backend/Frontend 首次构建成功，但无条件重新拉 PostgreSQL 时因
+  Docker Hub TLS timeout 失败；改为验证并复用本地 `linux/amd64` 镜像。
+- 候选提交：`574e279`（Project B 完整实现）与 `59d46a4`（离线导出修正）。
+- 产物验证：三镜像均为 `linux/amd64`；镜像包和源码 ZIP 的 SHA-256、源码包
+  必需文件及 JSON manifest 均通过检查。产物被 Git 忽略，不包含 `.env`。
+- 外部边界：此记录形成时远端 PR/CI 尚待创建，不能把本地通过冒充远端 Check。
