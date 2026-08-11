@@ -25,6 +25,7 @@ const agentPageContextSchema = z.object({
   pageType: z.enum([
     'dashboard', 'circle', 'circle_livechat', 'forum', 'forum_post', 'match',
     'teamup', 'teamup_chat', 'survey', 'messages', 'profile', 'settings', 'notifications', 'other',
+    'resonance', 'meetup_safety',
   ]),
   resourceId: z.string().trim().min(1).max(120).optional(),
   parentResourceId: z.string().trim().min(1).max(120).optional(),
@@ -146,6 +147,15 @@ const createActionSchema = z.discriminatedUnion('kind', [
   }) }),
   z.object({ kind: z.literal('mark_notification_read'), payload: z.object({ notificationId: safeResourceId }) }),
   z.object({ kind: z.literal('mark_all_notifications_read'), payload: z.object({}) }),
+  z.object({ kind: z.literal('create_resonance_capsule'), payload: z.object({
+    title: z.string().trim().min(1).max(80), prompt: z.string().trim().min(1).max(500),
+    expiresInDays: z.number().int().min(1).max(30).default(7),
+  }) }),
+  z.object({ kind: z.literal('create_meetup_safety_plan'), payload: z.object({
+    title: z.string().trim().min(1).max(100), meetingPlace: z.string().trim().min(1).max(200),
+    meetingAt: z.string().datetime(), expectedEndAt: z.string().datetime(),
+    note: z.string().trim().max(500).optional(),
+  }) }),
 ]);
 
 router.post('/actions', requireAuth, validate(createActionSchema), async (req, res, next) => {

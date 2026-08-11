@@ -178,14 +178,26 @@ export function AgentOverlayProvider({ children }: { children: ReactNode }) {
               ? await createAgentAction({ kind: action.kind, payload: { matchId: action.matchId, action: action.action } })
               : action.kind === 'mark_notification_read'
                 ? await createAgentAction({ kind: action.kind, payload: { notificationId: action.notificationId } })
-                : await createAgentAction({ kind: 'mark_all_notifications_read', payload: {} });
+                : action.kind === 'create_resonance_capsule'
+                  ? await createAgentAction({ kind: action.kind, payload: {
+                    title: action.title, prompt: action.prompt, expiresInDays: action.expiresInDays,
+                  } })
+                  : action.kind === 'create_meetup_safety_plan'
+                    ? await createAgentAction({ kind: action.kind, payload: {
+                      title: action.title, meetingPlace: action.meetingPlace,
+                      meetingAt: action.meetingAt, expectedEndAt: action.expectedEndAt,
+                      ...(action.note ? { note: action.note } : {}),
+                    } })
+                    : await createAgentAction({ kind: 'mark_all_notifications_read', payload: {} });
       const label = action.kind === 'comment_post' ? `评论“${action.postTitle}”`
         : action.kind === 'like_post' ? `点赞“${action.postTitle}”`
           : action.kind === 'favorite_post' ? `收藏“${action.postTitle}”`
             : action.kind === 'send_teamup_chat' ? `向“${action.teamupTitle}”群聊发送消息`
               : action.kind === 'match_action' ? `${action.action === 'ACCEPT' ? '接受' : '拒绝'}当前匹配`
                 : action.kind === 'mark_notification_read' ? `将“${action.notificationTitle}”标为已读`
-                  : '将全部通知标为已读';
+                  : action.kind === 'create_resonance_capsule' ? `创建共鸣胶囊“${action.title}”`
+                    : action.kind === 'create_meetup_safety_plan' ? `创建安心赴约计划“${action.title}”`
+                      : '将全部通知标为已读';
       setPendingAction({ kind: 'generic', actionId: prepared.actionId, actionKind: prepared.kind, label });
     } catch (error) {
       append({ id: nextId(), role: 'status', content: errorMessage(error) });
@@ -236,8 +248,17 @@ export function AgentOverlayProvider({ children }: { children: ReactNode }) {
         append({ id: nextId(), role: 'status', content: `已处理加入“${pendingAction.action.teamupTitle}”的请求。` });
       } else {
         const confirmation = await requestAgentConfirmation(pendingAction.actionKind, pendingAction.actionId);
-        await executeAgentAction(pendingAction.actionId, pendingAction.actionKind, confirmation.confirmationToken);
-        append({ id: nextId(), role: 'status', content: `已完成：${pendingAction.label}。` });
+        const execution = await executeAgentAction(
+          pendingAction.actionId, pendingAction.actionKind, confirmation.confirmationToken,
+        );
+        const result = execution.result as { inviteCode?: unknown } | null;
+        const completion = pendingAction.actionKind === 'create_resonance_capsule'
+          && typeof result?.inviteCode === 'string'
+          ? `已完成：${pendingAction.label}。一次性邀请码：${result.inviteCode}（请现在复制并私下转交）。`
+          : pendingAction.actionKind === 'create_meetup_safety_plan'
+            ? `已完成：${pendingAction.label}。请前往“安心赴约”页面，由你本人签到。`
+            : `已完成：${pendingAction.label}。`;
+        append({ id: nextId(), role: 'status', content: completion });
       }
       setPendingAction(null);
     } catch (error) {

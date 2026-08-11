@@ -18,6 +18,8 @@ const suggestions = [
   '找一些适合长期交流的学习搭子',
   '查看我的未读通知',
   '在“AI 与 Agent 学习圈”的圈内茶话发送：今晚有人一起交流工具调用吗？',
+  '创建共鸣胶囊：慢慢认识｜哪一个瞬间让你感到被理解？',
+  '查看我的安心赴约计划',
 ];
 
 const intentLabels: Record<AgentQueryTrace['intent'], string> = {
@@ -45,6 +47,8 @@ function actionText(action: AgentProposedAction) {
     case 'match_action': return action.action === 'ACCEPT' ? '接受当前匹配' : '拒绝当前匹配';
     case 'mark_notification_read': return `将“${action.notificationTitle}”标为已读`;
     case 'mark_all_notifications_read': return '将全部通知标为已读';
+    case 'create_resonance_capsule': return `创建共鸣胶囊“${action.title}”`;
+    case 'create_meetup_safety_plan': return `创建安心赴约计划“${action.title}”`;
   }
 }
 
@@ -53,6 +57,7 @@ function actionKey(action: AgentProposedAction) {
   if ('postId' in action) return `${action.kind}:${action.postId}`;
   if ('matchId' in action) return `${action.kind}:${action.matchId}`;
   if ('notificationId' in action) return `${action.kind}:${action.notificationId}`;
+  if (action.kind === 'create_resonance_capsule' || action.kind === 'create_meetup_safety_plan') return `${action.kind}:${action.title}`;
   return `${action.kind}:${actionText(action)}`;
 }
 
@@ -65,7 +70,7 @@ function ConversationResult({ message, onAction }: {
   const actions = response.proposedActions ?? [];
 
   return <>
-    {(response.circles.length > 0 || response.posts.length > 0 || (response.teamups?.length ?? 0) > 0) && <div className="agent-grid agent-conversation-results">
+    {(response.circles.length > 0 || response.posts.length > 0 || (response.teamups?.length ?? 0) > 0 || (response.resonanceCapsules?.length ?? 0) > 0 || (response.meetupSafetyPlans?.length ?? 0) > 0) && <div className="agent-grid agent-conversation-results">
       {response.circles.map((circle) => <AgentResultCard
         key={circle.id}
         eyebrow={circle.isJoined ? '已加入圈子' : '圈子'}
@@ -94,6 +99,18 @@ function ConversationResult({ message, onAction }: {
         description={teamup.description}
         meta={`${teamup.currentMemberCount}/${teamup.maxMembers} 人 · ${teamup.joinMode === 'direct' ? '直接加入' : '审核加入'}`}
         action={<Link to={`/circles/${teamup.circleId}/teamups/${teamup.id}`}>查看组队</Link>}
+      />)}
+      {(response.resonanceCapsules ?? []).map((capsule) => <AgentResultCard
+        key={capsule.id} eyebrow="共鸣胶囊" title={capsule.title}
+        description={capsule.status === 'revealed' ? '双方回答已经揭晓' : capsule.hasResponded ? '你的回答已封存' : '等待你的回应'}
+        meta={capsule.otherHasResponded ? '对方已回应' : '对方尚未回应'}
+        action={<Link to={`/resonance/${capsule.id}`}>打开胶囊</Link>}
+      />)}
+      {(response.meetupSafetyPlans ?? []).map((plan) => <AgentResultCard
+        key={plan.id} eyebrow="安心赴约" title={plan.title}
+        description={`状态：${plan.status}`}
+        meta={new Date(plan.meetingAt).toLocaleString('zh-CN')}
+        action={<Link to="/meetup-safety">查看计划</Link>}
       />)}
     </div>}
 
@@ -150,7 +167,7 @@ export default function Agent() {
     void getAgentStatus().then(({ profile, questionnaire }) => {
       if (!profile.profileComplete) setStatus(`资料还缺少 ${profile.missingFields.length} 项；Agent 可以帮你定位，但不会代填个人信息。`);
       else if (!questionnaire.complete || questionnaire.needsUpdate) setStatus('资料已就绪，问卷仍需由你完成或更新。');
-      else setStatus('资料与问卷均已就绪；可以检索、申请加入圈子、准备帖子或确认发送圈内消息。');
+      else setStatus('资料与问卷均已就绪；可以检索旧版社区内容，也可以协助创建共鸣胶囊与安心赴约计划。');
     }).catch(() => setStatus('暂时无法读取账户状态，仍可继续使用公开检索能力。'));
   }, []);
 
@@ -223,7 +240,7 @@ export default function Agent() {
           <div className="agent-workspace__intro">
             <span className="agent-kicker">页面随行策展助手 · 完整工作台</span>
             <h1>从查找到执行，<br />让 Agent 陪你完成。</h1>
-            <p>我会读取你有权查看的当前页面、资料、问卷和真实平台数据。检索与总结可以直接完成；论坛互动、加入圈子或组队、匹配选择和发送消息等写操作，始终由你最终确认。</p>
+            <p>我会读取你有权查看的当前页面与数据。旧版匹配、圈子和论坛为检索上下文；本阶段新增的共鸣胶囊与安心赴约也可以查询，并在你确认后创建。共鸣回答与赴约签到必须由你本人完成。</p>
             <div className="agent-capabilities" aria-label="当前 Agent 能力">
               <span><MaterialIcon name="search" />圈子与论坛检索</span>
               <span><MaterialIcon name="group_add" />确认后申请入圈</span>
@@ -231,6 +248,8 @@ export default function Agent() {
               <span><MaterialIcon name="edit_note" />帖子草稿与发布</span>
               <span><MaterialIcon name="groups" />搭子检索与申请</span>
               <span><MaterialIcon name="favorite" />匹配与通知协助</span>
+              <span><MaterialIcon name="all_inclusive" />共鸣胶囊状态与创建</span>
+              <span><MaterialIcon name="verified_user" />安心赴约计划协助</span>
             </div>
             <div className="agent-status"><MaterialIcon name="verified_user" />{status}</div>
           </div>
@@ -274,7 +293,7 @@ export default function Agent() {
         </motion.header>
 
         <motion.section className="agent-section agent-compose" initial={false} animate={{ opacity: 1, y: 0 }}>
-          <div className="agent-section__heading"><span>完整工作台扩展</span><h2>准备一篇帖子</h2><p>先保存为本地 Agent 草稿，检查后再使用一次性确认凭据发布。</p></div>
+          <div className="agent-section__heading"><span>旧版社区联动</span><h2>准备一篇帖子</h2><p>先保存为服务端待确认草稿，检查后再使用一次性确认凭据发布；论坛本身不计入本阶段新增功能。</p></div>
           <form onSubmit={(event) => void makeDraft(event)}>
             <input name="title" required maxLength={100} placeholder="帖子标题" />
             <textarea name="content" required maxLength={10000} rows={5} placeholder="告诉大家你想交流什么…" />

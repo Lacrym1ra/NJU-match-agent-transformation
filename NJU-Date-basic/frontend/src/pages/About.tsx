@@ -33,13 +33,6 @@ const About = () => {
   const fromDashboard = location.state?.fromDashboard === true;
   const backPath = fromDashboard ? "/dashboard" : "/";
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText('NJUMatch@163.com');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <div className="min-h-screen bg-[#FCFBF8] text-[#2C2825] font-sans selection:bg-[#420047] selection:text-[#FCFBF8]">
@@ -74,7 +67,7 @@ const About = () => {
             在诚朴之间，<br />候一场明月相逢。
           </h1>
           <p className="text-base md:text-xl text-[#8B7355] font-serif max-w-xl mx-auto leading-relaxed md:leading-loose italic">
-            由南大人，为南大人建造。<br />拒绝快餐社交，让心动回归深度与本真。
+            面向校园社交场景的独立课程衍生版。<br />不代表南京大学官方，也不复用原项目运营身份。
           </p>
         </motion.section>
 
@@ -162,16 +155,16 @@ const About = () => {
           <MaterialIcon name="mail" className="text-[32px] text-[#420047]/60 mb-4 block" />
           <h2 className="font-serif text-2xl tracking-widest text-[#2C2825] mb-4">以纸笺相见</h2>
           <p className="text-[#8B7355] text-sm md:text-base font-light mb-8">
-              若有关于策展的任何谏言与期望，欢迎投递至我们的邮筒，<br />或在小红书 (NJU Match) 留下你的足迹。<br />不论是建议的反馈、算法的探讨还是心事的倾诉。
+              本课程衍生版不沿用原项目的邮箱或社交媒体账号。<br />一般建议可提交至仓库 Issue；涉及安全或隐私的信息请使用仓库 Security 渠道，切勿公开粘贴个人数据。
           </p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            <button onClick={handleCopyEmail} className="inline-flex items-center gap-2 border border-[#8B7355]/40 text-[#420047] font-serif tracking-widest px-8 py-3 hover:bg-[#420047] hover:text-[#FCFBF8] transition-colors duration-500 w-64 justify-center">
-              <MaterialIcon name={copied ? 'check' : 'mail'} className="text-[18px]" />
-              {copied ? '已复制邮箱' : 'NJUMatch@163.com'}
-            </button>
-            <a href="https://www.xiaohongshu.com/user/profile/63821992000000001f01e424" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[#8B7355]/40 text-[#420047] font-serif tracking-widest px-8 py-3 hover:bg-[#420047] hover:text-[#FCFBF8] transition-colors duration-500 w-64 justify-center">
-              <span className="font-sans font-medium text-[11px] leading-none border border-current rounded-full w-[17px] h-[17px] flex items-center justify-center pt-[1px] shrink-0">小</span>
-              小红书: NJU Match
+            <a href="https://github.com/Lacrym1ra/NJU-match-agent-transformation/issues" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[#8B7355]/40 text-[#420047] font-serif tracking-widest px-8 py-3 hover:bg-[#420047] hover:text-[#FCFBF8] transition-colors duration-500 w-64 justify-center">
+              <MaterialIcon name="forum" className="text-[18px]" />
+              仓库 Issues
+            </a>
+            <a href="https://github.com/Lacrym1ra/NJU-match-agent-transformation/security" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[#8B7355]/40 text-[#420047] font-serif tracking-widest px-8 py-3 hover:bg-[#420047] hover:text-[#FCFBF8] transition-colors duration-500 w-64 justify-center">
+              <MaterialIcon name="shield" className="text-[18px]" />
+              安全与隐私渠道
             </a>
           </div>
         </motion.section>
@@ -179,8 +172,8 @@ const About = () => {
       </main>
 
       <footer className="w-full text-center pb-8 pt-10 border-t border-[#EAE7E1] text-xs text-[#8B7355]/60 font-serif tracking-widest flex flex-col items-center gap-2">
-        <p>© 2026 NJU Match. The Digital Curator.</p>
-        <p>Built for the Excellence of Nanjing University Alumni.</p>
+        <p>© 2026 NJU Match Course Derivative.</p>
+        <p>Independent coursework deployment · Not officially affiliated with Nanjing University.</p>
       </footer>
     </div>
   );

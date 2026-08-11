@@ -13,7 +13,7 @@ const Footer = () => {
             </h3>
           </div>
           <p className="font-sans text-[#5E5855] text-sm tracking-wide font-light">
-            放慢脚步的社交实验。<br/>专注南大人的深度匹配。
+            独立部署的课程衍生社交实验。<br/>原有匹配能力与新增 Agent 模块分离演进。
           </p>
         </div>
         
@@ -25,7 +25,7 @@ const Footer = () => {
       </div>
       
       <div className="max-w-7xl mx-auto mt-16 text-center text-xs font-sans font-light tracking-wider text-[#8B7355]/60">
-        &copy; {new Date().getFullYear()} NJU Match. All rights reserved. Not officially affiliated with Nanjing University.
+        &copy; {new Date().getFullYear()} NJU Match Course Derivative. Independent data boundary; not officially affiliated with Nanjing University.
       </div>
     </footer>
   );

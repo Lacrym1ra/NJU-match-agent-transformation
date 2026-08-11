@@ -24,8 +24,6 @@ import { REPORT_REASON_LABEL, type ReportReasonValue } from '../lib/reportReason
 // API Helper
 // ---------------------------------------------------------------------------
 
-import { mockRequest } from '../api/mock';
-
 function getUpcomingWeekOf(): string {
   const now = new Date();
   const shifted = new Date(now.getTime() + 8 * 60 * 60 * 1000);
@@ -55,6 +53,7 @@ async function adminFetch(path: string, options: RequestInit = {}) {
   const USE_MOCK = (import.meta as any).env.VITE_USE_MOCK === 'true';
   if (USE_MOCK) {
     console.log(`[Mock Admin API] ${options.method || 'GET'} /admin${path}`);
+    const { mockRequest } = await import('../api/mock');
     return mockRequest(`/admin${path}`, { ...options, headers });
   }
 
@@ -2803,7 +2802,13 @@ function HeartboxSignalsTab({ onAuthFail }: { onAuthFail: () => void }) {
 // ── 邮件预览渲染组件 ──────────────────────────────────────────────────────────
 type ReportActionType = 'reviewed' | 'warn_update' | 'dismissed' | 'request_evidence';
 
-const SUPPORT_EMAIL = 'njumatch@163.com';
+const SUPPORT_EMAIL = ((import.meta as any).env.VITE_SUPPORT_EMAIL as string | undefined)?.trim() || null;
+
+function supportChannel(purpose: string): string {
+  return SUPPORT_EMAIL
+    ? `请通过 ${SUPPORT_EMAIL} ${purpose}`
+    : `当前部署尚未配置独立私密支持邮箱；请等待管理员提供经过验证的非公开渠道后再${purpose}`;
+}
 
 function getReporterMailContent(action: ReportActionType, reportId: string, adminNote?: string) {
   const noteSection = adminNote ? `\n\n管理员备注：${adminNote}` : '';
@@ -2829,7 +2834,7 @@ function getReporterMailContent(action: ReportActionType, reportId: string, admi
     request_evidence: {
       title: '举报跟进 — 请补充材料',
       lead: '你提交的举报正在审核中，我们需要更多信息来做出判断。',
-      body: `举报编号：${reportId}${noteSection}\n\n为帮助我们准确审核，请将相关证明材料（截图、聊天记录等）发送至 ${SUPPORT_EMAIL}，邮件主题请注明：举报 ${reportId} 补充材料。\n\n请在收到此邮件后 72 小时内提交，否则我们将依据现有信息继续处理。`,
+      body: `举报编号：${reportId}${noteSection}\n\n为帮助我们准确审核，${supportChannel(`提交相关证明材料，并注明“举报 ${reportId} 补充材料”`)}。\n\n请在收到此邮件后 72 小时内提交，否则我们将依据现有信息继续处理。`,
       footer: `提交材料时请务必注明举报编号 ${reportId}，以便快速关联。`,
       buttonText: '发送证明材料',
     },
@@ -2843,7 +2848,7 @@ function getReportedMailContent(action: ReportActionType, reportId: string, reas
     return {
       title: '社区行为提醒',
       lead: '我们收到了与你账号相关的举报，并已完成初步审核。',
-      body: `举报编号：${reportId}\n涉及类型：${reasonText || '社区安全相关'}${noteSection}\n\n经管理员审核，该举报已被标记为属实。请你检查并调整资料、发言或互动方式，避免骚扰、虚假资料、不当内容或其他影响社区安全的行为。\n\n如果你认为本次判断存在误会，可以通过 ${SUPPORT_EMAIL} 提交申诉。申诉时请附上举报编号和你的说明，我们会进一步复核。`,
+      body: `举报编号：${reportId}\n涉及类型：${reasonText || '社区安全相关'}${noteSection}\n\n经管理员审核，该举报已被标记为属实。请你检查并调整资料、发言或互动方式，避免骚扰、虚假资料、不当内容或其他影响社区安全的行为。\n\n如果你认为本次判断存在误会，${supportChannel('提交申诉并附上举报编号和说明')}。`,
       footer: '本提醒不会公开展示给其他用户。严重或重复违规可能导致账号功能受限。',
       buttonText: undefined,
     };
@@ -2853,7 +2858,7 @@ function getReportedMailContent(action: ReportActionType, reportId: string, reas
       title: '资料更新提醒',
       lead: '我们收到了关于你资料信息的反馈，请检查并更新。',
       body: `根据用户反馈，你账号中填写的联系方式（如QQ号、微信号等）或其他资料信息可能存在错误或过期。${noteSection}\n\n请尽快登录 NJU Match，在「个人设置」中核对并更新相关信息，确保配对成功后对方能顺利联系到你。`,
-      footer: `本提醒不影响你的匹配资格。如有疑问，可通过 ${SUPPORT_EMAIL} 联系我们。`,
+      footer: `本提醒不影响你的匹配资格。如有疑问，${supportChannel('联系我们')}。`,
       buttonText: '立即更新资料',
     };
   }

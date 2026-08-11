@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import NotificationBell from './components/NotificationBell';
 import GlobalAgent from './components/global-agent/GlobalAgent';
 import { AgentOverlayProvider } from './context/AgentOverlayContext';
+import PrivacyBoundaryNotice from './components/PrivacyBoundaryNotice';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
@@ -44,7 +45,12 @@ const Messages = lazy(() => import('./pages/Messages'));
 const FollowList = lazy(() => import('./pages/FollowList'));
 const Agent = lazy(() => import('./pages/Agent'));
 const AgentDemo = lazy(() => import('./pages/AgentDemo'));
-const AgentLocalEntry = lazy(() => import('./pages/AgentLocalEntry'));
+const ResonanceCapsules = lazy(() => import('./pages/ResonanceCapsules'));
+const ResonanceCapsuleDetail = lazy(() => import('./pages/ResonanceCapsuleDetail'));
+const MeetupSafety = lazy(() => import('./pages/MeetupSafety'));
+const AgentLocalEntry = import.meta.env.DEV
+  ? lazy(() => import('./pages/AgentLocalEntry'))
+  : null;
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -79,6 +85,7 @@ function App() {
         <ScrollToTop />
         <NotificationBell />
         <GlobalAgent />
+        <PrivacyBoundaryNotice />
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -89,11 +96,14 @@ function App() {
             <Route path="/changelog" element={<Changelog />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/agent-demo" element={<AgentDemo />} />
-            <Route path="/agent-local" element={<AgentLocalEntry />} />
+            <Route path="/agent-local" element={AgentLocalEntry ? <AgentLocalEntry /> : <NotFound />} />
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/agent" element={<ProtectedRoute><Agent /></ProtectedRoute>} />
+            <Route path="/resonance" element={<ProtectedRoute><ResonanceCapsules /></ProtectedRoute>} />
+            <Route path="/resonance/:id" element={<ProtectedRoute><ResonanceCapsuleDetail /></ProtectedRoute>} />
+            <Route path="/meetup-safety" element={<ProtectedRoute><MeetupSafety /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/survey" element={<ProtectedRoute><Survey /></ProtectedRoute>} />

@@ -4,7 +4,7 @@ import MaterialIcon from './MaterialIcon';
 
 const Announcement = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const ANNOUNCEMENT_VERSION = 'v1'; // 更新此版本号可重新给所有人展示
+  const ANNOUNCEMENT_VERSION = 'course-derivative-v1'; // 更新此版本号可重新给所有人展示
   const EXPIRATION_DATE = '2024-04-10T00:00:00+08:00'; // 活动截止时间，超过此时间不再显示
 
   useEffect(() => {
@@ -12,7 +12,7 @@ const Announcement = () => {
     if (new Date() > new Date(EXPIRATION_DATE)) return;
 
     // Check if the user has already dismissed or clicked the announcement
-    const hasSeen = localStorage.getItem(`has_seen_xhs_promo_${ANNOUNCEMENT_VERSION}`);
+    const hasSeen = localStorage.getItem(`has_seen_project_update_${ANNOUNCEMENT_VERSION}`);
     if (!hasSeen) {
       // Delay the popup so it doesn't interrupt the initial page load (e.g. 1 seconds)
       const timer = setTimeout(() => {
@@ -24,14 +24,13 @@ const Announcement = () => {
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem(`has_seen_xhs_promo_${ANNOUNCEMENT_VERSION}`, 'true');
+    localStorage.setItem(`has_seen_project_update_${ANNOUNCEMENT_VERSION}`, 'true');
   };
 
   const handleAction = () => {
     setIsVisible(false);
-    localStorage.setItem(`has_seen_xhs_promo_${ANNOUNCEMENT_VERSION}`, 'true');
-    // The placeholder link for Xiaohongshu (you can replace this later)
-    window.open('http://xhslink.com/o/XNADlQaZjM', '_blank', 'noopener,noreferrer');
+    localStorage.setItem(`has_seen_project_update_${ANNOUNCEMENT_VERSION}`, 'true');
+    window.open('https://github.com/Lacrym1ra/NJU-match-agent-transformation', '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -82,7 +81,7 @@ const Announcement = () => {
             </div>
             
             <p className="font-sans text-[12px] md:text-[13px] text-[#5E5855] leading-relaxed mb-5 md:mb-6 font-light tracking-wide">
-              关注 NJU Match 小红书官方账号，获取平台最新开发进度、交友档案墙与匹配小贴士。
+              本课程衍生版不沿用原项目运营账号。代码、版本说明和测试证据统一以独立仓库为准。
             </p>
             
             <button 
@@ -90,7 +89,7 @@ const Announcement = () => {
               className="w-full py-2.5 md:py-3 bg-transparent border border-[#420047] text-[#420047] text-xs font-sans tracking-widest hover:bg-[#420047] hover:text-[#FCFBF8] transition-colors duration-300 rounded flex items-center justify-center gap-2"
             >
               <MaterialIcon name="menu_book" className="text-[16px]" />
-              前往小红书浏览
+              查看项目仓库
             </button>
           </div>
         </motion.div>

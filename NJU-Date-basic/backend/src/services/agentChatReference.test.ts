@@ -105,6 +105,21 @@ test('agent requires confirmation before changing all notification state', () =>
   }]);
 });
 
+test('agent proposes both Project B creations behind confirmation', () => {
+  assert.deepEqual(proposeAgentActions('创建共鸣胶囊：慢慢认识｜哪一个瞬间让你感到被理解？', []), [{
+    kind: 'create_resonance_capsule', title: '慢慢认识', prompt: '哪一个瞬间让你感到被理解？',
+    expiresInDays: 7, requiresConfirmation: true,
+  }]);
+  assert.deepEqual(proposeAgentActions(
+    '创建安心赴约：先锋书店见面｜广州路先锋书店｜2026-08-12 18:00｜2026-08-12 20:00｜到店后由我手动签到',
+    [],
+  ), [{
+    kind: 'create_meetup_safety_plan', title: '先锋书店见面', meetingPlace: '广州路先锋书店',
+    meetingAt: '2026-08-12T10:00:00.000Z', expectedEndAt: '2026-08-12T12:00:00.000Z',
+    note: '到店后由我手动签到', requiresConfirmation: true,
+  }]);
+});
+
 test('agent recognizes natural personal forum collection wording', () => {
   assert.equal(detectAgentForumCollectionScope('列出我发布过的帖子'), 'mine');
   assert.equal(detectAgentForumCollectionScope('列出我点赞过的帖子'), 'liked');

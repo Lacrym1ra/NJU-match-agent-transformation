@@ -2143,6 +2143,18 @@ const Dashboard = () => {
     
           <div className="w-16 h-[1px] bg-[#8B7355]/30 my-2 relative z-10" />
 
+          {/* Project B 新增模块：与原有匹配/圈子/论坛明确分栏。 */}
+          <div className="grid grid-cols-2 gap-2" aria-label="本阶段新增功能">
+            <button type="button" onClick={() => navigate('/resonance')} className="rounded-2xl bg-[#EEE6ED]/65 px-3 py-3 text-left transition-colors hover:bg-[#E5D8E4]">
+              <span className="block text-[9px] tracking-[0.18em] text-[#611066]">NEW MODULE</span>
+              <strong className="mt-1 block font-serif text-sm font-normal text-[#2C2825]">共鸣胶囊</strong>
+            </button>
+            <button type="button" onClick={() => navigate('/meetup-safety')} className="rounded-2xl bg-[#EFEAE2]/75 px-3 py-3 text-left transition-colors hover:bg-[#E8E0D5]">
+              <span className="block text-[9px] tracking-[0.18em] text-[#8B7355]">NEW MODULE</span>
+              <strong className="mt-1 block font-serif text-sm font-normal text-[#2C2825]">安心赴约</strong>
+            </button>
+          </div>
+
           {/* 移动端专属：传统的顶部切换Tab */}
           <div className="relative mt-2 mb-1 flex items-end md:hidden">
             <div className="relative z-10 flex w-full gap-1.5">

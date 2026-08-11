@@ -36,6 +36,8 @@ export function deriveAgentPageContext(pathname: string, documentTitle?: string)
   if (safePath.startsWith('/user/')) return { pathname: safePath, pageType: 'profile', resourceId: segment(safePath, 1), title };
   if (safePath.startsWith('/settings') || safePath === '/account') return { pathname: safePath, pageType: 'settings', title };
   if (safePath === '/notifications') return { pathname: safePath, pageType: 'notifications', title };
+  if (safePath.startsWith('/resonance')) return { pathname: safePath, pageType: 'resonance', resourceId: segment(safePath, 1), title };
+  if (safePath === '/meetup-safety') return { pathname: safePath, pageType: 'meetup_safety', title };
   return { pathname: safePath, pageType: 'other', title };
 }
 
@@ -53,5 +55,7 @@ export const pageContextLabels: Record<AgentPageContext['pageType'], string> = {
   profile: '资料',
   settings: '设置',
   notifications: '通知',
+  resonance: '共鸣胶囊',
+  meetup_safety: '安心赴约',
   other: '当前页面',
 };

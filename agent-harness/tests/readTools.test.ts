@@ -96,6 +96,28 @@ describe("NJU-Match read tools", () => {
     ]);
   });
 
+  it("registers Project B status tools when the adapter provides them", async () => {
+    const registry = new ToolRegistry(createNjuMatchReadTools(createPort({
+      async listResonanceCapsules() {
+        return { total: 1, capsules: [{
+          id: "capsule-1", title: "Slow hello", status: "collecting", role: "creator",
+          hasResponded: true, otherHasResponded: false, expiresAt: "2026-08-20T00:00:00.000Z",
+        }] };
+      },
+      async listMeetupSafetyPlans() {
+        return { total: 1, plans: [{
+          id: "plan-1", title: "Bookstore", status: "scheduled",
+          meetingAt: "2026-08-12T10:00:00.000Z", expectedEndAt: "2026-08-12T12:00:00.000Z",
+        }] };
+      },
+    })));
+    assert.equal(registry.names().includes("list_resonance_capsules"), true);
+    assert.equal(registry.names().includes("list_meetup_safety_plans"), true);
+    assert.equal((await registry.execute(
+      "list_resonance_capsules", {}, toolContext, 100,
+    )).category, "SUCCESS");
+  });
+
   it("gets only the authenticated user's profile status", async () => {
     const seenUserIds: string[] = [];
     const port = createPort({

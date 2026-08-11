@@ -165,3 +165,52 @@
   Windows 脚本会拒绝该状态，镜像仍须在 Docker 启动后或远端 CI 实际构建。
 - 证据边界：`docs/SUPERPOWERS_TDD_EVIDENCE.md` 只映射可证实的流程；
   历史没有 skill invocation、worktree 或 subagent 证据的步骤仍标为缺失。
+
+---
+
+## 2026-08-11 — TASK-080 至 TASK-081
+
+- Agent：Codex；未使用 subagent，也未伪造 Superpowers 调用记录。
+- 目标：将最终项目类型从 A 切换为 B，保留 Harness Agent 作为创新模块，并完成原有/新增功能边界和全站前端隐私分离基线。
+- 当时的需求判定（后被用户纠正）：曾认为旧身份/匹配、圈子/组队、论坛/社交可计入 Project B 模块数。最终口径已在 TASK-090–092 修正：旧功能只是基线，不计本阶段新贡献。
+- 文档修改：README、SPEC、PLAN、SPEC_PROCESS、交付缺口、最终检查表、
+  反思模板和 Harness README 改用 Project B 口径；Project A 方向确认文件
+  保留为历史记录。
+- 新增证据：`PROJECT_B_SCOPE_AND_FEATURE_BASELINE.md` 区分继承、新增和
+  改进；`FRONTEND_PRIVACY_SEPARATION_AUDIT.md` 覆盖 42 个路由模式及
+  嵌套页面。
+- 代码红灯设计：路由契约测试读取 `App.tsx`，任何新增但未分类的 Route 会导致集合断言失败。
+- 代码实现：新增路由隐私规则、全局隐私边界标识；生产关闭
+  `/agent-local`；重写 Privacy，并同步 About、Footer、UserAgreement、
+  AccountSettings 和历史公告/管理员联系文案，移除原项目运营邮箱和
+  社交媒体入口。
+- 验证：前端 TypeScript 通过；34/34 单元测试通过（新增隐私契约 3/3）；
+  Vite production build 通过；仓库根 `npm test` 全部通过；Markdown lint 0 issue。
+- 诚实边界：自动化尚不能替代 42 个路由模式的多角色浏览器检查；专用
+  隐私联系渠道、Provider 数据说明、导出和完整物理删除仍是上线真实用户前
+  的 P0 缺口。
+
+---
+
+## 2026-08-11 — TASK-090 至 TASK-092
+
+- Agent：Codex；未使用 subagent，未伪造 Superpowers 调用记录。
+- 用户纠正：原 NJU-Match 全部功能都是阶段前基线，不能用于满足本阶段的功能模块数量。
+- 新增 N1 “共鸣胶囊”：邀请码双人加入、单边回答封存、双方完成后同时揭晓；具有独立数据表、REST API、列表/详情页和状态机。
+- 新增 N2 “安心赴约”：私有计划、本人签到、签到后完成、取消和超时视图；不宣称为应急服务。
+- Agent 联动：新增两类状态读工具与两个受 HITL 确认的创建动作；Agent 无胶囊代答或赴约代签到/代完成工具。
+- 隐私修正：数据库只存邀请码 SHA-256；一次性明文不写入 Agent
+  Action 结果；发给模型的胶囊/赴约上下文排除问题正文、地点和备注；赴约
+  DTO 不返回内部 `userId`。
+- TDD 红灯：先增加两个 Policy 测试时因实现模块不存在得到 2 个 `ERR_MODULE_NOT_FOUND`；最小实现后进入数据库和浏览器验收。
+- 实现期修正：处理过期视图与存储状态不同、胶囊并发提交假冲突、
+  Express 5 路由参数类型，并拆分 Admin 图表依赖以消除超大单页包。
+- 非 Mock 冒烟首次发现：真实网络延迟下，两个表单在 `await` 后再读
+  React `event.currentTarget`，导致后端已 201 写入而前端未刷新。修正为等待前保存
+  form 引用，重建前端镜像后复测通过。
+- 真实验证：Backend 347/347，Frontend 34/34，Harness 44/44；
+  三个 TypeScript/Vite build 通过；PostgreSQL 3/3（包含 Agent 确认前
+  零副作用、确认后写入与 Token 单次消费）；Chromium 6/6；
+  Docker Compose production frontend + Express + PostgreSQL 非 Mock 浏览器冒烟通过。
+- UI：两个新页面沿用 `DESIGN.md` 的纸白、墨色、棕/紫、衬线标题、大留白、柔和玻璃光影与 0.8 秒入场动效。
+- 未伪造的外部边界：尚未产生本批次的远端 CI/PR、公网浏览器或多角色 42 路由完整矩阵证据。

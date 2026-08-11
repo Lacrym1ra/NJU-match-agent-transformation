@@ -15,6 +15,8 @@ const suggestions = [
   '帮我找本周可以参加的校园活动',
   '找一些适合长期交流的学习搭子',
   '查看我的未读通知',
+  '查看我的共鸣胶囊',
+  '查看我的安心赴约计划',
 ];
 
 function actionText(action: AgentProposedAction) {
@@ -31,6 +33,8 @@ function actionText(action: AgentProposedAction) {
     case 'match_action': return action.action === 'ACCEPT' ? '接受当前匹配' : '拒绝当前匹配';
     case 'mark_notification_read': return `将“${action.notificationTitle}”标为已读`;
     case 'mark_all_notifications_read': return '将全部通知标为已读';
+    case 'create_resonance_capsule': return `创建共鸣胶囊“${action.title}”`;
+    case 'create_meetup_safety_plan': return `创建安心赴约计划“${action.title}”`;
   }
 }
 
@@ -39,6 +43,7 @@ function actionKey(action: AgentProposedAction) {
   if ('postId' in action) return `${action.kind}:${action.postId}`;
   if ('matchId' in action) return `${action.kind}:${action.matchId}`;
   if ('notificationId' in action) return `${action.kind}:${action.notificationId}`;
+  if (action.kind === 'create_resonance_capsule' || action.kind === 'create_meetup_safety_plan') return `${action.kind}:${action.title}`;
   return `${action.kind}:${actionText(action)}`;
 }
 
@@ -49,7 +54,7 @@ function ResultPreview({ message, onAction }: {
   const response = message.response;
   if (!response) return null;
   return <>
-    {(response.circles.length > 0 || response.posts.length > 0 || (response.teamups?.length ?? 0) > 0) && (
+    {(response.circles.length > 0 || response.posts.length > 0 || (response.teamups?.length ?? 0) > 0 || (response.resonanceCapsules?.length ?? 0) > 0 || (response.meetupSafetyPlans?.length ?? 0) > 0) && (
       <div className="global-agent-results" aria-label="Agent 检索结果">
         {response.circles.map((circle, index) => (
           <article className="global-agent-result" key={circle.id}>
@@ -78,6 +83,20 @@ function ResultPreview({ message, onAction }: {
             <strong>{teamup.title}</strong>
             <small>{teamup.currentMemberCount}/{teamup.maxMembers} 人 · {teamup.joinMode === 'direct' ? '直接加入' : '审核加入'}</small>
             <div><Link to={`/circles/${teamup.circleId}/teamups/${teamup.id}`}>查看组队</Link></div>
+          </article>
+        ))}
+        {(response.resonanceCapsules ?? []).map((capsule, index) => (
+          <article className="global-agent-result" key={capsule.id}>
+            <span>[R{index + 1}] 共鸣胶囊</span><strong>{capsule.title}</strong>
+            <small>{capsule.status === 'revealed' ? '已经揭晓' : capsule.hasResponded ? '我的回答已封存' : '等待我回应'}</small>
+            <div><Link to={`/resonance/${capsule.id}`}>打开胶囊</Link></div>
+          </article>
+        ))}
+        {(response.meetupSafetyPlans ?? []).map((plan, index) => (
+          <article className="global-agent-result" key={plan.id}>
+            <span>[S{index + 1}] 安心赴约</span><strong>{plan.title}</strong>
+            <small>{plan.status} · {new Date(plan.meetingAt).toLocaleString('zh-CN')}</small>
+            <div><Link to="/meetup-safety">查看计划</Link></div>
           </article>
         ))}
       </div>

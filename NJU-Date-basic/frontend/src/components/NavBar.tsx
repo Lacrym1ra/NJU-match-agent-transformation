@@ -71,6 +71,8 @@ export const NavBar = () => {
         <div className="flex justify-end">
           {isAuthenticated ? (
             <div className="flex items-center gap-2 md:gap-3">
+              <Link to="/resonance" className="hidden lg:inline text-xs font-sans tracking-widest text-[#611066] hover:text-[#2C2825] transition-colors">共鸣</Link>
+              <Link to="/meetup-safety" className="hidden lg:inline text-xs font-sans tracking-widest text-[#611066] hover:text-[#2C2825] transition-colors">赴约</Link>
               <Link
                 to="/dashboard"
                 title={user?.nickname || '案榻'}

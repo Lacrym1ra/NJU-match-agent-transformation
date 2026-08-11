@@ -11,6 +11,7 @@ coverage/
 playwright-report/
 test-results/
 *.log
+/deployment-packages/
 
 # Harness runtime state
 .agent-state/

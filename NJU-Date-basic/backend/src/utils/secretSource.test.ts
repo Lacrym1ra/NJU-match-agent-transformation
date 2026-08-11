@@ -21,6 +21,19 @@ describe('loadSecret', () => {
     assert.equal(value, 'server-only-key');
   });
 
+  it('ignores an unavailable optional allowlist root when another root contains the secret', () => {
+    const secretPath = path.join(secretRoot, 'llm_api_key_with_missing_root');
+    const missingRoot = path.join(secretRoot, 'missing-optional-root');
+    writeFileSync(secretPath, 'server-only-key\n', { mode: 0o600 });
+
+    const value = loadSecret('LLM_API_KEY', {
+      env: { LLM_API_KEY_FILE: secretPath },
+      allowedRoots: [secretRoot, missingRoot],
+    });
+
+    assert.equal(value, 'server-only-key');
+  });
+
   it('keeps an environment value as a development compatibility source', () => {
     assert.equal(loadSecret('LLM_API_KEY', {
       env: { LLM_API_KEY: 'development-key' },

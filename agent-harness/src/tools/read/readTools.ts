@@ -10,6 +10,8 @@ import {
   forumSearchResultSchema,
   profileStatusSchema,
   questionnaireStatusSchema,
+  resonanceCapsuleStatusResultSchema,
+  meetupSafetyStatusResultSchema,
 } from "./schemas.js";
 
 function invalidArguments(tool: string): Observation {
@@ -111,5 +113,25 @@ export function createNjuMatchReadTools(port: NjuMatchReadPort): readonly Tool[]
           : `Found ${result.posts.length} visible forum post(s).`,
       isEmpty: (result) => result.posts.length === 0,
     }),
+    ...(port.listResonanceCapsules ? [readTool({
+      name: "list_resonance_capsules",
+      inputSchema: emptyInputSchema,
+      outputSchema: resonanceCapsuleStatusResultSchema,
+      execute: (userId) => port.listResonanceCapsules!(userId),
+      summarize: (result) => result.capsules.length === 0
+        ? "The current user has no resonance capsules."
+        : `Found ${result.capsules.length} resonance capsule(s) owned by the current user.`,
+      isEmpty: (result) => result.capsules.length === 0,
+    })] : []),
+    ...(port.listMeetupSafetyPlans ? [readTool({
+      name: "list_meetup_safety_plans",
+      inputSchema: emptyInputSchema,
+      outputSchema: meetupSafetyStatusResultSchema,
+      execute: (userId) => port.listMeetupSafetyPlans!(userId),
+      summarize: (result) => result.plans.length === 0
+        ? "The current user has no meetup safety plans."
+        : `Found ${result.plans.length} meetup safety plan(s) owned by the current user.`,
+      isEmpty: (result) => result.plans.length === 0,
+    })] : []),
   ];
 }

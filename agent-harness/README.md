@@ -1,6 +1,6 @@
 # Agent Harness Core
 
-这是 Social Agent 与 Project A Coding adapter 共用的自研 Harness 内核。
+这是 Project B 应用内 Social Agent 使用的自研 Harness 内核，同时保留历史 Coding adapter 作为隔离的开发者扩展。
 真实 `/agent` 后端已经通过 `LLMPort` 使用该循环；离线机制测试仍全部
 使用 Mock LLM。
 
@@ -29,6 +29,7 @@ RunRequest
 - Tool 异常与超时标准化；
 - 当前认证用户上下文传入 Tool；
 - 资料状态、问卷状态、圈子搜索和论坛搜索 Tool；
+- 生产适配器追加共鸣胶囊与安心赴约状态 Tool，旧适配器可不注册以保持兼容；
 - Zod 输入/输出契约和最多 10 条搜索结果；
 - 可注入的 `NjuMatchReadPort`；
 - 最大步数和重复动作停止；
@@ -52,6 +53,9 @@ RunRequest
 后端通过 `agentHarnessRuntime.ts` 注入真实 Provider 和
 `agentReadService`。社交写操作继续由原后端确认状态机执行，Coding
 adapter 只用于隔离的开发者/课程机制场景。
+
+Project B 新模块的写边界由应用后端实现：Agent 只能在 HITL 后创建胶囊或
+赴约计划，不能替用户提交胶囊回答，也不能替用户签到/完成赴约计划。
 
 ## 测试逻辑
 

@@ -98,3 +98,21 @@ export const forumSearchResultSchema = z
     posts: z.array(forumPostSearchItemSchema).max(10),
   })
   .strict();
+
+export const resonanceCapsuleStatusResultSchema = z.object({
+  total: z.number().int().nonnegative(),
+  capsules: z.array(z.object({
+    id: z.string(), title: z.string(), status: z.string(),
+    role: z.enum(["creator", "participant"]),
+    hasResponded: z.boolean(), otherHasResponded: z.boolean(),
+    expiresAt: z.string(),
+  }).strict()).max(50),
+}).strict();
+
+export const meetupSafetyStatusResultSchema = z.object({
+  total: z.number().int().nonnegative(),
+  plans: z.array(z.object({
+    id: z.string(), title: z.string(), status: z.string(),
+    meetingAt: z.string(), expectedEndAt: z.string(),
+  }).strict()).max(50),
+}).strict();

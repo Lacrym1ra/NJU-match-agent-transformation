@@ -7,8 +7,9 @@
     "test": "node scripts/test-all.mjs",
     "verify": "node scripts/test-all.mjs",
     "bootstrap:verify": "node scripts/test-all.mjs --install",
-    "docker:windows:build": "powershell -ExecutionPolicy Bypass -File scripts/windows/build-images.ps1",
-    "docker:windows:up": "powershell -ExecutionPolicy Bypass -File scripts/windows/run-local.ps1"
+    "docker:windows:build": "node scripts/windows/run-powershell.mjs scripts/windows/build-images.ps1",
+    "docker:windows:export": "node scripts/windows/run-powershell.mjs scripts/windows/export-deployment-package.ps1",
+    "docker:windows:up": "node scripts/windows/run-powershell.mjs scripts/windows/run-local.ps1"
   },
   "engines": {
     "node": ">=20"
