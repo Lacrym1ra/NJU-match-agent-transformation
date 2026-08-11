@@ -29,12 +29,14 @@ New-Item -ItemType Directory -Force -Path $packageRoot | Out-Null
 & (Join-Path $PSScriptRoot "build-images.ps1") -Tag $safeTag
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-docker pull --platform linux/amd64 postgres:16-alpine
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
 $backendImage = "nju-match-backend:$safeTag"
 $frontendImage = "nju-match-frontend:$safeTag"
 $postgresImage = "postgres:16-alpine"
+$postgresPlatform = docker image inspect $postgresImage --format '{{.Os}}/{{.Architecture}}' 2>$null
+if ($LASTEXITCODE -ne 0 -or $postgresPlatform.Trim() -ne 'linux/amd64') {
+  docker pull --platform linux/amd64 $postgresImage
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
 $archiveBase = "nju-match-images-$safeTag-linux-amd64"
 $tarPath = Join-Path $packageRoot "$archiveBase.tar"
 $gzipPath = "$tarPath.gz"
