@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomInt, randomUUID } from 'node:crypto';
 import { and, desc, eq, gt, isNull, ne, or } from 'drizzle-orm';
 import { db } from '../db/connection.js';
 import { resonanceCapsules } from '../db/schema.js';
@@ -15,8 +15,10 @@ function hashInviteCode(code: string) {
 }
 
 function createInviteCode() {
-  const bytes = randomBytes(8);
-  return [...bytes].map((byte) => INVITE_ALPHABET[byte % INVITE_ALPHABET.length]).join('');
+  return Array.from(
+    { length: 8 },
+    () => INVITE_ALPHABET[randomInt(0, INVITE_ALPHABET.length)],
+  ).join('');
 }
 
 function normalizeText(value: string, field: string, max: number) {
