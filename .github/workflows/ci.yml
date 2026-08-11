@@ -19,7 +19,7 @@ jobs:
     name: Workspace Verification
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -35,7 +35,7 @@ jobs:
     name: Repository Policy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Reject forbidden credential files
         shell: bash
@@ -67,7 +67,7 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check Markdown links and style
         uses: DavidAnson/markdownlint-cli2-action@v19
         with:
@@ -83,7 +83,7 @@ jobs:
       run:
         working-directory: agent-harness
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Detect Harness package
         id: detect
@@ -130,7 +130,7 @@ jobs:
       run:
         working-directory: NJU-Date-basic/backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
