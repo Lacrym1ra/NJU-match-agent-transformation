@@ -43,8 +43,9 @@ $gzipPath = "$tarPath.gz"
 $sourcePath = Join-Path $packageRoot "nju-match-source-$safeTag.zip"
 $checksumPath = Join-Path $packageRoot "$archiveBase.sha256"
 $manifestPath = Join-Path $packageRoot "nju-match-deployment-$safeTag.json"
+$imageEnvPath = Join-Path $packageRoot "nju-match-images-$safeTag.env"
 
-foreach ($path in @($tarPath, $gzipPath, $sourcePath, $checksumPath, $manifestPath)) {
+foreach ($path in @($tarPath, $gzipPath, $sourcePath, $checksumPath, $manifestPath, $imageEnvPath)) {
   if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path -Force }
 }
 
@@ -69,11 +70,20 @@ Remove-Item -LiteralPath $tarPath -Force
 git -C $repoRoot archive --format=zip --output=$sourcePath HEAD
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+@(
+  "# Non-secret image selection for release $safeTag",
+  "BACKEND_IMAGE=$backendImage",
+  "FRONTEND_IMAGE=$frontendImage",
+  "POSTGRES_IMAGE=$postgresImage"
+) | Set-Content -Encoding ascii -LiteralPath $imageEnvPath
+
 $imageHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $gzipPath).Hash.ToLowerInvariant()
 $sourceHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $sourcePath).Hash.ToLowerInvariant()
+$imageEnvHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $imageEnvPath).Hash.ToLowerInvariant()
 @(
   "$imageHash  $([System.IO.Path]::GetFileName($gzipPath))",
-  "$sourceHash  $([System.IO.Path]::GetFileName($sourcePath))"
+  "$sourceHash  $([System.IO.Path]::GetFileName($sourcePath))",
+  "$imageEnvHash  $([System.IO.Path]::GetFileName($imageEnvPath))"
 ) | Set-Content -Encoding ascii -LiteralPath $checksumPath
 
 $manifest = [ordered]@{
@@ -82,6 +92,7 @@ $manifest = [ordered]@{
   platform = 'linux/amd64'
   sourceArchive = [System.IO.Path]::GetFileName($sourcePath)
   imageArchive = [System.IO.Path]::GetFileName($gzipPath)
+  imageEnvironment = [System.IO.Path]::GetFileName($imageEnvPath)
   images = [ordered]@{
     backend = [ordered]@{ tag = $backendImage; id = (docker image inspect $backendImage --format '{{.Id}}') }
     frontend = [ordered]@{ tag = $frontendImage; id = (docker image inspect $frontendImage --format '{{.Id}}') }
@@ -95,3 +106,4 @@ Write-Host "  $gzipPath"
 Write-Host "  $sourcePath"
 Write-Host "  $checksumPath"
 Write-Host "  $manifestPath"
+Write-Host "  $imageEnvPath"

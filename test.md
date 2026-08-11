@@ -198,6 +198,7 @@ Get-Content deployment-packages\*.sha256
 - 同一提交的 `nju-match-source-<commit>.zip`；
 - SHA-256 校验文件；
 - 含提交号、平台、镜像 ID 的 JSON manifest。
+- 只含三个镜像标签的 `nju-match-images-<commit>.env`（不含凭据）。
 
 本机重新加载验证可使用一个临时标签环境；不要删除仍在运行的正式镜像：
 
@@ -209,7 +210,16 @@ docker image inspect postgres:16-alpine
 
 ## 11. Ubuntu 更新后验收
 
-在 Xshell 中进入 `/opt/NJU-match-agent-transformation` 后执行：
+先在上传目录校验并加载本次发布的离线镜像：
+
+```bash
+sha256sum -c nju-match-images-<commit>-linux-amd64.sha256
+gzip -dc nju-match-images-<commit>-linux-amd64.tar.gz | docker load
+```
+
+将新源码同步到 `/opt/NJU-match-agent-transformation`，并将不含凭据的
+`nju-match-images-<commit>.env` 三行追加到 `/etc/nju-match/runtime.env`，替换其中
+旧的同名项。安装新 systemd unit 后执行：
 
 ```bash
 git rev-parse --short HEAD
@@ -217,6 +227,7 @@ sudo systemctl restart nju-match.service
 sudo systemctl status nju-match.service --no-pager -l
 docker compose --env-file /etc/nju-match/runtime.env \
   -f NJU-Date-basic/docker-compose.yml \
+  -f deploy/ubuntu/docker-compose.release.yml \
   -f deploy/ubuntu/docker-compose.credentials.yml ps
 curl -fsS http://127.0.0.1:8082/health
 curl -fsS https://match.invertedarena.com/health

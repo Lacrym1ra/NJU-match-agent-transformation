@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-postgres:16-alpine}
+    pull_policy: never
+
+  backend:
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to the verified release tag}
+    pull_policy: never
+
+  frontend:
+    image: ${FRONTEND_IMAGE:?Set FRONTEND_IMAGE to the verified release tag}
+    pull_policy: never
