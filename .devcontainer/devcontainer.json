@@ -1,0 +1,34 @@
+{
+  "name": "NJU Match public demo",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2.17.0": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+  "forwardPorts": [8082],
+  "portsAttributes": {
+    "8082": {
+      "label": "NJU Match demo",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
+  "remoteEnv": {
+    "COMPOSE_PROJECT_NAME": "nju-match-codespaces"
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/bootstrap-demo.sh",
+  "postAttachCommand": "bash .devcontainer/scripts/show-demo-status.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
